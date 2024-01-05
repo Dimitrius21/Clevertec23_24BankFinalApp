@@ -1,0 +1,118 @@
+# типы liquibase https://overcoder.net/q/117500/%D0%BF%D0%B5%D1%80%D0%B5%D1%87%D0%B8%D1%81%D0%BB%D0%B8%D1%82%D0%B5-%D0%B2%D1%81%D0%B5-%D1%82%D0%B8%D0%BF%D1%8B-sql-liquibase
+
+databaseChangeLog:
+  - changeSet:
+      id: create_account
+      author: group1
+      changes:
+        - createTable:
+            tableName: accounts
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: iban
+                  type: VARCHAR(35)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: iban_readable
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: amount
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: currency_code
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: open_date
+                  type: date
+                  constraints:
+                    nullable: false
+              - column:
+                  name: main_acc
+                  type: boolean
+                  constraints:
+                    nullable: false
+              - column:
+                  name: customer_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: customer_type
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: rate
+                  type: double
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: create_card
+      author: group1
+      changes:
+        - createTable:
+            tableName: cards
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: card_number
+                  type: VARCHAR(50)
+  - changeSet:
+      id: create_credit
+      author: group1
+      changes:
+        - createTable:
+            tableName: credits
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: customer_id
+                  type: uuid
+  - changeSet:
+      id: create_deposit
+      author: group1
+      changes:
+        - createTable:
+            tableName: deposits
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: customer_id
+                  type: uuid

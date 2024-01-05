@@ -1,0 +1,72 @@
+spring:
+  application:
+    name: product_service
+  datasource:
+    url : jdbc:postgresql://localhost:5432/bank
+    username : postgres
+    password : 1234
+    driver : org.postgresql.Driver
+  jpa:
+    show-sql : true
+  profiles:
+        active : dev
+  liquibase:
+    enabled: true
+    contexts: dev
+spring-doc:
+  packagesToScan: ru.clevertec.bank.product.controller
+caching:
+  repository: accountRepository, cardRepository, CreditRepository, DepositRepository
+#feign:
+#  name: auth-server
+#  url : http://localhost:8090
+exception:
+  custom-handler:
+    enable : true
+rabbit:
+  queue:
+    account: account
+    card: card
+    credit : credit
+    deposit : deposit
+server:
+  port: 8081
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+#  liquibase:
+#    contexts: dev
+caching:
+  type : lru
+  size : 5
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: jdbc:postgresql://localhost:5432/test
+  liquibase:
+    contexts: test
+caching:
+  type : lfu
+  size : 5
+---
+
+spring:
+  config:
+    activate:
+      on-profile: redis
+  cache:
+    redis:
+      time-to-live: 300s
+  data:
+    redis:
+      host: localhost
+      port: 6379

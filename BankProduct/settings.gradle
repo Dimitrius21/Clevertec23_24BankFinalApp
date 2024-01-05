@@ -1,0 +1,3 @@
+rootProject.name = 'BankProduct'
+include 'controller-logging-starter'
+include 'exception-handling-starter'
