@@ -1,11 +1,15 @@
 package ru.clevertec.bank.product.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.clevertec.bank.product.domain.dto.AccountChangeSumDto;
 import ru.clevertec.bank.product.domain.entity.Account;
 import ru.clevertec.bank.product.repository.AccountRepository;
 import ru.clevertec.exceptionhandler.exception.ResourceNotFountException;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -19,24 +23,43 @@ public class AccountService {
         return account;
     }
 
-    public Account getAccountByClientId(UUID id) {
-        Account account = accRepo.findByCustomerId(id).orElseThrow(() -> new ResourceNotFountException(
-                String.format("Account for client with id=%s not found", id.toString())));
-        return account;
+    public List<Account> getAccountsByCustomerId(UUID id) {
+        return accRepo.findByCustomerId(id);
     }
 
-    public void deleteAccountById(long id){
+    public void deleteAccountById(long id) {
         accRepo.deleteById(id);
     }
 
-    public Account saveAccount(Account acc){
+    public Account saveAccount(Account acc) {
         return accRepo.save(acc);
     }
 
-    public Account updateAccount(Account acc){
+    public Account updateAccountName(Account acc) {
+        Account account = accRepo.findByIban(acc.getIban()).orElseThrow(() -> new ResourceNotFountException(
+                String.format("Account with IBAN=%s not found", acc.getIban())));
+        if (!account.getCustomerId().equals(acc.getCustomerId())) {
+            throw new RuntimeException("Incorrect customer");
+        }
+        account.setName(acc.getName());
+        accRepo.save(account);
+        return account;
+    }
 
-
-        return acc;
+    @Transactional
+    public Account updateAccountSum(AccountChangeSumDto acc) {
+        Account account = accRepo.findByIban(acc.getIban()).orElseThrow(() -> new ResourceNotFountException(
+                String.format("Account with IBAN=%s not found", acc.getIban())));
+        if (acc.getCurrencyCode() != account.getCurrencyCode()) {
+            throw new RuntimeException("Incorrect currency");
+        }
+        long newSum = account.getAmount() + acc.getChange();
+        if (newSum < 0) {
+            throw new RuntimeException("There isn't enough many");
+        }
+        account.setAmount(newSum);
+        accRepo.save(account);
+        return account;
     }
 
 }
