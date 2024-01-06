@@ -23,7 +23,7 @@ public class Account {
     @Column(name = "iban_readable")
     private String ibanReadable; // ": "AABB CCC DDDD EEEE EEEE EEEE EEEE",
     @Column(name = "amount")
-    private long amount; //": 2100.00,
+    private long amount; //": 210000, в копейках
     @Column(name = "currency_code")
     private int currencyCode; //": "933",
     @Column(name = "open_date")

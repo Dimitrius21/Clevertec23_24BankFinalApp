@@ -2,8 +2,7 @@ package ru.clevertec.bank.product.controller.openapi;
 
 
 public interface AccountOpenAPI {
-/*
-    @Operation(summary = "Find News by ID",
+/*    @Operation(summary = "Find News by ID",
             description = "Get a News object by specifying its id (without Comments).")
     @Parameter(in = ParameterIn.PATH, name = "id", description = "News Id")
     @ApiResponses({
