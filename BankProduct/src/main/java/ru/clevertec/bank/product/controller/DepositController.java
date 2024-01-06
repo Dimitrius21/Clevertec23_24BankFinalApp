@@ -1,43 +1,24 @@
 package ru.clevertec.bank.product.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import ru.clevertec.bank.product.domain.dto.DepositResponse;
 import ru.clevertec.bank.product.service.DepositService;
 
-import java.util.UUID;
-
 @RestController
-@RequestMapping("/deposit")
+@RequestMapping("/deposits")
 @RequiredArgsConstructor
 public class DepositController {
 
     private final DepositService depositService;
 
     @GetMapping("/{id}")
-    public ResponseEntity getById(@PathVariable long id){
-        return null;
+    public ResponseEntity<DepositResponse> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(depositService.findById(id));
     }
 
-    @GetMapping("client/{id}")
-    public ResponseEntity getByClientId(@PathVariable UUID id){
-        String uuid = id.toString();
-        return new ResponseEntity<>(uuid, HttpStatus.OK);
-    }
-
-    @PostMapping
-    public ResponseEntity create(@RequestBody long dto){
-        return null;
-    }
-
-    @PutMapping
-    public ResponseEntity update(@RequestBody long dto){
-        return null;
-    }
-
-    @DeleteMapping
-    public ResponseEntity delete(@PathVariable long id){
-        return null;
-    }
 }

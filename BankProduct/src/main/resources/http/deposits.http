@@ -1,0 +1,3 @@
+###findById
+GET http://localhost:8081/deposits/1
+Accept: application/json
