@@ -11,6 +11,11 @@ spring:
       hibernate:
         format_sql: true
     open-in-view: false
+  data:
+    web:
+      pageable:
+        default-page-size: 20
+        max-page-size: 40
   profiles:
     active: dev
   liquibase:
@@ -19,7 +24,7 @@ spring:
 spring-doc:
   packagesToScan: ru.clevertec.bank.product.controller
 caching:
-  repository: accountRepository, cardRepository, CreditRepository, depositRepository
+  repository: accountRepository, cardRepository, CreditRepository, DepositRepository
 #feign:
 #  name: auth-server
 #  url : http://localhost:8090
