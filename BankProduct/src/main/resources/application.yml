@@ -2,14 +2,18 @@ spring:
   application:
     name: product_service
   datasource:
-    url : jdbc:postgresql://localhost:5432/bank
-    username : postgres
-    password : 1234
-    driver : org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/bank
+    username: postgres
+    password: 1234
+    driver: org.postgresql.Driver
   jpa:
-    show-sql : true
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
   profiles:
-        active : dev
+    active: dev
   liquibase:
     enabled: true
     contexts: dev
@@ -22,13 +26,13 @@ caching:
 #  url : http://localhost:8090
 exception:
   custom-handler:
-    enable : true
+    enable: true
 rabbit:
   queue:
     account: account
     card: card
-    credit : credit
-    deposit : deposit
+    credit: credit
+    deposit: deposit
 server:
   port: 8081
 
@@ -41,8 +45,8 @@ spring:
 #  liquibase:
 #    contexts: dev
 caching:
-  type : lru
-  size : 5
+  type: lru
+  size: 5
 
 ---
 
@@ -55,8 +59,8 @@ spring:
   liquibase:
     contexts: test
 caching:
-  type : lfu
-  size : 5
+  type: lfu
+  size: 5
 ---
 
 spring:

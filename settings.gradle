@@ -1,0 +1,7 @@
+rootProject.name = 'Clevertec23_24BankFinalApp'
+include 'BankClient',
+        'BankConfig',
+        'BankCurrencyRate',
+        'BankProduct',
+        'controller-logging-starter',
+        'exception-handling-starter'
