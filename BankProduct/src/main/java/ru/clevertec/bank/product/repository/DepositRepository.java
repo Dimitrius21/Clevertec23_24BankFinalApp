@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import ru.clevertec.bank.product.domain.entity.Deposit;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 public interface DepositRepository extends JpaRepository<Deposit, Long> {
@@ -19,5 +21,7 @@ public interface DepositRepository extends JpaRepository<Deposit, Long> {
             JOIN FETCH d.account
             """)
     Page<Deposit> findAllWithAccounts(Pageable pageable);
+
+    List<Deposit> findAllByExpDateAndAutoRenew(LocalDate expDate, Boolean autoRenew);
 
 }

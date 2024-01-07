@@ -10,11 +10,14 @@ import ru.clevertec.bank.product.domain.dto.deposit.DepInfoUpdateRequest;
 import ru.clevertec.bank.product.domain.dto.deposit.DepositInfoRequest;
 import ru.clevertec.bank.product.domain.dto.deposit.DepositInfoResponse;
 import ru.clevertec.bank.product.domain.entity.Account;
+import ru.clevertec.bank.product.domain.entity.Deposit;
 import ru.clevertec.bank.product.mapper.DepositMapper;
 import ru.clevertec.bank.product.repository.AccountRepository;
 import ru.clevertec.bank.product.repository.DepositRepository;
+import ru.clevertec.exceptionhandler.exception.NotValidRequestParametersException;
 import ru.clevertec.exceptionhandler.exception.ResourceNotFountException;
 
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -65,6 +68,15 @@ public class DepositService {
     }
 
     @Transactional
+    public void updateExpDate() {
+        LocalDate expDate = LocalDate.now();
+        depositRepository.findAllByExpDateAndAutoRenew(expDate, true)
+                .stream()
+                .map(deposit -> setNewExpDate(deposit, expDate))
+                .forEach(depositRepository::save);
+    }
+
+    @Transactional
     public DeleteResponse deleteById(Long id) {
         return depositRepository.findWithAccountById(id)
                 .map(deposit -> {
@@ -77,6 +89,18 @@ public class DepositService {
 
     private Supplier<ResourceNotFountException> throwResourceNotFoundException(Long id) {
         return () -> new ResourceNotFountException("Deposit with id %s is not found".formatted(id));
+    }
+
+    private Deposit setNewExpDate(Deposit deposit, LocalDate expDate) {
+        Integer termVal = deposit.getTermVal();
+        Character termScale = deposit.getTermScale();
+        LocalDate newExpDate = switch (termScale) {
+            case 'D' -> expDate.plusDays(termVal);
+            case 'M' -> expDate.plusMonths(termVal);
+            default -> throw new NotValidRequestParametersException("Invalid termScale: %s".formatted(termScale));
+        };
+        deposit.setExpDate(newExpDate);
+        return deposit;
     }
 
 }

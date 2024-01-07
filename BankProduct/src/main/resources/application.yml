@@ -21,6 +21,9 @@ spring:
   liquibase:
     enabled: true
     contexts: dev
+scheduler:
+  autoRenew:
+    cron: "00 00 00 * * *"
 spring-doc:
   packagesToScan: ru.clevertec.bank.product.controller
 caching:
