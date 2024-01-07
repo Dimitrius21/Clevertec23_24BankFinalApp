@@ -17,13 +17,23 @@ Content-Type: application/json
   "accInfo": {
     "accIban": "AABBCCCDDDDEEEEEEEEEEEEEEZZZ",
     "currAmount": 3000,
-    "currencyCode": 933
+    "currencyCode": 933,
+    "rate": 11.53
   },
   "depInfo": {
-    "rate": 14.50,
     "termVal": 24,
-    "termScale": "s",
+    "termScale": "M",
     "depType": "REVOCABLE",
     "autoRenew": true
   }
+}
+
+###updateById
+PUT http://localhost:8081/deposits/20
+Accept: application/json
+Content-Type: application/json
+
+{
+  "depType": "IRREVOCABLE",
+  "autoRenew": false
 }
