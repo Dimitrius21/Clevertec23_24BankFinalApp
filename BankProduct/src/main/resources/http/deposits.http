@@ -1,21 +1,29 @@
 ###findWithAccountById
-GET http://localhost:8081/deposits/1
+GET http://localhost:8081/deposits/15
 Accept: application/json
 
 ###findAllWithAccounts
 GET http://localhost:8081/deposits?page=0&size=3
 Accept: application/json
 
-###saveByAccountId
-POST http://localhost:8081/deposits/accounts/2
+###saveWithAccount
+POST http://localhost:8081/deposits
 Accept: application/json
 Content-Type: application/json
 
 {
-  "rate": 14.50,
-  "termVal": 6,
-  "termScale": "M",
-  "expDate": "2025-01-01",
-  "depType": "IRREVOCABLE",
-  "autoRenew": false
+  "customerId": "1a72a05f-4b8f-43c5-a889-1ebc6d9dc729",
+  "customerType": "LEGAL",
+  "accInfo": {
+    "accIban": "AABBCCCDDDDEEEEEEEEEEEEEEZZZ",
+    "currAmount": 3000,
+    "currencyCode": 933
+  },
+  "depInfo": {
+    "rate": 14.50,
+    "termVal": 24,
+    "termScale": "s",
+    "depType": "REVOCABLE",
+    "autoRenew": true
+  }
 }

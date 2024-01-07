@@ -5,7 +5,6 @@ CREATE TABLE IF NOT EXISTS deposits
 (
     id         BIGSERIAL PRIMARY KEY,
     account_id BIGINT REFERENCES accounts (id) ON DELETE CASCADE NOT NULL,
-    rate       NUMERIC                                           NOT NULL,
     term_val   INT                                               NOT NULL,
     term_scale CHAR(1)                                           NOT NULL,
     exp_date   DATE                                              NOT NULL,

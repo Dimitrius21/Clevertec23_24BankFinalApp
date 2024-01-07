@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -37,8 +36,6 @@ public class Deposit {
     @JoinColumn(name = "account_id")
     private Account account;
 
-    private BigDecimal rate;
-
     @Column(name = "term_val")
     private Integer termVal;
 
@@ -59,12 +56,12 @@ public class Deposit {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
         Deposit deposit = (Deposit) object;
-        return Objects.equals(id, deposit.id) && Objects.equals(rate, deposit.rate);
+        return Objects.equals(id, deposit.id) && Objects.equals(termVal, deposit.termVal);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, rate);
+        return Objects.hash(id, termVal);
     }
 
 }

@@ -2,34 +2,61 @@ package ru.clevertec.bank.product.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import ru.clevertec.bank.product.domain.dto.deposit.DepInfoDto;
-import ru.clevertec.bank.product.domain.dto.deposit.DepositInfoDto;
-import ru.clevertec.bank.product.domain.entity.Account;
+import org.mapstruct.Named;
+import ru.clevertec.bank.product.domain.dto.deposit.DepInfoRequest;
+import ru.clevertec.bank.product.domain.dto.deposit.DepositInfoRequest;
+import ru.clevertec.bank.product.domain.dto.deposit.DepositInfoResponse;
 import ru.clevertec.bank.product.domain.entity.Deposit;
+import ru.clevertec.exceptionhandler.exception.NotValidRequestParametersException;
+
+import java.time.LocalDate;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Mapper
 public interface DepositMapper {
 
+    @Mapping(target = "accInfo.id", source = "account.id")
     @Mapping(target = "accInfo.accIban", source = "account.iban")
     @Mapping(target = "accInfo.accOpenDate", source = "account.openDate")
     @Mapping(target = "accInfo.currAmount", source = "account.amount")
     @Mapping(target = "accInfo.currencyCode", source = "account.currencyCode")
     @Mapping(target = "depInfo", source = "deposit")
-    DepositInfoDto toDepositInfoDto(Deposit deposit);
+    DepositInfoResponse toDepositInfoResponse(Deposit deposit);
 
-    @Mapping(target = "account.id", source = "account.id")
-    @Mapping(target = "account.name", source = "account.name")
-    @Mapping(target = "account.iban", source = "account.iban")
-    @Mapping(target = "account.ibanReadable", source = "account.ibanReadable")
-    @Mapping(target = "account.amount", source = "account.amount")
-    @Mapping(target = "account.currencyCode", source = "account.currencyCode")
-    @Mapping(target = "account.openDate", source = "account.openDate")
-    @Mapping(target = "account.mainAcc", source = "account.mainAcc")
-    @Mapping(target = "account.customerId", source = "account.customerId")
-    @Mapping(target = "account.customerType", source = "account.customerType")
-    @Mapping(target = "account.rate", source = "account.rate")
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "rate", source = "depInfoDto.rate")
-    Deposit toDeposit(DepInfoDto depInfoDto, Account account);
+    @Mapping(target = "account.name", constant = "Депозитный")
+    @Mapping(target = "account.iban", source = "accInfo.accIban")
+    @Mapping(target = "account.ibanReadable", source = "accInfo.accIban", qualifiedByName = "formatIban")
+    @Mapping(target = "account.amount", source = "accInfo.currAmount")
+    @Mapping(target = "account.currencyCode", source = "accInfo.currencyCode")
+    @Mapping(target = "account.openDate", expression = "java(LocalDate.now())")
+    @Mapping(target = "account.customerId", source = "customerId")
+    @Mapping(target = "account.customerType", source = "customerType")
+    @Mapping(target = "account.rate", source = "depInfo.rate")
+    @Mapping(target = "termVal", source = "depInfo.termVal")
+    @Mapping(target = "termScale", source = "depInfo.termScale")
+    @Mapping(target = "expDate", source = "depInfo", qualifiedByName = "calculateExpDate")
+    @Mapping(target = "depType", source = "depInfo.depType")
+    @Mapping(target = "autoRenew", source = "depInfo.autoRenew")
+    Deposit toDeposit(DepositInfoRequest request);
+
+    @Named("formatIban")
+    default String formatIban(String iban) {
+        return IntStream.range(0, iban.length() / 4)
+                .mapToObj(i -> iban.substring(i * 4, i * 4 + 4))
+                .collect(Collectors.joining(" "));
+    }
+
+    @Named("calculateExpDate")
+    default LocalDate calculateExpDate(DepInfoRequest depInfo) {
+        Integer termVal = depInfo.termVal();
+        Character termScale = depInfo.termScale();
+        LocalDate openDate = LocalDate.now();
+        return switch (termScale) {
+            case 'D' -> openDate.plusDays(termVal);
+            case 'M' -> openDate.plusMonths(termVal);
+            default -> throw new NotValidRequestParametersException("Invalid termScale: %s".formatted(termScale));
+        };
+    }
 
 }
