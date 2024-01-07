@@ -57,11 +57,11 @@ public interface DepositMapper {
     @Named("calculateExpDate")
     default LocalDate calculateExpDate(DepInfoRequest depInfo) {
         Integer termVal = depInfo.termVal();
-        Character termScale = depInfo.termScale();
+        String termScale = depInfo.termScale();
         LocalDate openDate = LocalDate.now();
         return switch (termScale) {
-            case 'D' -> openDate.plusDays(termVal);
-            case 'M' -> openDate.plusMonths(termVal);
+            case "D" -> openDate.plusDays(termVal);
+            case "M" -> openDate.plusMonths(termVal);
             default -> throw new NotValidRequestParametersException("Invalid termScale: %s".formatted(termScale));
         };
     }

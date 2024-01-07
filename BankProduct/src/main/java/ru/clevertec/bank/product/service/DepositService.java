@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.clevertec.bank.product.domain.dto.DeleteResponse;
 import ru.clevertec.bank.product.domain.dto.deposit.DepInfoUpdateRequest;
 import ru.clevertec.bank.product.domain.dto.deposit.DepositInfoRequest;
@@ -19,6 +20,7 @@ import java.util.function.Supplier;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class DepositService {
 
     private final DepositRepository depositRepository;
@@ -36,6 +38,7 @@ public class DepositService {
                 .map(depositMapper::toDepositInfoResponse);
     }
 
+    @Transactional
     public DepositInfoResponse saveWithAccount(DepositInfoRequest request) {
         return Optional.of(request)
                 .map(depositMapper::toDeposit)
@@ -49,6 +52,7 @@ public class DepositService {
                 .orElseThrow(() -> new ResourceNotFountException("Cant save deposit")); // TODO add better exception for this message later
     }
 
+    @Transactional
     public DepositInfoResponse updateById(Long id, DepInfoUpdateRequest request) {
         return depositRepository.findWithAccountById(id)
                 .map(deposit -> {
@@ -60,6 +64,7 @@ public class DepositService {
                 .orElseThrow(throwResourceNotFoundException(id));
     }
 
+    @Transactional
     public DeleteResponse deleteById(Long id) {
         return depositRepository.findWithAccountById(id)
                 .map(deposit -> {
