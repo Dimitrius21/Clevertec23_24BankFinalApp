@@ -7,5 +7,5 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @Profile("prod")
 @Configuration
 @EnableScheduling
-public class ScheduledConfig {
+public class SchedulerConfig {
 }

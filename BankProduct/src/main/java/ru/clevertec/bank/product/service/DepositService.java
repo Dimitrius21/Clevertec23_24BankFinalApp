@@ -16,7 +16,6 @@ import ru.clevertec.bank.product.domain.entity.Deposit;
 import ru.clevertec.bank.product.mapper.DepositMapper;
 import ru.clevertec.bank.product.repository.AccountRepository;
 import ru.clevertec.bank.product.repository.DepositRepository;
-import ru.clevertec.exceptionhandler.exception.NotValidRequestParametersException;
 import ru.clevertec.exceptionhandler.exception.ResourceNotFountException;
 
 import java.time.LocalDate;
@@ -107,11 +106,9 @@ public class DepositService {
     private Deposit setNewExpDate(Deposit deposit, LocalDate expDate) {
         Integer termVal = deposit.getTermVal();
         Character termScale = deposit.getTermScale();
-        LocalDate newExpDate = switch (termScale) {
-            case 'D' -> expDate.plusDays(termVal);
-            case 'M' -> expDate.plusMonths(termVal);
-            default -> throw new NotValidRequestParametersException("Invalid termScale: %s".formatted(termScale));
-        };
+        LocalDate newExpDate = termScale.equals('D')
+                ? expDate.plusDays(termVal)
+                : expDate.plusMonths(termVal);
         deposit.setExpDate(newExpDate);
         return deposit;
     }
