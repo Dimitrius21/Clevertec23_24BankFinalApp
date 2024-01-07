@@ -35,11 +35,15 @@ exception:
   custom-handler:
     enable: true
 rabbit:
+  exchange: bank
   queue:
     account: account
     card: card
     credit: credit
     deposit: deposit
+  header:
+    key: message_type
+    deposit: deposit_info
 server:
   port: 8081
 
