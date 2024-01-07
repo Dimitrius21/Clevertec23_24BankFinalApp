@@ -28,6 +28,18 @@ Content-Type: application/json
   }
 }
 
+###saveByAccountId
+POST http://localhost:8081/deposits/5
+Accept: application/json
+Content-Type: application/json
+
+{
+  "termVal": 3,
+  "termScale": "D",
+  "depType": "REVOCABLE",
+  "autoRenew": true
+}
+
 ###updateById
 PUT http://localhost:8081/deposits/20
 Accept: application/json

@@ -5,6 +5,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 import ru.clevertec.bank.product.domain.dto.deposit.DepInfoRequest;
+import ru.clevertec.bank.product.domain.dto.deposit.DepInfoResponse;
 import ru.clevertec.bank.product.domain.dto.deposit.DepInfoUpdateRequest;
 import ru.clevertec.bank.product.domain.dto.deposit.DepositInfoRequest;
 import ru.clevertec.bank.product.domain.dto.deposit.DepositInfoResponse;
@@ -29,6 +30,8 @@ public interface DepositMapper {
     @Mapping(target = "depInfo", source = "deposit")
     DepositInfoResponse toDepositInfoResponse(Deposit deposit);
 
+    DepInfoResponse toDepInfoResponse(Deposit deposit);
+
     @Mapping(target = "account.name", constant = DEPOSIT)
     @Mapping(target = "account.iban", source = "accInfo.accIban")
     @Mapping(target = "account.ibanReadable", source = "accInfo.accIban", qualifiedByName = "formatIban")
@@ -44,6 +47,10 @@ public interface DepositMapper {
     @Mapping(target = "depType", source = "depInfo.depType")
     @Mapping(target = "autoRenew", source = "depInfo.autoRenew")
     Deposit toDeposit(DepositInfoRequest request);
+
+    @Mapping(target = "account.id", source = "accId")
+    @Mapping(target = "expDate", source = "request", qualifiedByName = "calculateExpDate")
+    Deposit toDeposit(Long accId, DepInfoRequest request);
 
     void updateDeposit(DepInfoUpdateRequest request, @MappingTarget Deposit deposit);
 

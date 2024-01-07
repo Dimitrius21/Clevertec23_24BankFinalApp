@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.clevertec.bank.product.domain.dto.DeleteResponse;
+import ru.clevertec.bank.product.domain.dto.deposit.DepInfoRequest;
+import ru.clevertec.bank.product.domain.dto.deposit.DepInfoResponse;
 import ru.clevertec.bank.product.domain.dto.deposit.DepInfoUpdateRequest;
 import ru.clevertec.bank.product.domain.dto.deposit.DepositInfoRequest;
 import ru.clevertec.bank.product.domain.dto.deposit.DepositInfoResponse;
@@ -44,6 +46,12 @@ public class DepositController {
     @PostMapping
     public ResponseEntity<DepositInfoResponse> saveWithAccount(@RequestBody @Valid DepositInfoRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(depositService.saveWithAccount(request));
+    }
+
+    @PostMapping("/{accId}")
+    public ResponseEntity<DepInfoResponse> saveByAccountId(@PathVariable @Positive Long accId,
+                                                           @RequestBody @Valid DepInfoRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(depositService.saveByAccountId(accId, request));
     }
 
     @PutMapping("/{id}")
