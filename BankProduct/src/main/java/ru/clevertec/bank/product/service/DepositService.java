@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ru.clevertec.bank.product.domain.dto.DeleteResponse;
 import ru.clevertec.bank.product.domain.dto.deposit.DepInfoUpdateRequest;
 import ru.clevertec.bank.product.domain.dto.deposit.DepositInfoRequest;
 import ru.clevertec.bank.product.domain.dto.deposit.DepositInfoResponse;
@@ -56,6 +57,16 @@ public class DepositService {
                     return deposit;
                 })
                 .map(depositMapper::toDepositInfoResponse)
+                .orElseThrow(throwResourceNotFoundException(id));
+    }
+
+    public DeleteResponse deleteById(Long id) {
+        return depositRepository.findWithAccountById(id)
+                .map(deposit -> {
+                    depositRepository.deleteById(deposit.getId());
+                    return deposit;
+                })
+                .map(deposit -> new DeleteResponse("Deposit with id %s was successfully deleted".formatted(deposit.getId())))
                 .orElseThrow(throwResourceNotFoundException(id));
     }
 

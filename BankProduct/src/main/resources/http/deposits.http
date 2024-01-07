@@ -37,3 +37,6 @@ Content-Type: application/json
   "depType": "IRREVOCABLE",
   "autoRenew": false
 }
+
+###deleteById
+DELETE http://localhost:8081/deposits/9
