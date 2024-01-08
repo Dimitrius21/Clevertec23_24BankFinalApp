@@ -99,20 +99,3 @@ databaseChangeLog:
               - column:
                   name: customer_id
                   type: uuid
-  - changeSet:
-      id: create_deposit
-      author: group1
-      changes:
-        - createTable:
-            tableName: deposits
-            columns:
-              - column:
-                  name: id
-                  type: bigint
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: customer_id
-                  type: uuid

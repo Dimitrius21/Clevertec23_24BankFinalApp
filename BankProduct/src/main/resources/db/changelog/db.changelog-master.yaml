@@ -1,5 +1,7 @@
 databaseChangeLog:
   - include:
       file: db/changelog/create-tables.yaml
+  - include:
+      file: db/changelog/deposit-table-ddl.sql
   - includeAll:
       path: db/changelog/data/

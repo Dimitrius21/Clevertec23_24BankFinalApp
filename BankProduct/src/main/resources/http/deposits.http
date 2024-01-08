@@ -1,0 +1,54 @@
+###findWithAccountById
+GET http://localhost:8081/deposits/15
+Accept: application/json
+
+###findAllWithAccounts
+GET http://localhost:8081/deposits?page=0&size=10&sort=expDate
+Accept: application/json
+
+###saveWithAccount
+POST http://localhost:8081/deposits
+Accept: application/json
+Content-Type: application/json
+
+{
+  "customerId": "1a72a05f-4b8f-43c5-a889-1ebc6d9dc729",
+  "customerType": "LEGAL",
+  "accInfo": {
+    "accIban": "AABBCCCDDDDEEEEEEEEEEEEEEZZZ",
+    "currAmount": 3000,
+    "currencyCode": 933,
+    "rate": 11.53
+  },
+  "depInfo": {
+    "termVal": 24,
+    "termScale": "M",
+    "depType": "REVOCABLE",
+    "autoRenew": true
+  }
+}
+
+###saveByAccountId
+POST http://localhost:8081/deposits/5
+Accept: application/json
+Content-Type: application/json
+
+{
+  "termVal": 3,
+  "termScale": "D",
+  "depType": "REVOCABLE",
+  "autoRenew": true
+}
+
+###updateById
+PUT http://localhost:8081/deposits/20
+Accept: application/json
+Content-Type: application/json
+
+{
+  "depType": "IRREVOCABLE",
+  "autoRenew": false
+}
+
+###deleteById
+DELETE http://localhost:8081/deposits/9

@@ -1,4 +1,4 @@
 package ru.clevertec.bank.product.domain.dto;
 
-public class DepositOutDto {
+public record DeleteResponse(String message) {
 }
