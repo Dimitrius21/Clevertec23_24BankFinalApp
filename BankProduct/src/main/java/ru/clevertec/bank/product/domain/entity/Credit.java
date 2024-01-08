@@ -1,11 +1,17 @@
 package ru.clevertec.bank.product.domain.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
+@Getter
+@Setter
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "credits")
 public class Credit {
     @Id
@@ -34,6 +40,13 @@ public class Credit {
     @Column(name = "is_closed")
     private boolean isClosed; //": false,
     @Column(name = "customer_type")
-    private String customer_type; //" : "LEGAL/PHYSIC"
+    private String customerType; //" : "LEGAL/PHYSIC"
+
+    public void setIsClosed(boolean closed) {
+        isClosed = closed;
+    }
+    public boolean isIsClosed() {
+        return isClosed;
+    }
 
 }

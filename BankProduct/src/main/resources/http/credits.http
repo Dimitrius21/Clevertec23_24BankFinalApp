@@ -1,0 +1,30 @@
+###findById
+GET http://localhost:8081/credits/1
+Accept: application/json
+
+###findALl
+GET http://localhost:8081/credits
+Accept: application/json
+
+###create
+POST http://localhost:8081/credits
+Content-Type: application/json
+
+{
+  "customerId": "1a72a05f-4b8f-43c5-a889-1ebc6d9dc729",
+  "contractNumber": "11-0216444-2-0",
+  "contractStartDate": "2022-03-30",
+  "totalDebt": 8113.99,
+  "currentDebt": 361.99,
+  "currency": "BYN",
+  "repaymentDate": "2023-01-16",
+  "rate": 22.8,
+  "iban": "AABBCCCDDDDEEEEEEEEEEEEEEEE",
+  "possibleRepayment": true,
+  "isClosed": true,
+  "customerType" : "LEGAL"
+}
+
+###deleteById
+DELETE http://localhost:8081/credits/11
+

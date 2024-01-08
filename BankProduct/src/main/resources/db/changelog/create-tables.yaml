@@ -82,20 +82,4 @@ databaseChangeLog:
               - column:
                   name: card_number
                   type: VARCHAR(50)
-  - changeSet:
-      id: create_credit
-      author: group1
-      changes:
-        - createTable:
-            tableName: credits
-            columns:
-              - column:
-                  name: id
-                  type: bigint
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: customer_id
-                  type: uuid
+
