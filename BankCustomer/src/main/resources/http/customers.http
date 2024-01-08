@@ -1,18 +1,19 @@
 ###findById
-GET http://localhost:8082/customers/59e0fee2-8d26-4234-b9e1-b5c4576627d6
+GET http://localhost:8082/customers/1d9878c1-9814-40f8-9277-8f00a9f70379
 Accept: application/json
 
 ###findAll
 GET http://localhost:8082/customers
 Accept: application/json
 
-###saveWithAccount
+###save
 POST http://localhost:8082/customers
 Accept: application/json
 Content-Type: application/json
 
 {
-  "type" : "LEGAL",
+  "type" : "PHYSIC",
+  "unp": "ABCDEFGHI",
   "email": "example@email.com",
   "phoneCode": "37529",
   "phoneNumber": "1112233",

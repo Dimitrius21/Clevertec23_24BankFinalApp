@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.clevertec.bank.customer.domain.dto.PhysicCustomerResponse;
-import ru.clevertec.bank.customer.domain.entity.Customer;
+import ru.clevertec.bank.customer.domain.dto.CustomerRequest;
+import ru.clevertec.bank.customer.domain.dto.CustomerResponse;
 import ru.clevertec.bank.customer.service.CustomerService;
 
 import java.util.UUID;
@@ -25,18 +25,18 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @GetMapping
-    public ResponseEntity<Page<PhysicCustomerResponse>> findAll(Pageable pageable) {
+    public ResponseEntity<Page<CustomerResponse>> findAll(Pageable pageable) {
         return ResponseEntity.ok(customerService.findAll(pageable));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PhysicCustomerResponse> findById(@PathVariable UUID id) {
+    public ResponseEntity<CustomerResponse> findById(@PathVariable UUID id) {
         return ResponseEntity.ok(customerService.findById(id));
     }
 
     @PostMapping
-    public ResponseEntity<Customer> save(@RequestBody Customer customer) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(customerService.save(customer));
+    public ResponseEntity<CustomerResponse> save(@RequestBody CustomerRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(customerService.save(request));
     }
 
 }
