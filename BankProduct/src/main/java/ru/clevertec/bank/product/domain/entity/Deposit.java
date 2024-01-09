@@ -1,22 +1,24 @@
 package ru.clevertec.bank.product.domain.entity;
 
-import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import ru.clevertec.bank.product.domain.entity.listener.DepositListener;
+import ru.clevertec.bank.product.util.CustomerType;
 
-import java.time.LocalDate;
 import java.util.Objects;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -25,43 +27,35 @@ import java.util.Objects;
 @NoArgsConstructor
 @Entity
 @Table(name = "deposits")
+@EntityListeners(DepositListener.class)
 public class Deposit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ToString.Exclude
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_id")
-    private Account account;
+    private UUID customerId;
 
-    @Column(name = "term_val")
-    private Integer termVal;
+    @Enumerated(EnumType.STRING)
+    private CustomerType customerType;
 
-    @Column(name = "term_scale")
-    private Character termScale;
+    @Embedded
+    private AccInfo accInfo;
 
-    @Column(name = "exp_date")
-    private LocalDate expDate;
-
-    @Column(name = "dep_type")
-    private String depType;
-
-    @Column(name = "auto_renew")
-    private Boolean autoRenew;
+    @Embedded
+    private DepInfo depInfo;
 
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
         Deposit deposit = (Deposit) object;
-        return Objects.equals(id, deposit.id) && Objects.equals(termVal, deposit.termVal);
+        return Objects.equals(id, deposit.id) && Objects.equals(customerId, deposit.customerId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, termVal);
+        return Objects.hash(id, customerId);
     }
 
 }
