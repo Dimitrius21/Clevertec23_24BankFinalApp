@@ -6,6 +6,10 @@ Accept: application/json
 GET http://localhost:8081/deposits?page=0&size=10&sort=depInfo.expDate
 Accept: application/json
 
+###findAllByFilter
+GET http://localhost:8081/deposits/filter?greaterThan=true&amount=1000&currency=EUR&page=0&size=5
+Accept: application/json
+
 ###save
 POST http://localhost:8081/deposits
 Accept: application/json

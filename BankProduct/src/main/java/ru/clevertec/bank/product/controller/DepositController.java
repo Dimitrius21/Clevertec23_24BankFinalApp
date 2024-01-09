@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.clevertec.bank.product.domain.dto.DeleteResponse;
 import ru.clevertec.bank.product.domain.dto.deposit.request.DepInfoUpdateRequest;
+import ru.clevertec.bank.product.domain.dto.deposit.request.DepositFilterRequest;
 import ru.clevertec.bank.product.domain.dto.deposit.request.DepositInfoRequest;
 import ru.clevertec.bank.product.domain.dto.deposit.response.DepositInfoResponse;
 import ru.clevertec.bank.product.service.DepositService;
@@ -38,6 +39,11 @@ public class DepositController {
     @GetMapping
     public ResponseEntity<Page<DepositInfoResponse>> findAll(Pageable pageable) {
         return ResponseEntity.ok(depositService.findAll(pageable));
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<Page<DepositInfoResponse>> findAllByFilter(DepositFilterRequest request, Pageable pageable) {
+        return ResponseEntity.ok(depositService.findAllByFilter(request, pageable));
     }
 
     @PostMapping

@@ -16,6 +16,6 @@ public interface DepositMapper {
     Deposit toDeposit(DepositInfoRequest request);
 
     @Mapping(target = "depInfo", source = "request")
-    void updateDeposit(DepInfoUpdateRequest request, @MappingTarget Deposit deposit);
+    Deposit updateDeposit(DepInfoUpdateRequest request, @MappingTarget Deposit deposit);
 
 }
