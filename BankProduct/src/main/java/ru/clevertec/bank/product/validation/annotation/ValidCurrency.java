@@ -1,21 +1,20 @@
-package ru.clevertec.bank.product.validation;
+package ru.clevertec.bank.product.validation.annotation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
+import ru.clevertec.bank.product.validation.CurrencyValidator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(ElementType.PARAMETER)
+@Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = PageableValidator.class)
-public @interface ValidPageable {
+@Constraint(validatedBy = CurrencyValidator.class)
+public @interface ValidCurrency {
 
-    String regexp() default "termVal|termScale|expDate|depType|autoRenew";
-
-    String message() default "Acceptable pageable sort orders are only: {regexp}";
+    String message() default "Wrong currency! It doesn't exist in java.util.Currency";
 
     Class<?>[] groups() default {};
 
