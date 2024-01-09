@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
+import ru.clevertec.bank.product.validation.annotation.ValidCurrency;
 
 import java.math.BigDecimal;
 
@@ -16,5 +17,6 @@ public record AccInfoRequest(
         @Positive
         BigDecimal currAmount,
 
+        @ValidCurrency
         String currAmountCurrency) {
 }

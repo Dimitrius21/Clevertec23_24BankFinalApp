@@ -9,6 +9,7 @@ import ru.clevertec.bank.product.domain.dto.DeleteResponse;
 import ru.clevertec.bank.product.domain.dto.deposit.request.DepInfoUpdateRequest;
 import ru.clevertec.bank.product.domain.dto.deposit.request.DepositFilterRequest;
 import ru.clevertec.bank.product.domain.dto.deposit.request.DepositInfoRequest;
+import ru.clevertec.bank.product.domain.dto.deposit.request.DepositRabbitPayloadRequest;
 import ru.clevertec.bank.product.domain.dto.deposit.response.DepositInfoResponse;
 import ru.clevertec.bank.product.mapper.DepositMapper;
 import ru.clevertec.bank.product.repository.DepositRepository;
@@ -48,6 +49,14 @@ public class DepositService {
                 .map(depositMapper::toDeposit)
                 .map(depositRepository::save)
                 .map(depositMapper::toDepositInfoResponse)
+                .orElseThrow(() -> new ResourceNotFountException("Cant save deposit")); // TODO add better exception for this message later
+    }
+
+    @Transactional
+    public void save(DepositRabbitPayloadRequest request) {
+        Optional.ofNullable(request)
+                .map(depositMapper::toDeposit)
+                .map(depositRepository::save)
                 .orElseThrow(() -> new ResourceNotFountException("Cant save deposit")); // TODO add better exception for this message later
     }
 
