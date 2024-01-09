@@ -1,7 +1,7 @@
 --liquibase formatted sql
 
 --changeset Grigoryev_Pavel:2
-INSERT INTO customer (type, unp, register_date, email, phone_code, phone_number, full_name)
+INSERT INTO customer (customer_type, unp, register_date, email, phone_code, phone_number, customer_full_name)
 VALUES ('LEGAL', '123AB6789', '2024.01.01', 'HornsAndHooves@example.com', '37529', '1111111', 'ООО Рога и копыта'),
        ('LEGAL', '98S65D321', '2024.01.02', 'JollyRoger@example.com', '37533', '2222222', 'ООО Веселый роджер'),
        ('PHYSIC', NULL, '2024.01.03', 'Ivanov@example.com', '37544', '3333333', 'Иванов Иван Иванович'),

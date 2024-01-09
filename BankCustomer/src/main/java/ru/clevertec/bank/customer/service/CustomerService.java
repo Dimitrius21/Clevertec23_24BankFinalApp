@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.clevertec.bank.customer.domain.dto.CustomerRequest;
 import ru.clevertec.bank.customer.domain.dto.CustomerResponse;
 import ru.clevertec.bank.customer.mapper.CustomerMapper;
@@ -15,6 +16,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
@@ -31,6 +33,7 @@ public class CustomerService {
                 .map(customerMapper::toResponse);
     }
 
+    @Transactional
     public CustomerResponse save(CustomerRequest request) {
         return Optional.of(request)
                 .map(customerMapper::toCustomer)

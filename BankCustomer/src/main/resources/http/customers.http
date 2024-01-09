@@ -1,5 +1,5 @@
 ###findById
-GET http://localhost:8082/customers/1d9878c1-9814-40f8-9277-8f00a9f70379
+GET http://localhost:8082/customers/0c21ac2b-7d61-4835-9255-4627059ed440
 Accept: application/json
 
 ###findAll
@@ -12,10 +12,10 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "type" : "PHYSIC",
+  "customer_type" : "LEGAL",
   "unp": "ABCDEFGHI",
   "email": "example@email.com",
   "phoneCode": "37529",
   "phoneNumber": "1112233",
-  "fullName": "Иванов Иван Иванович"
+  "customer_fullname": "Иванов Иван Иванович"
 }
