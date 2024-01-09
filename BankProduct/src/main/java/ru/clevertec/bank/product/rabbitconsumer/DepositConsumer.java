@@ -7,8 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
-import ru.clevertec.bank.product.domain.dto.deposit.DepositInfoRequest;
-import ru.clevertec.bank.product.domain.dto.deposit.DepositInfoResponse;
+import ru.clevertec.bank.product.domain.dto.deposit.request.DepositInfoRequest;
+import ru.clevertec.bank.product.domain.dto.deposit.response.DepositInfoResponse;
 import ru.clevertec.bank.product.service.DepositService;
 import ru.clevertec.exceptionhandler.exception.ResourceNotFountException;
 
@@ -26,7 +26,7 @@ public class DepositConsumer {
             ObjectWriter prettyPrinter = objectMapper.writerWithDefaultPrettyPrinter();
             DepositInfoRequest request = objectMapper.readValue(message, DepositInfoRequest.class);
             log.info("Received request from RabbitMQ:\n{}", prettyPrinter.writeValueAsString(request));
-            DepositInfoResponse response = depositService.saveWithAccount(request);
+            DepositInfoResponse response = depositService.save(request);
             log.info("Request successfully saved in Postgresql:\n{}", prettyPrinter.writeValueAsString(response));
         } catch (JsonProcessingException e) {
             log.error(e.getMessage());

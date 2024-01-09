@@ -17,13 +17,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.clevertec.bank.product.domain.dto.DeleteResponse;
-import ru.clevertec.bank.product.domain.dto.deposit.DepInfoRequest;
-import ru.clevertec.bank.product.domain.dto.deposit.DepInfoResponse;
-import ru.clevertec.bank.product.domain.dto.deposit.DepInfoUpdateRequest;
-import ru.clevertec.bank.product.domain.dto.deposit.DepositInfoRequest;
-import ru.clevertec.bank.product.domain.dto.deposit.DepositInfoResponse;
+import ru.clevertec.bank.product.domain.dto.deposit.request.DepInfoUpdateRequest;
+import ru.clevertec.bank.product.domain.dto.deposit.request.DepositInfoRequest;
+import ru.clevertec.bank.product.domain.dto.deposit.response.DepositInfoResponse;
 import ru.clevertec.bank.product.service.DepositService;
-import ru.clevertec.bank.product.validation.ValidPageable;
 
 @Validated
 @RestController
@@ -34,24 +31,18 @@ public class DepositController {
     private final DepositService depositService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<DepositInfoResponse> findWithAccountById(@PathVariable @Positive Long id) {
-        return ResponseEntity.ok(depositService.findWithAccountById(id));
+    public ResponseEntity<DepositInfoResponse> findById(@PathVariable @Positive Long id) {
+        return ResponseEntity.ok(depositService.findById(id));
     }
 
     @GetMapping
-    public ResponseEntity<Page<DepositInfoResponse>> findAllWithAccounts(@ValidPageable Pageable pageable) {
-        return ResponseEntity.ok(depositService.findAllWithAccounts(pageable));
+    public ResponseEntity<Page<DepositInfoResponse>> findAll(Pageable pageable) {
+        return ResponseEntity.ok(depositService.findAll(pageable));
     }
 
     @PostMapping
-    public ResponseEntity<DepositInfoResponse> saveWithAccount(@RequestBody @Valid DepositInfoRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(depositService.saveWithAccount(request));
-    }
-
-    @PostMapping("/{accId}")
-    public ResponseEntity<DepInfoResponse> saveByAccountId(@PathVariable @Positive Long accId,
-                                                           @RequestBody @Valid DepInfoRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(depositService.saveByAccountId(accId, request));
+    public ResponseEntity<DepositInfoResponse> save(@RequestBody @Valid DepositInfoRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(depositService.save(request));
     }
 
     @PutMapping("/{id}")
