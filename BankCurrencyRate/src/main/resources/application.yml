@@ -1,0 +1,54 @@
+spring:
+  application:
+    name: rates_service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/rates
+    username: postgres
+    password: 1234
+    driver: org.postgresql.Driver
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+#    open-in-view: false
+  profiles:
+    active: dev
+  liquibase:
+    enabled: true
+    contexts: dev
+spring-doc:
+  packagesToScan: ru.clevertec.bank.currency.controller
+
+exception:
+  custom-handler:
+    enable: true
+rabbit:
+  queue:
+    account: account
+    card: card
+    credit: credit
+    deposit: deposit
+server:
+  port: 8081
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+#  liquibase:
+#    contexts: dev
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: jdbc:postgresql://localhost:5432/rates_test
+  liquibase:
+    contexts: test
+
