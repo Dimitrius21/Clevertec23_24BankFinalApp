@@ -10,5 +10,6 @@ CREATE TABLE IF NOT EXISTS customer
     email              VARCHAR(50) UNIQUE NOT NULL,
     phone_code         VARCHAR(10)        NOT NULL,
     phone_number       VARCHAR(20)        NOT NULL,
-    customer_full_name VARCHAR(255)       NOT NULL
+    customer_full_name VARCHAR(255)       NOT NULL,
+    deleted            BOOLEAN            NOT NULL
 );

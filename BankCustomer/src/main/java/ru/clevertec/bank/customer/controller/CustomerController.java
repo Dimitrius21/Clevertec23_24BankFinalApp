@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -55,6 +56,11 @@ public class CustomerController {
     @DeleteMapping("/{id}")
     public ResponseEntity<DeleteResponse> deleteById(@PathVariable UUID id) {
         return ResponseEntity.ok(customerService.deleteById(id));
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<CustomerResponse> restoreById(@PathVariable UUID id) {
+        return ResponseEntity.status(HttpStatus.OK).body(customerService.restoreById(id));
     }
 
 }

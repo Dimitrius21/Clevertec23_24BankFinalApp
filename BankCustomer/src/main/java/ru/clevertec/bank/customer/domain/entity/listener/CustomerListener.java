@@ -9,6 +9,7 @@ public class CustomerListener {
 
     @PrePersist
     public void prePersist(Customer customer) {
+        customer.setDeleted(false);
         customer.setRegisterDate(LocalDate.now());
     }
 

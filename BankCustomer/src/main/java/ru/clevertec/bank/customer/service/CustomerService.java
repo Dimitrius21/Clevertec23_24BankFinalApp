@@ -26,13 +26,13 @@ public class CustomerService {
     private final CustomerMapper customerMapper;
 
     public CustomerResponse findById(UUID id) {
-        return customerRepository.findById(id)
+        return customerRepository.findByCustomerIdAndDeletedFalse(id)
                 .map(customerMapper::toResponse)
                 .orElseThrow(throwResourceNotFoundException(id));
     }
 
     public Page<CustomerResponse> findAll(Pageable pageable) {
-        return customerRepository.findAll(pageable)
+        return customerRepository.findAllByDeletedFalse(pageable)
                 .map(customerMapper::toResponse);
     }
 
@@ -48,7 +48,7 @@ public class CustomerService {
     //TODO unique exception handler for unique field
     @Transactional
     public CustomerResponse updateById(UUID id, CustomerUpdateRequest request) {
-        return customerRepository.findById(id)
+        return customerRepository.findByCustomerIdAndDeletedFalse(id)
                 .map(customer -> customerMapper.updateCustomer(request, customer))
                 .map(customerRepository::save)
                 .map(customerMapper::toResponse)
@@ -57,13 +57,24 @@ public class CustomerService {
 
     @Transactional
     public DeleteResponse deleteById(UUID id) {
-        return customerRepository.findById(id)
+        return customerRepository.findByCustomerIdAndDeletedFalse(id)
                 .map(customer -> {
-                    customerRepository.delete(customer);
-                    return customer;
+                    customer.setDeleted(true);
+                    return customerRepository.save(customer);
                 })
                 .map(customer -> new DeleteResponse("Customer with id %s was successfully deleted"
                         .formatted(customer.getCustomerId())))
+                .orElseThrow(throwResourceNotFoundException(id));
+    }
+
+    @Transactional
+    public CustomerResponse restoreById(UUID id) {
+        return customerRepository.findByCustomerIdAndDeletedTrue(id)
+                .map(customer -> {
+                    customer.setDeleted(false);
+                    return customerRepository.save(customer);
+                })
+                .map(customerMapper::toResponse)
                 .orElseThrow(throwResourceNotFoundException(id));
     }
 

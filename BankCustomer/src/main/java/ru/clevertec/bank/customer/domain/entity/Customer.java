@@ -41,6 +41,7 @@ public class Customer {
     private String phoneCode;
     private String phoneNumber;
     private String customerFullName;
+    private Boolean deleted;
 
     @Override
     public boolean equals(Object object) {
