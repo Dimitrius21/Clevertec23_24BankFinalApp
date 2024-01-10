@@ -3,7 +3,7 @@
 
 CREATE TABLE rates_list (
 id bigserial PRIMARY KEY,
-start_time timestamp);
+start_time timestamptz);
 
 CREATE TABLE rates (
 id bigserial PRIMARY KEY,
