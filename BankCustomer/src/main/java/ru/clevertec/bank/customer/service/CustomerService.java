@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.clevertec.bank.customer.domain.dto.CustomerRabbitPayloadRequest;
 import ru.clevertec.bank.customer.domain.dto.CustomerRequest;
 import ru.clevertec.bank.customer.domain.dto.CustomerResponse;
 import ru.clevertec.bank.customer.domain.dto.CustomerUpdateRequest;
@@ -42,6 +43,14 @@ public class CustomerService {
                 .map(customerMapper::toCustomer)
                 .map(customerRepository::save)
                 .map(customerMapper::toResponse)
+                .orElseThrow(() -> new ResourceNotFountException("Cant save customer")); //TODO add better exception for this message
+    }
+
+    @Transactional
+    public void save(CustomerRabbitPayloadRequest request) {
+        Optional.ofNullable(request)
+                .map(customerMapper::toCustomer)
+                .map(customerRepository::save)
                 .orElseThrow(() -> new ResourceNotFountException("Cant save customer")); //TODO add better exception for this message
     }
 

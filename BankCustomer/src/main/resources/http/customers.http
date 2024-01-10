@@ -1,5 +1,5 @@
 ###findById
-GET http://localhost:8082/customers/16f60fc4-ce0b-4e2d-9106-648a7dc350f9
+GET http://localhost:8082/customers/1a72a05f-4b8f-43c5-a889-1ebc6d9dc724
 Accept: application/json
 
 ###findAll
@@ -32,9 +32,9 @@ Content-Type: application/json
 }
 
 ###deleteById
-DELETE http://localhost:8082/customers/16f60fc4-ce0b-4e2d-9106-648a7dc350b5
+DELETE http://localhost:8082/customers/1a72a05f-4b8f-43c5-a889-1ebc6d9dc724
 Accept: application/json
 
 ###restoreById
-PATCH http://localhost:8082/customers/16f60fc4-ce0b-4e2d-9106-648a7dc350f9
+PATCH http://localhost:8082/customers/1a72a05f-4b8f-43c5-a889-1ebc6d9dc724
 Accept: application/json

@@ -3,7 +3,7 @@
 --changeset Grigoryev_Pavel:1
 CREATE TABLE IF NOT EXISTS customer
 (
-    customer_id        UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    customer_id        UUID PRIMARY KEY,
     customer_type      VARCHAR(20)        NOT NULL,
     unp                VARCHAR(9),
     register_date      DATE               NOT NULL,

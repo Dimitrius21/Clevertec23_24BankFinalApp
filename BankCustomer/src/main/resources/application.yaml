@@ -22,3 +22,13 @@ spring:
     active: dev
 server:
   port: 8082
+exception:
+  custom-handler:
+    enable: true
+rabbit:
+  exchange: bank
+  queue:
+    customer: customer
+  header:
+    key: message_type
+    customer: customer
