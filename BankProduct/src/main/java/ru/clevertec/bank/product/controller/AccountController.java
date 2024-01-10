@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.clevertec.bank.product.domain.dto.AccountChangeSumDto;
 import ru.clevertec.bank.product.domain.dto.AccountInDto;
 import ru.clevertec.bank.product.domain.dto.AccountOutDto;
 import ru.clevertec.bank.product.domain.entity.Account;
@@ -22,11 +21,10 @@ public class AccountController  {
     private final AccountService accService;
     private final AccountMapper mapper;
 
-    @GetMapping("/{id}")
-    public ResponseEntity getById(@PathVariable long id){
-        Account account = accService.getAccountById(id);
-        AccountOutDto dto = mapper.toAccountOutDto(account);
-        return new ResponseEntity<>(dto, HttpStatus.OK);
+    @GetMapping("/{iban}")
+    public ResponseEntity<AccountOutDto> getById(@PathVariable String iban){
+        AccountOutDto outDto = accService.getAccountByIban(iban);
+        return new ResponseEntity<>(outDto, HttpStatus.OK);
     }
 
     @GetMapping("client/{id}")
@@ -39,12 +37,18 @@ public class AccountController  {
     }
 
     @PostMapping
-    public ResponseEntity create(@RequestBody AccountInDto dtoIn){
-        Account account = mapper.toAccount(dtoIn);
-        account = accService.saveAccount(account);
-        AccountOutDto dtoOut = mapper.toAccountOutDto(account);
+    public ResponseEntity<AccountOutDto> create(@RequestBody AccountInDto dtoIn){
+        AccountOutDto dtoOut = accService.createAccount(dtoIn);
         return new ResponseEntity<>(dtoOut, HttpStatus.CREATED);
     }
+
+    @PostMapping("/rabbit")
+    public ResponseEntity<AccountOutDto> saveFromRabbit(@RequestBody String dtoIn){
+        AccountOutDto dtoOut = accService.saveAccountFromRabbit(dtoIn);
+        return new ResponseEntity<>(dtoOut, HttpStatus.CREATED);
+    }
+
+
 
     @PutMapping("/rename")
     public ResponseEntity updateName(@RequestBody AccountInDto dtoIn){
@@ -54,16 +58,16 @@ public class AccountController  {
         return new ResponseEntity<>(dtoOut, HttpStatus.OK);
     }
 
-    @PutMapping("/amount")
+/*    @PutMapping("/amount")
     public ResponseEntity updateSum(@RequestBody AccountChangeSumDto dto){
         Account account = accService.updateAccountSum(dto);
         AccountOutDto dtoOut = mapper.toAccountOutDto(account);
         return new ResponseEntity<>(dtoOut, HttpStatus.OK);
-    }
+    }*/
 
-    @DeleteMapping
-    public void delete(@PathVariable long id){
-        accService.deleteAccountById(id);
+    @DeleteMapping("/{iban}")
+    public void delete(@PathVariable String iban){
+        accService.deleteAccountByIban(iban);
     }
 
 
