@@ -9,9 +9,8 @@ databaseChangeLog:
             tableName: accounts
             columns:
               - column:
-                  name: id
-                  type: bigint
-                  autoIncrement: true
+                  name: iban
+                  type: VARCHAR(35)
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -21,23 +20,13 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: iban
-                  type: VARCHAR(35)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: iban_readable
-                  type: VARCHAR(50)
-                  constraints:
-                    nullable: false
-              - column:
                   name: amount
                   type: bigint
                   constraints:
                     nullable: false
               - column:
                   name: currency_code
-                  type: int
+                  type: CHAR(5)
                   constraints:
                     nullable: false
               - column:
@@ -57,7 +46,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: customer_type
-                  type: VARCHAR(255)
+                  type: VARCHAR(20)
                   constraints:
                     nullable: false
               - column:

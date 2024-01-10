@@ -10,6 +10,7 @@ import ru.clevertec.bank.product.domain.entity.Account;
 import ru.clevertec.bank.product.service.AccountService;
 import ru.clevertec.bank.product.util.AccountMapper;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -20,36 +21,53 @@ public class AccountController  {
     private final AccountService accService;
     private final AccountMapper mapper;
 
-    @GetMapping("/{id}")
-    public ResponseEntity getById(@PathVariable long id){
-        Account account = accService.getAccountById(id);
-        AccountOutDto dto = mapper.toAccountOutDto(account);
-        return new ResponseEntity<>(dto, HttpStatus.OK);
+    @GetMapping("/{iban}")
+    public ResponseEntity<AccountOutDto> getById(@PathVariable String iban){
+        AccountOutDto outDto = accService.getAccountByIban(iban);
+        return new ResponseEntity<>(outDto, HttpStatus.OK);
     }
 
     @GetMapping("client/{id}")
-    public ResponseEntity getByClientId(@PathVariable UUID id){
-        Account account = accService.getAccountByClientId(id);
-        AccountOutDto dto = mapper.toAccountOutDto(account);
-        return new ResponseEntity<>(dto, HttpStatus.OK);
+    public ResponseEntity getByCustomerId(@PathVariable UUID id){
+        List<Account> accounts = accService.getAccountsByCustomerId(id);
+        List<AccountOutDto> dtoList = accounts.stream()
+                .map(mapper::toAccountOutDto)
+                .toList();
+        return new ResponseEntity<>(dtoList, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity create(@RequestBody AccountInDto dtoIn){
-        Account account = mapper.toAccount(dtoIn);
-        account = accService.saveAccount(account);
-        AccountOutDto dtoOut = mapper.toAccountOutDto(account);
+    public ResponseEntity<AccountOutDto> create(@RequestBody AccountInDto dtoIn){
+        AccountOutDto dtoOut = accService.createAccount(dtoIn);
         return new ResponseEntity<>(dtoOut, HttpStatus.CREATED);
     }
 
-    @PutMapping
-    public ResponseEntity update(@RequestBody long dto){
-        return null;
+    @PostMapping("/rabbit")
+    public ResponseEntity<AccountOutDto> saveFromRabbit(@RequestBody String dtoIn){
+        AccountOutDto dtoOut = accService.saveAccountFromRabbit(dtoIn);
+        return new ResponseEntity<>(dtoOut, HttpStatus.CREATED);
     }
 
-    @DeleteMapping
-    public void delete(@PathVariable long id){
-        accService.deleteAccountById(id);
+
+
+    @PutMapping("/rename")
+    public ResponseEntity updateName(@RequestBody AccountInDto dtoIn){
+        Account account = mapper.toAccount(dtoIn);
+        account = accService.updateAccountName(account);
+        AccountOutDto dtoOut = mapper.toAccountOutDto(account);
+        return new ResponseEntity<>(dtoOut, HttpStatus.OK);
+    }
+
+/*    @PutMapping("/amount")
+    public ResponseEntity updateSum(@RequestBody AccountChangeSumDto dto){
+        Account account = accService.updateAccountSum(dto);
+        AccountOutDto dtoOut = mapper.toAccountOutDto(account);
+        return new ResponseEntity<>(dtoOut, HttpStatus.OK);
+    }*/
+
+    @DeleteMapping("/{iban}")
+    public void delete(@PathVariable String iban){
+        accService.deleteAccountByIban(iban);
     }
 
 
