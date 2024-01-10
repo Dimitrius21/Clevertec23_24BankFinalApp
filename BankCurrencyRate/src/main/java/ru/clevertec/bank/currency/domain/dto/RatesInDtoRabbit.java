@@ -6,12 +6,12 @@ import ru.clevertec.bank.currency.domain.entity.Rate;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
-public class RatesInDto {
-    private long id;
+public class RatesInDtoRabbit {
     //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
-    private LocalDateTime startDt;
-    private List<Rate> exchangeRates;
+    private Map<String, String> header;
+    private RatesInDto payload;
 }

@@ -6,29 +6,32 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.clevertec.bank.currency.domain.dto.RatesInDto;
 import ru.clevertec.bank.currency.domain.dto.RatesOutDto;
-import ru.clevertec.bank.currency.domain.entity.Rates;
-import ru.clevertec.bank.currency.mapper.RatesMapper;
 import ru.clevertec.bank.currency.service.CurrencyRateService;
+
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/rate")
 @RequiredArgsConstructor
 public class CurrencyRateController {
     private final CurrencyRateService ratesService;
-    private final RatesMapper mapper;
 
     @GetMapping
-    public ResponseEntity<RatesOutDto> getLast(){
-        Rates rates = ratesService.getLastRates();
-        RatesOutDto outDto = mapper.toRatesOutDto(rates);
+    public ResponseEntity<RatesOutDto> getCurrent() {
+        LocalDateTime now = LocalDateTime.now();
+        RatesOutDto outDto = ratesService.getLastRates(now);
+        return new ResponseEntity<>(outDto, HttpStatus.OK);
+    }
+
+    @GetMapping("/{time}")
+    public ResponseEntity<RatesOutDto> getLast(@PathVariable LocalDateTime time) {
+        RatesOutDto outDto = ratesService.getRatesAtTime(time);
         return new ResponseEntity<>(outDto, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<RatesOutDto> save(@RequestBody RatesInDto inDto){
-        Rates rates = mapper.toRates(inDto);
-        rates = ratesService.saveRates(rates);
-        RatesOutDto outDto = mapper.toRatesOutDto(rates);
+    public ResponseEntity<RatesOutDto> craete(@RequestBody RatesInDto inDto) {
+        RatesOutDto outDto = ratesService.createRates(inDto);
         return new ResponseEntity<>(outDto, HttpStatus.CREATED);
     }
 

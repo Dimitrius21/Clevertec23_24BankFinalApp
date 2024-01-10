@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -17,6 +18,7 @@ public class Rates {
     private long id;
     @Column(name = "start_time")
     private LocalDateTime start;
-    @OneToMany(mappedBy = "ratesListId") //, cascade = CascadeType.PERSIST)
-    private List<Rate> exchangeRates;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "rates_list_id", nullable=false)
+    private List<Rate> exchangeRates = new ArrayList<>();
 }
