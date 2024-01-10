@@ -7,12 +7,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.clevertec.bank.customer.domain.dto.CustomerRequest;
 import ru.clevertec.bank.customer.domain.dto.CustomerResponse;
+import ru.clevertec.bank.customer.domain.dto.CustomerUpdateRequest;
+import ru.clevertec.bank.customer.domain.dto.DeleteResponse;
 import ru.clevertec.bank.customer.mapper.CustomerMapper;
 import ru.clevertec.bank.customer.repository.CustomerRepository;
 import ru.clevertec.exceptionhandler.exception.ResourceNotFountException;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +28,7 @@ public class CustomerService {
     public CustomerResponse findById(UUID id) {
         return customerRepository.findById(id)
                 .map(customerMapper::toResponse)
-                .orElseThrow(() -> new ResourceNotFountException("Customer with id %s is not found".formatted(id)));
+                .orElseThrow(throwResourceNotFoundException(id));
     }
 
     public Page<CustomerResponse> findAll(Pageable pageable) {
@@ -40,6 +43,32 @@ public class CustomerService {
                 .map(customerRepository::save)
                 .map(customerMapper::toResponse)
                 .orElseThrow(() -> new ResourceNotFountException("Cant save customer")); //TODO add better exception for this message
+    }
+
+    //TODO unique exception handler for unique field
+    @Transactional
+    public CustomerResponse updateById(UUID id, CustomerUpdateRequest request) {
+        return customerRepository.findById(id)
+                .map(customer -> customerMapper.updateCustomer(request, customer))
+                .map(customerRepository::save)
+                .map(customerMapper::toResponse)
+                .orElseThrow(throwResourceNotFoundException(id));
+    }
+
+    @Transactional
+    public DeleteResponse deleteById(UUID id) {
+        return customerRepository.findById(id)
+                .map(customer -> {
+                    customerRepository.delete(customer);
+                    return customer;
+                })
+                .map(customer -> new DeleteResponse("Customer with id %s was successfully deleted"
+                        .formatted(customer.getCustomerId())))
+                .orElseThrow(throwResourceNotFoundException(id));
+    }
+
+    private Supplier<ResourceNotFountException> throwResourceNotFoundException(UUID id) {
+        return () -> new ResourceNotFountException("Customer with id %s is not found".formatted(id));
     }
 
 }

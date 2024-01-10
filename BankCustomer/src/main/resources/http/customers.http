@@ -1,5 +1,5 @@
 ###findById
-GET http://localhost:8082/customers/0c21ac2b-7d61-4835-9255-4627059ed440
+GET http://localhost:8082/customers/5c33d931-4236-449b-9947-c8ed71a4436d
 Accept: application/json
 
 ###findAll
@@ -12,10 +12,25 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "customer_type" : "LEGAL",
+  "customer_type": "LEGAL",
   "unp": "ABCDEFGHI",
   "email": "example@email.com",
   "phoneCode": "37529",
   "phoneNumber": "1112233",
   "customer_fullname": "Иванов Иван Иванович"
 }
+
+###updateById
+PUT http://localhost:8082/customers/5c33d931-4236-449b-9947-c8ed71a4436d
+Accept: application/json
+Content-Type: application/json
+
+{
+  "email": "singleton@email.com",
+  "phoneCode": "37533",
+  "phoneNumber": "2223344"
+}
+
+###deleteById
+DELETE http://localhost:8082/customers/a06062cf-2ce1-42e9-a4e4-26da1c0d0ea2
+Accept: application/json

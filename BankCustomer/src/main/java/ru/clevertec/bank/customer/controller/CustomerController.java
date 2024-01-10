@@ -7,14 +7,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.clevertec.bank.customer.domain.dto.CustomerRequest;
 import ru.clevertec.bank.customer.domain.dto.CustomerResponse;
+import ru.clevertec.bank.customer.domain.dto.CustomerUpdateRequest;
+import ru.clevertec.bank.customer.domain.dto.DeleteResponse;
 import ru.clevertec.bank.customer.service.CustomerService;
 import ru.clevertec.bank.customer.validation.ValidLegalUnp;
 
@@ -41,6 +45,16 @@ public class CustomerController {
     @PostMapping
     public ResponseEntity<CustomerResponse> save(@RequestBody @Valid @ValidLegalUnp CustomerRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(customerService.save(request));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CustomerResponse> updateById(@PathVariable UUID id, @RequestBody CustomerUpdateRequest request) {
+        return ResponseEntity.status(HttpStatus.OK).body(customerService.updateById(id, request));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<DeleteResponse> deleteById(@PathVariable UUID id) {
+        return ResponseEntity.ok(customerService.deleteById(id));
     }
 
 }
