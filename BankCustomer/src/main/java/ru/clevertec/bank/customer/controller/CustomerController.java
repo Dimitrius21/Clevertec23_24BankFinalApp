@@ -49,7 +49,7 @@ public class CustomerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CustomerResponse> updateById(@PathVariable UUID id, @RequestBody CustomerUpdateRequest request) {
+    public ResponseEntity<CustomerResponse> updateById(@PathVariable UUID id, @RequestBody @Valid CustomerUpdateRequest request) {
         return ResponseEntity.status(HttpStatus.OK).body(customerService.updateById(id, request));
     }
 
