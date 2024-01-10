@@ -66,7 +66,7 @@ public class AccountService {
             account = accRepo.save(account);
             return mapper.toAccountOutDto(account);
         } catch (JsonProcessingException e) {
-            throw new RequestBodyIncorrectException("Data in the request body isn't correct");
+            throw new RequestBodyIncorrectException("Data in the request body isn't correct: " + message);
         }
     }
 
