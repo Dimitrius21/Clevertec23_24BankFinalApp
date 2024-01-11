@@ -1,15 +1,18 @@
 ###findById
 GET http://localhost:8082/customers/1a72a05f-4b8f-43c5-a889-1ebc6d9dc724
 Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiQURNSU5JU1RSQVRPUiIsInN1YiI6IjFhNzJhMDVmLTRiOGYtNDNjNS1hODg5LTFlYmM2ZDlkYzcyOSIsImlhdCI6MTcwNTAwMDY5MSwiZXhwIjoxNzA1MDg3MDkxfQ.0rv8BT9_uoRNsew6oJXlUgV-zcjJ19gO3bTKqCxIEHdr88ImjhsoibC8uspkOIoR
 
 ###findAll
 GET http://localhost:8082/customers
 Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiQURNSU5JU1RSQVRPUiIsInN1YiI6IjFhNzJhMDVmLTRiOGYtNDNjNS1hODg5LTFlYmM2ZDlkYzcyOSIsImlhdCI6MTcwNTAwMDY5MSwiZXhwIjoxNzA1MDg3MDkxfQ.0rv8BT9_uoRNsew6oJXlUgV-zcjJ19gO3bTKqCxIEHdr88ImjhsoibC8uspkOIoR
 
 ###save
 POST http://localhost:8082/customers
 Accept: application/json
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiQURNSU5JU1RSQVRPUiIsInN1YiI6IjFhNzJhMDVmLTRiOGYtNDNjNS1hODg5LTFlYmM2ZDlkYzMwMCIsImlhdCI6MTcwNDk2OTAzNywiZXhwIjoxNzA1MDU1NDM3fQ.3TcLMVoWMHLbaLmx78lb_cLhmFDQxx1fsS_wlJyhGH29SvdQSB1paAJoqkmFA491
 
 {
   "customer_type": "LEGAL",
@@ -21,9 +24,10 @@ Content-Type: application/json
 }
 
 ###updateById
-PUT http://localhost:8082/customers/5c33d931-4236-449b-9947-c8ed71a4436d
+PUT http://localhost:8082/customers/1a72a05f-4b8f-43c5-a889-1ebc6d9dc726
 Accept: application/json
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiQURNSU5JU1RSQVRPUiIsInN1YiI6IjFhNzJhMDVmLTRiOGYtNDNjNS1hODg5LTFlYmM2ZDlkYzcyOSIsImlhdCI6MTcwNTAwMDIxMCwiZXhwIjoxNzA1MDg2NjEwfQ.goqg8gF7t7TK6djoiAvbSc8y3ErkGiPMJKYa8yBZWRYTvlNrzeS-0RhNO4LeoteO
 
 {
   "email": "singleton@email.com",
@@ -34,7 +38,9 @@ Content-Type: application/json
 ###deleteById
 DELETE http://localhost:8082/customers/1a72a05f-4b8f-43c5-a889-1ebc6d9dc724
 Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiQURNSU5JU1RSQVRPUiIsInN1YiI6IjFhNzJhMDVmLTRiOGYtNDNjNS1hODg5LTFlYmM2ZDlkYzcyOSIsImlhdCI6MTcwNTAwMDIxMCwiZXhwIjoxNzA1MDg2NjEwfQ.goqg8gF7t7TK6djoiAvbSc8y3ErkGiPMJKYa8yBZWRYTvlNrzeS-0RhNO4LeoteO
 
 ###restoreById
 PATCH http://localhost:8082/customers/1a72a05f-4b8f-43c5-a889-1ebc6d9dc724
 Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiQURNSU5JU1RSQVRPUiIsInN1YiI6IjFhNzJhMDVmLTRiOGYtNDNjNS1hODg5LTFlYmM2ZDlkYzcyOSIsImlhdCI6MTcwNTAwMDIxMCwiZXhwIjoxNzA1MDg2NjEwfQ.goqg8gF7t7TK6djoiAvbSc8y3ErkGiPMJKYa8yBZWRYTvlNrzeS-0RhNO4LeoteO

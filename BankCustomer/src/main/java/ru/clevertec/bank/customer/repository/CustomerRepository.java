@@ -16,4 +16,6 @@ public interface CustomerRepository extends JpaRepository<Customer, UUID> {
 
     Page<Customer> findAllByDeletedFalse(Pageable pageable);
 
+    boolean existsByCustomerId(UUID id);
+
 }

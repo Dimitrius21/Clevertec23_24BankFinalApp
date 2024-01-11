@@ -1,0 +1,9 @@
+###generateJwt
+POST http://localhost:8082/jwt
+Accept: application/json
+Content-Type: application/json
+
+{
+  "id" : "1a72a05f-4b8f-43c5-a889-1ebc6d9dc729",
+  "role": "ADMINISTRATOR"
+}

@@ -3,6 +3,8 @@ package ru.clevertec.bank.customer.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.clevertec.bank.customer.domain.dto.CustomerRabbitPayloadRequest;
@@ -26,8 +28,10 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
     private final CustomerMapper customerMapper;
 
-    public CustomerResponse findById(UUID id) {
-        return customerRepository.findByCustomerIdAndDeletedFalse(id)
+    public CustomerResponse findById(UUID id, Authentication authentication) {
+        return getUserFromAuthentication(authentication)
+                .map(user -> checkEqualityOfIdsForUserRole(id, user))
+                .flatMap(user -> customerRepository.findByCustomerIdAndDeletedFalse(id))
                 .map(customerMapper::toResponse)
                 .orElseThrow(throwResourceNotFoundException(id));
     }
@@ -48,16 +52,17 @@ public class CustomerService {
 
     @Transactional
     public void save(CustomerRabbitPayloadRequest request) {
-        Optional.ofNullable(request)
+        Optional.of(request)
                 .map(customerMapper::toCustomer)
-                .map(customerRepository::save)
-                .orElseThrow(() -> new ResourceNotFountException("Cant save customer")); //TODO add better exception for this message
+                .ifPresent(customerRepository::save);
     }
 
     //TODO unique exception handler for unique field
     @Transactional
-    public CustomerResponse updateById(UUID id, CustomerUpdateRequest request) {
-        return customerRepository.findByCustomerIdAndDeletedFalse(id)
+    public CustomerResponse updateById(UUID id, CustomerUpdateRequest request, Authentication authentication) {
+        return getUserFromAuthentication(authentication)
+                .map(user -> checkEqualityOfIdsForUserRole(id, user))
+                .flatMap(user -> customerRepository.findByCustomerIdAndDeletedFalse(id))
                 .map(customer -> customerMapper.updateCustomer(request, customer))
                 .map(customerRepository::save)
                 .map(customerMapper::toResponse)
@@ -87,8 +92,27 @@ public class CustomerService {
                 .orElseThrow(throwResourceNotFoundException(id));
     }
 
+    public boolean existsByCustomerId(UUID id) {
+        return customerRepository.existsByCustomerId(id);
+    }
+
     private Supplier<ResourceNotFountException> throwResourceNotFoundException(UUID id) {
         return () -> new ResourceNotFountException("Customer with id %s is not found".formatted(id));
+    }
+
+    private Optional<User> getUserFromAuthentication(Authentication authentication) {
+        return Optional.of(authentication)
+                .map(Authentication::getPrincipal)
+                .map(User.class::cast);
+    }
+
+    private User checkEqualityOfIdsForUserRole(UUID id, User user) {
+        UUID customerId = UUID.fromString(user.getUsername());
+        String authority = user.getAuthorities().stream().findFirst().orElseThrow().getAuthority();
+        if (authority.equals("ROLE_USER") && !customerId.equals(id)) {
+            throw new ResourceNotFountException("With a USER role, you can only view your customer"); //TODO add exception for this message
+        }
+        return user;
     }
 
 }
