@@ -21,13 +21,10 @@ spring:
   liquibase:
     enabled: true
     contexts: dev
-scheduler:
-  autoRenew:
-    cron: "00 00 00 * * *"
 spring-doc:
   packagesToScan: ru.clevertec.bank.product.controller
-caching:
-  repository: accountRepository, cardRepository, CreditRepository, DepositRepository
+#caching:
+#  repository: accountRepository, cardRepository, CreditRepository, DepositRepository
 #feign:
 #  name: auth-server
 #  url : http://localhost:8090
