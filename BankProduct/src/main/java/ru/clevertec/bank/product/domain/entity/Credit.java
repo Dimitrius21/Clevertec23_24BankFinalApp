@@ -2,6 +2,10 @@ package ru.clevertec.bank.product.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.id.IdentifierGenerator;
+import ru.clevertec.bank.product.util.CustomerType;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -13,40 +17,49 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "credits")
-public class Credit {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+public class Credit implements IdentifierGenerator {
+
     @Column(name = "customer_id")
-    private UUID customerId; //": "1a72a05f-4b8f-43c5-a889-1ebc6d9dc729",
+    private UUID customerId;
+
+    @Id
+    @GeneratedValue(generator = "custom")
+    @GenericGenerator(name = "custom", type = Credit.class)
     @Column(name = "contract_number")
-    private String contractNumber; //": "11-0216444-2-0",
+    private String contractNumber;
+
     @Column(name = "contract_start_date")
-    private LocalDate contractStartDate; //": "30.03.2022",
+    private LocalDate contractStartDate;
+
     @Column(name = "total_debt")
-    private long totalDebt; //": 8113.99,
+    private Long totalDebt;
+
     @Column(name = "current_debt")
-    private long currentDebt; //": 361.99,
+    private Long currentDebt;
+
     @Column(name = "currency")
-    private String currency; //": "BYN",
+    private String currency;
+
     @Column(name = "repayment_date")
-    private LocalDate repaymentDate; //": "16.01.2023",
+    private LocalDate repaymentDate;
+
     @Column(name = "rate")
-    private double rate; //": 22.8,
+    private Double rate;
+
     @Column(name = "iban")
-    private String iban; //": "AABBCCCDDDDEEEEEEEEEEEEEEEE",
+    private String iban;
     @Column(name = "possible_repayment")
-    private boolean possibleRepayment; //": true,
+    private Boolean possibleRepayment;
     @Column(name = "is_closed")
-    private boolean isClosed; //": false,
+    private Boolean isClosed;
+
     @Column(name = "customer_type")
-    private String customerType; //" : "LEGAL/PHYSIC"
+    @Enumerated(EnumType.STRING)
+    private CustomerType customerType;
 
-    public void setIsClosed(boolean closed) {
-        isClosed = closed;
+    @Override
+    public Object generate(SharedSessionContractImplementor session, Object object) {
+        Credit credit = (Credit) object;
+        return credit.getContractNumber();
     }
-    public boolean isIsClosed() {
-        return isClosed;
-    }
-
 }

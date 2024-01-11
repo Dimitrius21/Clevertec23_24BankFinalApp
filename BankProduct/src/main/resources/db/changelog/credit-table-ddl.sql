@@ -1,9 +1,7 @@
 CREATE TABLE IF NOT EXISTS credits
 (
-
-    id                  BIGSERIAL PRIMARY KEY,
+    contract_number     VARCHAR(20)      PRIMARY KEY,
     customer_id         UUID             NOT NULL,
-    contract_number     VARCHAR(20)      NOT NULL,
     contract_start_date DATE             NOT NULL,
     total_debt          BIGINT           NOT NULL,
     current_debt        BIGINT           NOT NULL,

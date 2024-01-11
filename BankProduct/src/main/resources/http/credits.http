@@ -1,5 +1,5 @@
 ###findById
-GET http://localhost:8081/credits/1
+GET http://localhost:8081/credits/11-0216444-2-0
 Accept: application/json
 
 ###findALl
@@ -21,10 +21,24 @@ Content-Type: application/json
   "rate": 22.8,
   "iban": "AABBCCCDDDDEEEEEEEEEEEEEEEE",
   "possibleRepayment": true,
-  "isClosed": true,
+  "isClosed": false,
   "customerType" : "LEGAL"
 }
 
+###findAllByCustomerId
+GET http://localhost:8081/credits/customers/1a72a05f-4b8f-43c5-a889-1ebc6d9dc729
+
 ###deleteById
-DELETE http://localhost:8081/credits/11
+DELETE http://localhost:8081/credits/11-0216444-2-0
+
+###updateById
+PUT http://localhost:8081/credits/11-0216444-2-0
+Content-Type: application/json
+
+{
+ "repaymentDate": "2023-08-16",
+  "rate": 22.6,
+  "possibleRepayment": true,
+  "isClosed": true
+}
 

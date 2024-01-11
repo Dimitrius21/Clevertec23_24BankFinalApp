@@ -1,4 +1,4 @@
-package ru.clevertec.bank.product.domain.dto.credit;
+package ru.clevertec.bank.product.domain.dto.credit.request;
 
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
@@ -12,24 +12,17 @@ public class CreateCreditDTO {
     private UUID customerId;
     private String contractNumber;
     private LocalDate contractStartDate;
-    private long totalDebt;
-    private long currentDebt;
+    private Long totalDebt;
+    private Long currentDebt;
     private String currency;
     private LocalDate repaymentDate;
-    private double rate;
+    private Double rate;
     private String iban;
-    private boolean possibleRepayment;
-    private boolean isClosed;
+    private Boolean possibleRepayment;
+    private Boolean isClosed;
 
     @Pattern(regexp = "LEGAL|PHYSIC",
             message = "Acceptable customerTypes are only: LEGAL or PHYSIC")
     private String customerType;
 
-    public void setIsClosed(boolean closed) {
-        isClosed = closed;
-    }
-
-    public boolean isIsClosed() {
-        return isClosed;
-    }
 }

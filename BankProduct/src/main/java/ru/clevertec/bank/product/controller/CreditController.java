@@ -1,13 +1,12 @@
 package ru.clevertec.bank.product.controller;
 
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.clevertec.bank.product.domain.dto.credit.CreateCreditDTO;
-import ru.clevertec.bank.product.domain.dto.credit.CreditResponseDTO;
-import ru.clevertec.bank.product.domain.dto.credit.UpdateCreditDTO;
+import ru.clevertec.bank.product.domain.dto.credit.request.CreateCreditDTO;
+import ru.clevertec.bank.product.domain.dto.credit.response.CreditResponseDTO;
+import ru.clevertec.bank.product.domain.dto.credit.request.UpdateCreditDTO;
 import ru.clevertec.bank.product.service.CreditService;
 
 import java.util.List;
@@ -20,9 +19,9 @@ public class CreditController {
 
     private final CreditService creditService;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<CreditResponseDTO> findById(@PathVariable @Positive Long id) {
-        return ResponseEntity.ok(creditService.findById(id));
+    @GetMapping("/{contractNumber}")
+    public ResponseEntity<CreditResponseDTO> findById(@PathVariable String contractNumber) {
+        return ResponseEntity.ok(creditService.findById(contractNumber));
     }
 
     @GetMapping
@@ -30,8 +29,8 @@ public class CreditController {
         return ResponseEntity.ok(creditService.findAll());
     }
 
-    @GetMapping("/clients/{id}")
-    public ResponseEntity<List<CreditResponseDTO>> findAllByClientId(@PathVariable UUID id) {
+    @GetMapping("/customers/{id}")
+    public ResponseEntity<List<CreditResponseDTO>> findAllByCustomerId(@PathVariable UUID id) {
         return ResponseEntity.ok(creditService.findAllByClientId(id));
     }
 
@@ -40,13 +39,15 @@ public class CreditController {
         return ResponseEntity.status(HttpStatus.CREATED).body(creditService.save(dto)).getBody();
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<CreditResponseDTO> updateById(@PathVariable @Positive Long id, @RequestBody UpdateCreditDTO dto) {
-        return ResponseEntity.ok(creditService.updateById(id, dto));
+    @PutMapping("/{contractNumber}")
+    public ResponseEntity<CreditResponseDTO> updateById(@PathVariable String contractNumber, @RequestBody UpdateCreditDTO dto) {
+        return ResponseEntity.ok(creditService.updateById(contractNumber, dto));
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteById(@PathVariable @Positive Long id) {
-        creditService.deleteById(id);
+    @DeleteMapping("/{contractNumber}")
+    public void deleteById(@PathVariable String contractNumber) {
+        creditService.deleteById(contractNumber);
     }
 }
+
+
