@@ -1,29 +1,41 @@
 package ru.clevertec.bank.product.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import ru.clevertec.bank.product.util.CardStatus;
+import ru.clevertec.bank.product.util.CustomerType;
 
-import java.util.UUID;
+import java.util.List;
 
 @Entity
+@Data
 @Table(name = "cards")
+@AllArgsConstructor
+@NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Card {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
     @Column(name = "card_number")
-    private String cardNumber; //": "5200000000001096",
-    //??
-    @Column(name = "card_number_readable")
-    private String cardNumberReadable; //": "5200 0000 0000 1096",
-    @Column(name = "iban")
-    private String iban; //": "AABBCCCDDDDEEEEEEEEEEEEEEEE",
-    @Column(name = "customerId")
-    private UUID customer_id; //": "1a72a05f-4b8f-43c5-a889-1ebc6d9dc729",
-    @Column(name = "customer_type")
-    private String customerType; //" : "LEGAL/PHYSIC",
-    @Column(name = "cardholder")
-    private String cardholder; //": "CARDHOLDER NAME",
-    @Column(name = "card_status")
-    private String cardStatus; //": "ACTIVE/INACTIVE/BLOCKED/NEW"
+    private String cardNumber;
 
+//    @Column(name = "iban")
+//    private String iban;
+
+    @Column(name = "customer_id")
+    private String customerId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "customer_type")
+    private CustomerType customerType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "card_status")
+    private CardStatus cardStatus;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "iban")
+    private List<Account> accounts;
 }

@@ -3,8 +3,8 @@ spring:
     name: product_service
   datasource:
     url: jdbc:postgresql://localhost:5432/bank
-    username: pavel
-    password: pavel
+    username: postgres
+    password: postgres
   jpa:
     show-sql: true
     properties:
