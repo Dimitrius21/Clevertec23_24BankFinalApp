@@ -9,7 +9,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import ru.clevertec.bank.customer.domain.dto.CustomerRabbitRequest;
 import ru.clevertec.bank.customer.service.CustomerService;
-import ru.clevertec.exceptionhandler.exception.ResourceNotFountException;
+import ru.clevertec.exceptionhandler.exception.InternalServerErrorException;
 
 @Slf4j
 @Component
@@ -29,7 +29,7 @@ public class CustomerConsumer {
             log.info("Request successfully saved in Postgresql");
         } catch (JsonProcessingException e) {
             log.error(e.getMessage());
-            throw new ResourceNotFountException(e.getMessage()); // TODO add better exception later
+            throw new InternalServerErrorException(e.getMessage());
         }
     }
 
