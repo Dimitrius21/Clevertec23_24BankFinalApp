@@ -1,4 +1,4 @@
-package ru.clevertec.bank.product.domain.entity.listener;
+package ru.clevertec.bank.product.domain.entity.util;
 
 import jakarta.persistence.PrePersist;
 import ru.clevertec.bank.product.domain.entity.Deposit;

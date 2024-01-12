@@ -1,7 +1,6 @@
 package ru.clevertec.bank.product.controller;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,9 +30,9 @@ public class DepositController {
 
     private final DepositService depositService;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<DepositInfoResponse> findById(@PathVariable @Positive Long id) {
-        return ResponseEntity.ok(depositService.findById(id));
+    @GetMapping("/{iban}")
+    public ResponseEntity<DepositInfoResponse> findByIban(@PathVariable String iban) {
+        return ResponseEntity.ok(depositService.findByIban(iban));
     }
 
     @GetMapping
@@ -51,15 +50,15 @@ public class DepositController {
         return ResponseEntity.status(HttpStatus.CREATED).body(depositService.save(request));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<DepositInfoResponse> updateById(@PathVariable @Positive Long id,
-                                                          @RequestBody @Valid DepInfoUpdateRequest request) {
-        return ResponseEntity.status(HttpStatus.OK).body(depositService.updateById(id, request));
+    @PutMapping("/{iban}")
+    public ResponseEntity<DepositInfoResponse> updateByIban(@PathVariable String iban,
+                                                            @RequestBody @Valid DepInfoUpdateRequest request) {
+        return ResponseEntity.status(HttpStatus.OK).body(depositService.updateByIban(iban, request));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<DeleteResponse> deleteById(@PathVariable @Positive Long id) {
-        return ResponseEntity.ok(depositService.deleteById(id));
+    @DeleteMapping("/{iban}")
+    public ResponseEntity<DeleteResponse> deleteByIban(@PathVariable String iban) {
+        return ResponseEntity.ok(depositService.deleteByIban(iban));
     }
 
 }

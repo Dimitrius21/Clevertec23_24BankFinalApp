@@ -7,8 +7,7 @@ import ru.clevertec.bank.product.util.CustomerType;
 import java.util.UUID;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record DepositInfoResponse(Long id,
-                                  UUID customerId,
+public record DepositInfoResponse(UUID customerId,
                                   CustomerType customerType,
                                   AccInfoResponse accInfo,
                                   DepInfoResponse depInfo) {
