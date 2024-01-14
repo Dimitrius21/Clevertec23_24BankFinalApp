@@ -14,6 +14,7 @@ ext {
     openApiVersion = '2.3.0'
     mapstructVersion = '1.5.5.Final'
     jwtVersion = '0.12.3'
+    testContainersVersion = '1.19.3'
 }
 
 dependencies {
@@ -34,6 +35,10 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
     runtimeOnly "io.jsonwebtoken:jjwt-impl:$jwtVersion"
     runtimeOnly "io.jsonwebtoken:jjwt-jackson:$jwtVersion"
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation "org.testcontainers:postgresql:$testContainersVersion"
 }
 
 compileJava {
@@ -48,4 +53,8 @@ dependencyManagement {
     imports {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion"
     }
+}
+
+test {
+    useJUnitPlatform()
 }
