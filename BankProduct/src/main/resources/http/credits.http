@@ -11,18 +11,18 @@ POST http://localhost:8081/credits
 Content-Type: application/json
 
 {
-  "customerId": "1a72a05f-4b8f-43c5-a889-1ebc6d9dc729",
+  "customer_id": "1a72a05f-4b8f-43c5-a889-1ebc6d9dc729",
   "contractNumber": "11-0216444-2-0",
-  "contractStartDate": "2022-03-30",
+  "contractStartDate": "01.01.2023",
   "totalDebt": 8113.99,
   "currentDebt": 361.99,
   "currency": "BYN",
-  "repaymentDate": "2023-01-16",
+  "repaymentDate": "01.01.2024",
   "rate": 22.8,
   "iban": "AABBCCCDDDDEEEEEEEEEEEEEEEE",
   "possibleRepayment": true,
   "isClosed": false,
-  "customerType" : "LEGAL"
+  "customer_type" : "LEGAL"
 }
 
 ###findAllByCustomerId
@@ -36,7 +36,7 @@ PUT http://localhost:8081/credits/11-0216444-2-0
 Content-Type: application/json
 
 {
- "repaymentDate": "2023-08-16",
+  "repaymentDate": "16.08.2023",
   "rate": 22.6,
   "possibleRepayment": true,
   "isClosed": true

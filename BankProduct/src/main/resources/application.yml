@@ -41,6 +41,9 @@ rabbit:
   header:
     key: message_type
     deposit: deposit_info
+    credit: credit-details
+
+
 server:
   port: 8081
 

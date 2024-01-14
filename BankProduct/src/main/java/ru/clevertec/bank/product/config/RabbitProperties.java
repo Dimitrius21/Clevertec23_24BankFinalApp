@@ -18,12 +18,14 @@ public class RabbitProperties {
     @Data
     public static class QueueProperties {
         private String deposit;
+        private String credit;
     }
 
     @Data
     public static class HeaderProperties {
         private String key;
         private String deposit;
+        private String credit;
     }
 
 }

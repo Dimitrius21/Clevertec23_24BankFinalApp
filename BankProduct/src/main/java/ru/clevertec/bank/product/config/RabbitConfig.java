@@ -33,10 +33,24 @@ public class RabbitConfig {
     }
 
     @Bean
+    public Queue creditQueue() {
+        return QueueBuilder.durable(rabbitProperties.getQueue().getCredit())
+                .build();
+    }
+
+    @Bean
     public Binding depositQueueBinding() {
         return BindingBuilder.bind(depositQueue())
                 .to(headersExchange())
                 .whereAny(Map.of(rabbitProperties.getHeader().getKey(), rabbitProperties.getHeader().getDeposit()))
+                .match();
+    }
+
+    @Bean
+    public Binding creditQueueBinding() {
+        return BindingBuilder.bind(creditQueue())
+                .to(headersExchange())
+                .whereAny(Map.of(rabbitProperties.getHeader().getKey(), rabbitProperties.getHeader().getCredit()))
                 .match();
     }
 

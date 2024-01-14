@@ -20,10 +20,9 @@ public class CreditController {
     private final CreditService creditService;
 
     @GetMapping("/{contractNumber}")
-    public ResponseEntity<CreditResponseDTO> findById(@PathVariable String contractNumber) {
-        return ResponseEntity.ok(creditService.findById(contractNumber));
+    public ResponseEntity<CreditResponseDTO> findByContractNumber(@PathVariable String contractNumber) {
+        return ResponseEntity.ok(creditService.findByContractNumber(contractNumber));
     }
-
     @GetMapping
     public ResponseEntity<List<CreditResponseDTO>> findALl() {
         return ResponseEntity.ok(creditService.findAll());
@@ -35,18 +34,18 @@ public class CreditController {
     }
 
     @PostMapping
-    public CreditResponseDTO create(@RequestBody CreateCreditDTO dto) {
+    public CreditResponseDTO save(@RequestBody CreateCreditDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(creditService.save(dto)).getBody();
     }
 
     @PutMapping("/{contractNumber}")
-    public ResponseEntity<CreditResponseDTO> updateById(@PathVariable String contractNumber, @RequestBody UpdateCreditDTO dto) {
-        return ResponseEntity.ok(creditService.updateById(contractNumber, dto));
+    public ResponseEntity<CreditResponseDTO> updateByContractNumber(@PathVariable String contractNumber, @RequestBody UpdateCreditDTO dto) {
+        return ResponseEntity.ok(creditService.updateByContractNumber(contractNumber, dto));
     }
 
     @DeleteMapping("/{contractNumber}")
-    public void deleteById(@PathVariable String contractNumber) {
-        creditService.deleteById(contractNumber);
+    public void deleteByContactNumber(@PathVariable String contractNumber) {
+        creditService.deleteByContractNumber(contractNumber);
     }
 }
 
