@@ -4,51 +4,85 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.clevertec.bank.product.client.CurrencyRateClient;
 import ru.clevertec.bank.product.domain.dto.card.request.CardRabbitPayloadRequest;
 import ru.clevertec.bank.product.domain.dto.card.request.CardRequest;
 import ru.clevertec.bank.product.domain.dto.card.request.CardUpdateRequest;
 import ru.clevertec.bank.product.domain.dto.card.response.CardResponse;
-import ru.clevertec.bank.product.domain.entity.Card;
+import ru.clevertec.bank.product.domain.dto.card.response.CardResponseWithAmount;
+import ru.clevertec.bank.product.domain.entity.*;
 import ru.clevertec.bank.product.mapper.CardMapper;
+import ru.clevertec.bank.product.repository.AccountRepository;
 import ru.clevertec.bank.product.repository.CardRepository;
 import ru.clevertec.exceptionhandler.exception.GeneralException;
 import ru.clevertec.exceptionhandler.exception.RequestBodyIncorrectException;
 import ru.clevertec.exceptionhandler.exception.ResourceNotFountException;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class CardService {
 
+    private static final String CURRENCY_NAME_BYN = "BYN";
+    public static final int NUMBER_FOR_CONVER_TO_RUBLE = 100;
+
     private final CardRepository cardRepository;
+    private final AccountRepository accountRepository;
+    private final CurrencyRateClient currencyRateClient;
     private final CardMapper cardMapper;
 
+    @Transactional
     public void saveForRabbit(CardRabbitPayloadRequest request) {
         if (request == null) {
-            throw new RequestBodyIncorrectException("Empty request for save card");
+            throw new RequestBodyIncorrectException("Empty request from Rabbit for save card");
         }
         checkCardNumber(request.cardNumber());
-        cardRepository.save(cardMapper.toCard(request));
+        Card card = cardMapper.toCard(request);
+        Account account = accountRepository.findByIban(request.iban()).orElseThrow(() ->
+                new ResourceNotFountException(String.format("Account with iban=%s not found", request.iban())));
+        card.setAccount(account);
+        cardRepository.save(card);
     }
 
+    @Transactional
     public CardResponse save(CardRequest request) {
         if (request == null) {
             throw new RequestBodyIncorrectException("Empty request for save card");
         }
         checkCardNumber(request.cardNumber());
-        Card card = cardRepository.save(cardMapper.toCard(request));
-        return cardMapper.toCardResponse(card);
+        Card card = cardMapper.toCard(request);
+        Account account = accountRepository.findByIban(request.iban()).orElseThrow(() ->
+                new ResourceNotFountException(String.format("Account with iban=%s not found", request.iban())));
+        card.setAccount(account);
+        Card cardSaved = cardRepository.save(card);
+        return cardMapper.toCardResponse(cardSaved);
     }
 
     private void checkCardNumber(String cardNumber) {
-        if (cardRepository.getCardByCardNumber(cardNumber).isPresent()) {
+        if (cardRepository.findCardByCardNumber(cardNumber).isPresent()) {
             throw new GeneralException(String.format("Card with number: %s is already exist", cardNumber));
         }
     }
 
-    public CardResponse findById(Long id) {
-        Card card = cardRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFountException(String.format("Card with id=%d not found", id)));
-        return cardMapper.toCardResponse(card);
+    public CardResponseWithAmount findById(String id) {
+        Card card = cardRepository.findWithAccountByCardNumber(id).orElseThrow(() ->
+                new ResourceNotFountException(String.format("Card with id=%s not found", id)));
+        BigDecimal amount = BigDecimal.valueOf(card.getAccount().getAmount() / NUMBER_FOR_CONVER_TO_RUBLE).setScale(2);
+        List<Rate> exchangeRates  = currencyRateClient.getCurrent().getExchangeRates();
+        List<Amount> amounts = exchangeRates.stream()
+                .filter(r -> CURRENCY_NAME_BYN.equals(r.getReqCurr()))
+                .map(r -> new Amount(amount.divide(BigDecimal.valueOf(r.getSellRate()), 2, RoundingMode.HALF_UP), r.getSrcCurr()))
+                .collect(Collectors.toList());
+        amounts.add(new Amount(amount, CURRENCY_NAME_BYN));
+        CardResponseWithAmount cardResponseWithAmounts = cardMapper.toCardResponseWithAmounts(card);
+        cardResponseWithAmounts.setAmounts(amounts);
+        return cardResponseWithAmounts;
     }
 
     public Page<CardResponse> findAll(Pageable pageable) {
@@ -56,17 +90,30 @@ public class CardService {
                 .map(cardMapper::toCardResponse);
     }
 
-    public CardResponse update(Long id, CardUpdateRequest request) {
-        Card card = cardRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFountException(String.format("Card with id=%d not found", id)));
+    public CardResponse findByCustomerId(UUID uuid) {
+        Card card = cardRepository.findByCustomerId(uuid).orElseThrow(() ->
+                new ResourceNotFountException(String.format("Card with customer uuid=%s not found", uuid.toString())));
+        return cardMapper.toCardResponse(card);
+    }
+
+    @Transactional
+    public CardResponse update(String id, CardUpdateRequest request) {
+        if (request == null) {
+            throw new RequestBodyIncorrectException("Empty request for update card");
+        }
+        Card card = cardRepository.findCardByCardNumber(id).orElseThrow(() ->
+                new ResourceNotFountException(String.format("Card with id=%s not found", id)));
+        Account account = accountRepository.findByIban(request.iban()).orElseThrow(() ->
+                new ResourceNotFountException(String.format("Account with iban=%s not found", request.iban())));
         cardMapper.updateFromDto(request, card);
+        card.setAccount(account);
         Card cardSaved = cardRepository.save(card);
         return cardMapper.toCardResponse(cardSaved);
     }
 
-    public Long remove(Long id) {
-        Card card = cardRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFountException(String.format("Card with id=%d not found", id)));
+    public String remove(String id) {
+        Card card = cardRepository.findCardByCardNumber(id).orElseThrow(() ->
+                new ResourceNotFountException(String.format("Card with id=%s not found", id)));
         cardRepository.delete(card);
         return id;
     }

@@ -13,7 +13,7 @@ import ru.clevertec.exceptionhandler.exception.RequestBodyIncorrectException;
 public class AccountConsumer {
     private final AccountService accService;
 
-    @RabbitListener(queues = {"#{'${rabbit.queue.account}'}"})
+    @RabbitListener(queues = {"${rabbit.queue.account}"})
     public void getAccountMessage(String message) {
         try {
             accService.saveAccountFromRabbit(message);

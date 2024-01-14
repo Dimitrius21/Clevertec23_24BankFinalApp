@@ -5,10 +5,13 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.id.IdentifierGenerator;
 import ru.clevertec.bank.product.util.CardStatus;
 import ru.clevertec.bank.product.util.CustomerType;
 
-import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Data
@@ -16,26 +19,34 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Card {
+public class Card implements IdentifierGenerator {
     @Id
     @Column(name = "card_number")
+    @GeneratedValue(generator = "custom")
+    @GenericGenerator(name = "custom", type = Card.class)
     private String cardNumber;
 
-//    @Column(name = "iban")
-//    private String iban;
-
     @Column(name = "customer_id")
-    private String customerId;
+    private UUID customerId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "customer_type")
     private CustomerType customerType;
 
+    @Column(name = "cardholder")
+    private String cardholder;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "card_status")
     private CardStatus cardStatus;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "iban")
-    private List<Account> accounts;
+    private Account account;
+
+    @Override
+    public Object generate(SharedSessionContractImplementor session, Object object) {
+        Card card = (Card) object;
+        return card.getCardNumber();
+    }
 }
