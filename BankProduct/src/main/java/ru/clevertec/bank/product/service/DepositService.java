@@ -1,6 +1,9 @@
 package ru.clevertec.bank.product.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -28,6 +31,7 @@ public class DepositService {
     private final DepositRepository depositRepository;
     private final DepositMapper depositMapper;
 
+    @Cacheable(value = "deposit")
     public DepositInfoResponse findByIban(String iban) {
         return depositRepository.findById(iban)
                 .map(depositMapper::toDepositInfoResponse)
@@ -45,6 +49,7 @@ public class DepositService {
     }
 
     @Transactional
+    @CachePut(value = "deposit", key = "#result.accInfo().accIban()")
     public DepositInfoResponse save(DepositInfoRequest request) {
         depositRepository.findById(request.accInfo().accIban())
                 .ifPresent(deposit -> {
@@ -65,6 +70,7 @@ public class DepositService {
     }
 
     @Transactional
+    @CachePut(value = "deposit", key = "#result.accInfo().accIban()")
     public DepositInfoResponse updateByIban(String iban, DepInfoUpdateRequest request) {
         return depositRepository.findById(iban)
                 .map(deposit -> depositMapper.updateDeposit(request, deposit))
@@ -74,6 +80,7 @@ public class DepositService {
     }
 
     @Transactional
+    @CacheEvict(value = "deposit", key = "#iban")
     public DeleteResponse deleteByIban(String iban) {
         return depositRepository.findById(iban)
                 .map(deposit -> {
