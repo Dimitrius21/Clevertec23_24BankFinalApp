@@ -3,13 +3,12 @@ package ru.clevertec.exceptionhandler;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import ru.clevertec.exceptionhandler.domain.ErrorIfo;
 import ru.clevertec.exceptionhandler.domain.ValidationExceptionResponse;
 import ru.clevertec.exceptionhandler.domain.Violation;
@@ -29,23 +28,23 @@ import java.util.Objects;
 
 @RestControllerAdvice
 @ConditionalOnMissingBean
-public class AppExceptionHandler extends ResponseEntityExceptionHandler {
+public class AppExceptionHandler {
 
 
     @ExceptionHandler(ResourceNotFountException.class)
-    protected ResponseEntity<Object> handleEntityNotFoundEx(ResourceNotFountException ex, WebRequest request) {
+    protected ResponseEntity<Object> handleEntityNotFoundEx(ResourceNotFountException ex) {
         ErrorIfo error = new ErrorIfo(LocalDateTime.now(), HttpStatus.NOT_FOUND.value(), ex.getMessage(), ex.getErrorDetails());
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(NotValidRequestParametersException.class)
-    protected ResponseEntity<Object> handleNotValidRequestData(NotValidRequestParametersException ex, WebRequest request) {
+    protected ResponseEntity<Object> handleNotValidRequestData(NotValidRequestParametersException ex) {
         ErrorIfo error = new ErrorIfo(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(RequestBodyIncorrectException.class)
-    protected ResponseEntity<Object> handleNotValidRequestData(RequestBodyIncorrectException ex, WebRequest request) {
+    protected ResponseEntity<Object> handleNotValidRequestData(RequestBodyIncorrectException ex) {
         ErrorIfo error = new ErrorIfo(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
@@ -70,6 +69,12 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorIfo);
     }
 
+    @ExceptionHandler(PropertyReferenceException.class)
+    public ResponseEntity<ErrorIfo> propertyReferenceException(PropertyReferenceException exception) {
+        ErrorIfo errorIfo = new ErrorIfo(LocalDateTime.now(), HttpStatus.NOT_ACCEPTABLE.value(), exception.getMessage(), null);
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(errorIfo);
+    }
+
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ValidationExceptionResponse> handleConstraintValidationException(ConstraintViolationException exception) {
         List<Violation> violations = exception.getConstraintViolations()
@@ -80,7 +85,7 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ValidationExceptionResponse(violations));
     }
 
-    /*@ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ValidationExceptionResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
         List<Violation> violations = exception.getBindingResult()
                 .getFieldErrors()
@@ -88,6 +93,6 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
                 .map(fieldError -> new Violation(fieldError.getField(), fieldError.getDefaultMessage()))
                 .toList();
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ValidationExceptionResponse(violations));
-    }*/ //TODO Ambiguous @ExceptionHandler method mapped for [class org.springframework.web.bind.MethodArgumentNotValidException]
+    }
 
 }

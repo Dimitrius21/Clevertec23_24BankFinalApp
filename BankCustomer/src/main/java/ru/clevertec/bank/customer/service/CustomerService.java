@@ -111,7 +111,7 @@ public class CustomerService {
         UUID customerId = UUID.fromString(user.getUsername());
         String authority = user.getAuthorities().stream().findFirst().orElseThrow().getAuthority();
         if (authority.equals("ROLE_USER") && !customerId.equals(id)) {
-            throw new AccessDeniedForRoleException("With a USER role, you can only view your customer");
+            throw new AccessDeniedForRoleException("With a %s, you can only view/update your customer".formatted(authority));
         }
         return user;
     }

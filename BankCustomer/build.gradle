@@ -9,15 +9,9 @@ java {
     sourceCompatibility = targetCompatibility = '17'
 }
 
-configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
-    }
-}
-
 ext {
     springCloudVersion = '2022.0.4'
-    openApiVersion = '2.1.0'
+    openApiVersion = '2.3.0'
     mapstructVersion = '1.5.5.Final'
     jwtVersion = '0.12.3'
 }
