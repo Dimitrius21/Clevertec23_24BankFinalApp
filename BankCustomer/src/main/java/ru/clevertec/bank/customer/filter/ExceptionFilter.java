@@ -16,6 +16,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.clevertec.exceptionhandler.domain.ErrorIfo;
+import ru.clevertec.exceptionhandler.exception.AccessDeniedForRoleException;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -33,16 +34,20 @@ public class ExceptionFilter extends OncePerRequestFilter {
                                     @NonNull FilterChain filterChain) throws IOException, ServletException {
         try {
             filterChain.doFilter(request, response);
-        } catch (JwtException | AuthenticationException e) {
+        } catch (JwtException | AuthenticationException | AccessDeniedForRoleException e) {
             handleException(response, e);
         }
     }
 
     public void handleException(HttpServletResponse response, Exception e) throws IOException {
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        int status = HttpStatus.UNAUTHORIZED.value();
+        if (e instanceof AccessDeniedForRoleException) {
+            status = HttpStatus.FORBIDDEN.value();
+        }
+        response.setStatus(status);
         response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString());
         response.setCharacterEncoding("utf-8");
-        ErrorIfo errorIfo = new ErrorIfo(LocalDateTime.now(), HttpStatus.UNAUTHORIZED.value(), e.getMessage(), null);
+        ErrorIfo errorIfo = new ErrorIfo(LocalDateTime.now(), status, e.getMessage(), null);
         String responseMessage = objectMapper.writeValueAsString(errorIfo);
         log.error(errorIfo.toString());
         response.getWriter().write(responseMessage);

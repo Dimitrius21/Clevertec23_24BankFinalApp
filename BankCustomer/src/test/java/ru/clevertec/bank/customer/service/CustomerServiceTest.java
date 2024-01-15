@@ -13,9 +13,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import ru.clevertec.bank.customer.domain.dto.CustomerRabbitPayloadRequest;
 import ru.clevertec.bank.customer.domain.dto.CustomerRequest;
 import ru.clevertec.bank.customer.domain.dto.CustomerResponse;
@@ -29,11 +26,9 @@ import ru.clevertec.bank.customer.testutil.CustomerRequestTestBuilder;
 import ru.clevertec.bank.customer.testutil.CustomerResponseTestBuilder;
 import ru.clevertec.bank.customer.testutil.CustomerTestBuilder;
 import ru.clevertec.bank.customer.testutil.CustomerUpdateRequestTestBuilder;
-import ru.clevertec.exceptionhandler.exception.AccessDeniedForRoleException;
 import ru.clevertec.exceptionhandler.exception.InternalServerErrorException;
 import ru.clevertec.exceptionhandler.exception.ResourceNotFountException;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -52,10 +47,6 @@ class CustomerServiceTest {
     private CustomerRepository customerRepository;
     @Mock
     private CustomerMapper customerMapper;
-    @Mock
-    private Authentication authentication;
-    @Mock
-    private User user;
     @Captor
     private ArgumentCaptor<Customer> captor;
 
@@ -68,7 +59,7 @@ class CustomerServiceTest {
             UUID id = UUID.fromString("1a72a05f-4b8f-43c5-a889-1ebc6d9dc729");
             String expectedMessage = "Customer with id %s is not found".formatted(id);
 
-            Exception exception = assertThrows(ResourceNotFountException.class, () -> customerService.findById(id, authentication));
+            Exception exception = assertThrows(ResourceNotFountException.class, () -> customerService.findById(id));
             String actualMessage = exception.getMessage();
 
             assertThat(actualMessage).isEqualTo(expectedMessage);
@@ -80,17 +71,7 @@ class CustomerServiceTest {
             CustomerResponse expected = CustomerResponseTestBuilder.aCustomerResponse().build();
             Customer customer = CustomerTestBuilder.aCustomer().build();
             UUID id = customer.getCustomerId();
-            String authority = "ROLE_USER";
 
-            doReturn(user)
-                    .when(authentication)
-                    .getPrincipal();
-            doReturn(id.toString())
-                    .when(user)
-                    .getUsername();
-            doReturn(Collections.singletonList(new SimpleGrantedAuthority(authority)))
-                    .when(user)
-                    .getAuthorities();
             doReturn(Optional.of(customer))
                     .when(customerRepository)
                     .findByCustomerIdAndDeletedFalse(id);
@@ -98,34 +79,9 @@ class CustomerServiceTest {
                     .when(customerMapper)
                     .toResponse(customer);
 
-            CustomerResponse actual = customerService.findById(id, authentication);
+            CustomerResponse actual = customerService.findById(id);
 
             assertThat(actual).isEqualTo(expected);
-        }
-
-        @Test
-        @DisplayName("test should throw AccessDeniedForRoleException with expected message")
-        void testShouldThrowAccessDeniedForRoleException() {
-            UUID id = UUID.fromString("1a72a05f-4b8f-43c5-a889-1ebc6d9dc727");
-            UUID wrongId = UUID.fromString("1a72a05f-4b8f-43c5-a889-1ebc6d9dc729");
-            String authority = "ROLE_USER";
-            String expectedMessage = "With a %s, you can only view/update your customer".formatted(authority);
-
-            doReturn(user)
-                    .when(authentication)
-                    .getPrincipal();
-            doReturn(id.toString())
-                    .when(user)
-                    .getUsername();
-            doReturn(Collections.singletonList(new SimpleGrantedAuthority(authority)))
-                    .when(user)
-                    .getAuthorities();
-
-            Exception exception = assertThrows(AccessDeniedForRoleException.class,
-                    () -> customerService.findById(wrongId, authentication));
-            String actualMessage = exception.getMessage();
-
-            assertThat(actualMessage).isEqualTo(expectedMessage);
         }
 
     }
@@ -239,7 +195,7 @@ class CustomerServiceTest {
             String expectedMessage = "Customer with id %s is not found".formatted(id);
             CustomerUpdateRequest request = CustomerUpdateRequestTestBuilder.aCustomerUpdateRequest().build();
 
-            Exception exception = assertThrows(ResourceNotFountException.class, () -> customerService.updateById(id, request, authentication));
+            Exception exception = assertThrows(ResourceNotFountException.class, () -> customerService.updateById(id, request));
             String actualMessage = exception.getMessage();
 
             assertThat(actualMessage).isEqualTo(expectedMessage);
@@ -252,17 +208,7 @@ class CustomerServiceTest {
             CustomerUpdateRequest request = CustomerUpdateRequestTestBuilder.aCustomerUpdateRequest().build();
             Customer customer = CustomerTestBuilder.aCustomer().build();
             UUID id = customer.getCustomerId();
-            String authority = "ROLE_USER";
 
-            doReturn(user)
-                    .when(authentication)
-                    .getPrincipal();
-            doReturn(id.toString())
-                    .when(user)
-                    .getUsername();
-            doReturn(Collections.singletonList(new SimpleGrantedAuthority(authority)))
-                    .when(user)
-                    .getAuthorities();
             doReturn(Optional.of(customer))
                     .when(customerRepository)
                     .findByCustomerIdAndDeletedFalse(id);
@@ -276,35 +222,9 @@ class CustomerServiceTest {
                     .when(customerMapper)
                     .toResponse(customer);
 
-            CustomerResponse actual = customerService.updateById(id, request, authentication);
+            CustomerResponse actual = customerService.updateById(id, request);
 
             assertThat(actual).isEqualTo(response);
-        }
-
-        @Test
-        @DisplayName("test should throw AccessDeniedForRoleException with expected message")
-        void testShouldThrowAccessDeniedForRoleException() {
-            CustomerUpdateRequest request = CustomerUpdateRequestTestBuilder.aCustomerUpdateRequest().build();
-            UUID id = UUID.fromString("1a72a05f-4b8f-43c5-a889-1ebc6d9dc727");
-            UUID wrongId = UUID.fromString("1a72a05f-4b8f-43c5-a889-1ebc6d9dc729");
-            String authority = "ROLE_USER";
-            String expectedMessage = "With a %s, you can only view/update your customer".formatted(authority);
-
-            doReturn(user)
-                    .when(authentication)
-                    .getPrincipal();
-            doReturn(id.toString())
-                    .when(user)
-                    .getUsername();
-            doReturn(Collections.singletonList(new SimpleGrantedAuthority(authority)))
-                    .when(user)
-                    .getAuthorities();
-
-            Exception exception = assertThrows(AccessDeniedForRoleException.class,
-                    () -> customerService.updateById(wrongId, request, authentication));
-            String actualMessage = exception.getMessage();
-
-            assertThat(actualMessage).isEqualTo(expectedMessage);
         }
 
     }

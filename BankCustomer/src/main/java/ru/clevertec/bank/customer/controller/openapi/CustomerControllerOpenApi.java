@@ -15,7 +15,6 @@ import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import ru.clevertec.bank.customer.domain.dto.CustomerRequest;
 import ru.clevertec.bank.customer.domain.dto.CustomerResponse;
@@ -77,7 +76,7 @@ public interface CustomerControllerOpenApi {
                             }
                             """)))
     })
-    ResponseEntity<CustomerResponse> findById(UUID id, Authentication authentication);
+    ResponseEntity<CustomerResponse> findById(UUID id);
 
     @Operation(summary = "Find all Customers with pagination.", tags = "Customer",
             security = @SecurityRequirement(name = "Bearer Authentication"),
@@ -274,7 +273,7 @@ public interface CustomerControllerOpenApi {
                                     }
                                     """)))
     })
-    ResponseEntity<CustomerResponse> updateById(UUID id, @Valid CustomerUpdateRequest request, Authentication authentication);
+    ResponseEntity<CustomerResponse> updateById(UUID id, @Valid CustomerUpdateRequest request);
 
     @Operation(summary = "Delete Customer by id.", tags = "Customer",
             security = @SecurityRequirement(name = "Bearer Authentication"),

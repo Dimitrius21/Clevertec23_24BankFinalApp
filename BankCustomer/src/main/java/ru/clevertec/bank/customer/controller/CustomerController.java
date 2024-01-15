@@ -5,7 +5,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -33,8 +32,8 @@ public class CustomerController implements CustomerControllerOpenApi {
 
     @Override
     @GetMapping("/{id}")
-    public ResponseEntity<CustomerResponse> findById(@PathVariable UUID id, Authentication authentication) {
-        return ResponseEntity.ok(customerService.findById(id, authentication));
+    public ResponseEntity<CustomerResponse> findById(@PathVariable UUID id) {
+        return ResponseEntity.ok(customerService.findById(id));
     }
 
     @Override
@@ -52,9 +51,8 @@ public class CustomerController implements CustomerControllerOpenApi {
     @Override
     @PutMapping("/{id}")
     public ResponseEntity<CustomerResponse> updateById(@PathVariable UUID id,
-                                                       @RequestBody CustomerUpdateRequest request,
-                                                       Authentication authentication) {
-        return ResponseEntity.status(HttpStatus.OK).body(customerService.updateById(id, request, authentication));
+                                                       @RequestBody CustomerUpdateRequest request) {
+        return ResponseEntity.status(HttpStatus.OK).body(customerService.updateById(id, request));
     }
 
     @Override

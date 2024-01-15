@@ -3,8 +3,6 @@ package ru.clevertec.bank.customer.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.clevertec.bank.customer.domain.dto.CustomerRabbitPayloadRequest;
@@ -14,7 +12,6 @@ import ru.clevertec.bank.customer.domain.dto.CustomerUpdateRequest;
 import ru.clevertec.bank.customer.domain.dto.DeleteResponse;
 import ru.clevertec.bank.customer.mapper.CustomerMapper;
 import ru.clevertec.bank.customer.repository.CustomerRepository;
-import ru.clevertec.exceptionhandler.exception.AccessDeniedForRoleException;
 import ru.clevertec.exceptionhandler.exception.InternalServerErrorException;
 import ru.clevertec.exceptionhandler.exception.ResourceNotFountException;
 
@@ -30,10 +27,8 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
     private final CustomerMapper customerMapper;
 
-    public CustomerResponse findById(UUID id, Authentication authentication) {
-        return getUserFromAuthentication(authentication)
-                .map(user -> checkEqualityOfIdsForUserRole(id, user))
-                .flatMap(user -> customerRepository.findByCustomerIdAndDeletedFalse(id))
+    public CustomerResponse findById(UUID id) {
+        return customerRepository.findByCustomerIdAndDeletedFalse(id)
                 .map(customerMapper::toResponse)
                 .orElseThrow(throwResourceNotFoundException(id));
     }
@@ -60,10 +55,8 @@ public class CustomerService {
     }
 
     @Transactional
-    public CustomerResponse updateById(UUID id, CustomerUpdateRequest request, Authentication authentication) {
-        return getUserFromAuthentication(authentication)
-                .map(user -> checkEqualityOfIdsForUserRole(id, user))
-                .flatMap(user -> customerRepository.findByCustomerIdAndDeletedFalse(id))
+    public CustomerResponse updateById(UUID id, CustomerUpdateRequest request) {
+        return customerRepository.findByCustomerIdAndDeletedFalse(id)
                 .map(customer -> customerMapper.updateCustomer(request, customer))
                 .map(customerRepository::save)
                 .map(customerMapper::toResponse)
@@ -99,21 +92,6 @@ public class CustomerService {
 
     private Supplier<ResourceNotFountException> throwResourceNotFoundException(UUID id) {
         return () -> new ResourceNotFountException("Customer with id %s is not found".formatted(id));
-    }
-
-    private Optional<User> getUserFromAuthentication(Authentication authentication) {
-        return Optional.of(authentication)
-                .map(Authentication::getPrincipal)
-                .map(User.class::cast);
-    }
-
-    private User checkEqualityOfIdsForUserRole(UUID id, User user) {
-        UUID customerId = UUID.fromString(user.getUsername());
-        String authority = user.getAuthorities().stream().findFirst().orElseThrow().getAuthority();
-        if (authority.equals("ROLE_USER") && !customerId.equals(id)) {
-            throw new AccessDeniedForRoleException("With a %s, you can only view/update your customer".formatted(authority));
-        }
-        return user;
     }
 
 }

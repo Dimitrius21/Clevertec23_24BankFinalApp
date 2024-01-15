@@ -71,7 +71,7 @@ public class CustomerControllerIntegrationTest extends BaseIntegrationTest {
         @DisplayName("test should return expected json and status 403")
         void testShouldReturnExpectedJsonAndStatus403() throws Exception {
             String notUserId = "1a72a05f-4b8f-43c5-a889-1ebc6d9dc725";
-            String message = "With a ROLE_USER, you can only view/update your customer";
+            String message = "With a USER role, you can only view/update your customer";
             String token = jwtService.generateTokenByIdWithRole(UUID.fromString(ID), Role.USER);
 
             mockMvc.perform(get("/customers/%s".formatted(notUserId))
@@ -246,7 +246,7 @@ public class CustomerControllerIntegrationTest extends BaseIntegrationTest {
             CustomerUpdateRequest request = CustomerUpdateRequestTestBuilder.aCustomerUpdateRequest().build();
             String token = jwtService.generateTokenByIdWithRole(UUID.fromString(ID), Role.USER);
             String content = objectMapper.writeValueAsString(request);
-            String message = "With a ROLE_USER, you can only view/update your customer";
+            String message = "With a USER role, you can only view/update your customer";
 
             mockMvc.perform(put("/customers/%s".formatted(wrongId))
                             .content(content)
