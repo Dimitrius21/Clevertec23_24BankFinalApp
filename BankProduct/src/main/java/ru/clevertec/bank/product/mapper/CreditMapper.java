@@ -13,6 +13,8 @@ import ru.clevertec.bank.product.domain.entity.Credit;
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface CreditMapper {
 
+    @Mapping(target = "totalDebt", expression = "java(java.math.BigDecimal.valueOf(credit.getTotalDebt()).divide(java.math.BigDecimal.valueOf(100L)))")
+    @Mapping(target = "currentDebt", expression = "java(java.math.BigDecimal.valueOf(credit.getCurrentDebt()).divide(java.math.BigDecimal.valueOf(100L)))")
     CreditResponseDTO toCreditResponseDTO(Credit credit);
 
     @Mapping(target = "totalDebt", expression = "java(createCreditDTO.getTotalDebt().multiply(java.math.BigDecimal.valueOf(100L)).longValueExact())")

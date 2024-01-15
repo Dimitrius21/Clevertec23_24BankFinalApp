@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -18,9 +19,9 @@ public class CreditResponseDTO {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy")
     private LocalDate contractStartDate;
 
-    private Long totalDebt;
+    private BigDecimal totalDebt;
 
-    private Long currentDebt;
+    private BigDecimal currentDebt;
 
     private String currency;
 

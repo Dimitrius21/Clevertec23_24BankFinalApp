@@ -1,6 +1,8 @@
 package ru.clevertec.bank.product.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,8 +26,8 @@ public class CreditController {
         return ResponseEntity.ok(creditService.findByContractNumber(contractNumber));
     }
     @GetMapping
-    public ResponseEntity<List<CreditResponseDTO>> findALl() {
-        return ResponseEntity.ok(creditService.findAll());
+    public ResponseEntity<Page<CreditResponseDTO>> findALl(Pageable pageable) {
+        return ResponseEntity.ok(creditService.findAll(pageable));
     }
 
     @GetMapping("/customers/{id}")
