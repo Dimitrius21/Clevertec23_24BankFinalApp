@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import ru.clevertec.bank.product.util.DepositType;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -17,5 +18,5 @@ public record DepInfoResponse(BigDecimal rate,
                               LocalDate expDate,
 
                               DepositType depType,
-                              Boolean autoRenew) {
+                              Boolean autoRenew) implements Serializable {
 }

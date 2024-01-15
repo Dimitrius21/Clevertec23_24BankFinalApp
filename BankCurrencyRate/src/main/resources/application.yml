@@ -4,7 +4,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/rates
     username: postgres
-    password: 1234
+    password: postgres
     driver: org.postgresql.Driver
   jpa:
     show-sql: true
@@ -30,7 +30,7 @@ rabbit:
     credit: credit
     deposit: deposit
 server:
-  port: 8081
+  port: 8083
 
 ---
 

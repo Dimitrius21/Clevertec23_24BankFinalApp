@@ -5,6 +5,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import ru.clevertec.bank.product.util.DepositType;
 
 import java.math.BigDecimal;
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
+@ToString
 @Embeddable
 public class DepInfo {
 

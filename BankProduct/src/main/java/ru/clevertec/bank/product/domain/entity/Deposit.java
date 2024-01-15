@@ -6,7 +6,6 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -14,7 +13,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import ru.clevertec.bank.product.domain.entity.listener.DepositListener;
+import org.hibernate.annotations.GenericGenerator;
+import ru.clevertec.bank.product.domain.entity.util.DepositIdentifierGenerator;
+import ru.clevertec.bank.product.domain.entity.util.DepositListener;
 import ru.clevertec.bank.product.util.CustomerType;
 
 import java.util.Objects;
@@ -31,8 +32,9 @@ import java.util.UUID;
 public class Deposit {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(generator = "custom")
+    @GenericGenerator(name = "custom", type = DepositIdentifierGenerator.class)
+    private String accIban;
 
     private UUID customerId;
 
@@ -50,12 +52,12 @@ public class Deposit {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
         Deposit deposit = (Deposit) object;
-        return Objects.equals(id, deposit.id) && Objects.equals(customerId, deposit.customerId);
+        return Objects.equals(accIban, deposit.accIban) && Objects.equals(customerId, deposit.customerId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, customerId);
+        return Objects.hash(accIban, customerId);
     }
 
 }

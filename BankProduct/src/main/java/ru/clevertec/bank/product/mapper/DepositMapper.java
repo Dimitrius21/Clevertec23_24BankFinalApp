@@ -14,8 +14,10 @@ public interface DepositMapper {
 
     DepositInfoResponse toDepositInfoResponse(Deposit deposit);
 
+    @Mapping(target = "accIban", source = "request.accInfo.accIban")
     Deposit toDeposit(DepositInfoRequest request);
 
+    @Mapping(target = "accIban", source = "request.accInfo.accIban")
     Deposit toDeposit(DepositRabbitPayloadRequest request);
 
     @Mapping(target = "depInfo", source = "request")

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -14,5 +15,5 @@ public record AccInfoResponse(String accIban,
                               LocalDate accOpenDate,
 
                               BigDecimal currAmount,
-                              String currAmountCurrency) {
+                              String currAmountCurrency) implements Serializable {
 }

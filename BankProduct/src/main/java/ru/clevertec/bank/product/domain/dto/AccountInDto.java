@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @Data
 @NoArgsConstructor
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+//@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class AccountInDto {
     private String name;
     private String iban;

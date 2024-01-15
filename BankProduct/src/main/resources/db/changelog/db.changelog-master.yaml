@@ -3,5 +3,6 @@ databaseChangeLog:
       file: db/changelog/create-tables.yaml
   - include:
       file: db/changelog/deposit-table-ddl.sql
-  - include:
-      file: db/changelog/credit-table-ddl.sql
+  - includeAll:
+      path: db/changelog/data/
+

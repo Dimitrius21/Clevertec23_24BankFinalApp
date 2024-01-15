@@ -1,5 +1,5 @@
-###findById
-GET http://localhost:8081/deposits/5
+###findByIban
+GET http://localhost:8081/deposits/FR7630001007941234567890185
 Accept: application/json
 
 ###findAll
@@ -32,8 +32,8 @@ Content-Type: application/json
   }
 }
 
-###updateById
-PUT http://localhost:8081/deposits/3
+###updateByIban
+PUT http://localhost:8081/deposits/FR7630001007941234567890185
 Accept: application/json
 Content-Type: application/json
 
@@ -42,6 +42,6 @@ Content-Type: application/json
   "auto_renew": false
 }
 
-###deleteById
-DELETE http://localhost:8081/deposits/3
+###deleteByIban
+DELETE http://localhost:8081/deposits/FR7630001007941234567890185
 Accept: application/json

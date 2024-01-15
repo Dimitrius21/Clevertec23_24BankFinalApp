@@ -1,0 +1,5 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/customer-table-ddl.sql
+  - include:
+      file: db/changelog/data/customer-table-dml.sql

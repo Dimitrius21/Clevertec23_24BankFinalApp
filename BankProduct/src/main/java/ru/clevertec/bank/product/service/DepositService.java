@@ -1,6 +1,9 @@
 package ru.clevertec.bank.product.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -14,6 +17,7 @@ import ru.clevertec.bank.product.domain.dto.deposit.response.DepositInfoResponse
 import ru.clevertec.bank.product.mapper.DepositMapper;
 import ru.clevertec.bank.product.repository.DepositRepository;
 import ru.clevertec.bank.product.repository.specification.DepositSpecification;
+import ru.clevertec.exceptionhandler.exception.RequestBodyIncorrectException;
 import ru.clevertec.exceptionhandler.exception.ResourceNotFountException;
 
 import java.util.Optional;
@@ -27,10 +31,11 @@ public class DepositService {
     private final DepositRepository depositRepository;
     private final DepositMapper depositMapper;
 
-    public DepositInfoResponse findById(Long id) {
-        return depositRepository.findById(id)
+    @Cacheable(value = "deposit")
+    public DepositInfoResponse findByIban(String iban) {
+        return depositRepository.findById(iban)
                 .map(depositMapper::toDepositInfoResponse)
-                .orElseThrow(throwResourceNotFoundException(id));
+                .orElseThrow(throwResourceNotFoundException(iban));
     }
 
     public Page<DepositInfoResponse> findAll(Pageable pageable) {
@@ -44,7 +49,12 @@ public class DepositService {
     }
 
     @Transactional
+    @CachePut(value = "deposit", key = "#result.accInfo().accIban()")
     public DepositInfoResponse save(DepositInfoRequest request) {
+        depositRepository.findById(request.accInfo().accIban())
+                .ifPresent(deposit -> {
+                    throw new RequestBodyIncorrectException("Deposit with such acc_iban is already exist");
+                });
         return Optional.of(request)
                 .map(depositMapper::toDeposit)
                 .map(depositRepository::save)
@@ -54,34 +64,35 @@ public class DepositService {
 
     @Transactional
     public void save(DepositRabbitPayloadRequest request) {
-        Optional.ofNullable(request)
+        Optional.of(request)
                 .map(depositMapper::toDeposit)
-                .map(depositRepository::save)
-                .orElseThrow(() -> new ResourceNotFountException("Cant save deposit")); // TODO add better exception for this message later
+                .ifPresent(depositRepository::save);
     }
 
     @Transactional
-    public DepositInfoResponse updateById(Long id, DepInfoUpdateRequest request) {
-        return depositRepository.findById(id)
+    @CachePut(value = "deposit", key = "#result.accInfo().accIban()")
+    public DepositInfoResponse updateByIban(String iban, DepInfoUpdateRequest request) {
+        return depositRepository.findById(iban)
                 .map(deposit -> depositMapper.updateDeposit(request, deposit))
                 .map(depositRepository::save)
                 .map(depositMapper::toDepositInfoResponse)
-                .orElseThrow(throwResourceNotFoundException(id));
+                .orElseThrow(throwResourceNotFoundException(iban));
     }
 
     @Transactional
-    public DeleteResponse deleteById(Long id) {
-        return depositRepository.findById(id)
+    @CacheEvict(value = "deposit", key = "#iban")
+    public DeleteResponse deleteByIban(String iban) {
+        return depositRepository.findById(iban)
                 .map(deposit -> {
                     depositRepository.delete(deposit);
                     return deposit;
                 })
-                .map(deposit -> new DeleteResponse("Deposit with id %s was successfully deleted".formatted(deposit.getId())))
-                .orElseThrow(throwResourceNotFoundException(id));
+                .map(deposit -> new DeleteResponse("Deposit with iban %s was successfully deleted".formatted(deposit.getAccIban())))
+                .orElseThrow(throwResourceNotFoundException(iban));
     }
 
-    private Supplier<ResourceNotFountException> throwResourceNotFoundException(Long id) {
-        return () -> new ResourceNotFountException("Deposit with id %s is not found".formatted(id));
+    private Supplier<ResourceNotFountException> throwResourceNotFoundException(String iban) {
+        return () -> new ResourceNotFountException("Deposit with iban %s is not found".formatted(iban));
     }
 
 }
