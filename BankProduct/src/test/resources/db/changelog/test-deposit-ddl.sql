@@ -1,6 +1,6 @@
 --liquibase formatted sql
 
---changeset Grigoryev_Pavel:1
+--changeset Grigoryev_Pavel:test-1
 CREATE TABLE IF NOT EXISTS deposits
 (
     acc_iban             VARCHAR(50) PRIMARY KEY,
