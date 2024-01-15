@@ -31,7 +31,7 @@ dependencies {
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:$openApiVersion"
     implementation "org.mapstruct:mapstruct:$mapstructVersion"
 //	implementation 'org.springframework.cloud:spring-cloud-starter-config'
-//	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
     //implementation project(':controller-logging-starter')
     implementation project(':exception-handling-starter')
@@ -39,6 +39,8 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
 
     annotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 compileJava {
@@ -53,4 +55,8 @@ dependencyManagement {
     imports {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion"
     }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
 }

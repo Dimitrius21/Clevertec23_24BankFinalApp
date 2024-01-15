@@ -3,14 +3,16 @@ spring:
     name: product_service
   datasource:
     url: jdbc:postgresql://localhost:5432/bank
-    username: pavel
-    password: pavel
+    username: postgres
+    password: postgres
   jpa:
     show-sql: true
     properties:
       hibernate:
         format_sql: true
     open-in-view: false
+    hibernate:
+      ddl-auto: validate
   data:
     web:
       pageable:
@@ -44,6 +46,10 @@ rabbit:
 server:
   port: 8081
 
+client:
+  name: "currency"
+  url:
+    rate: "http://localhost:8083/rate"
 ---
 
 spring:
