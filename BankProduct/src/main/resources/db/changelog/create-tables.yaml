@@ -53,4 +53,3 @@ databaseChangeLog:
                   name: rate
                   type: double
                   constraints:
-                    nullable: false
