@@ -19,8 +19,9 @@ spring:
     contexts: dev
 spring-doc:
   packagesToScan: ru.clevertec.bank.product.controller
-#caching:
-#  repository: accountRepository, cardRepository, CreditRepository, DepositRepository
+caching:
+  repository: accountRepository
+  #, cardRepository, creditRepository, depositRepository
 #feign:
 #  name: auth-server
 #  url : http://localhost:8090
@@ -45,7 +46,7 @@ spring:
 #  liquibase:
 #    contexts: dev
 caching:
-  type: lru
+  type: lfu
   size: 5
 
 ---

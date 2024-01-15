@@ -1,4 +1,4 @@
-package ru.clevertec.bank.product.domain.dto;
+package ru.clevertec.bank.product.domain.dto.account.request;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

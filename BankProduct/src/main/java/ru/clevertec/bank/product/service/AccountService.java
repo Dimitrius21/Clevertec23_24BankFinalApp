@@ -3,13 +3,16 @@ package ru.clevertec.bank.product.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ru.clevertec.bank.product.domain.dto.AccountInDto;
-import ru.clevertec.bank.product.domain.dto.AccountInDtoRabbit;
-import ru.clevertec.bank.product.domain.dto.AccountOutDto;
+import org.springframework.transaction.annotation.Transactional;
+import ru.clevertec.bank.product.domain.dto.account.response.AccountFullOutDto;
+import ru.clevertec.bank.product.domain.dto.account.request.AccountInDto;
+import ru.clevertec.bank.product.domain.dto.account.request.AccountInDtoRabbit;
+import ru.clevertec.bank.product.domain.dto.account.response.AccountOutDto;
 import ru.clevertec.bank.product.domain.entity.Account;
 import ru.clevertec.bank.product.repository.AccountRepository;
-import ru.clevertec.bank.product.util.AccountMapper;
+import ru.clevertec.bank.product.mapper.AccountMapper;
 import ru.clevertec.exceptionhandler.exception.RequestBodyIncorrectException;
 import ru.clevertec.exceptionhandler.exception.ResourceNotFountException;
 
@@ -24,68 +27,66 @@ public class AccountService {
     private final AccountMapper mapper;
     private final ObjectMapper jacksonMapper;
 
+    @Transactional(readOnly = true)
     public AccountOutDto getAccountByIban(String iban) {
-        Account account = accRepo.findById(iban).orElseThrow(() -> new ResourceNotFountException(
-                String.format("Account with iban = %s not found", iban)));
-        return mapper.toAccountOutDto(account);
+        return accRepo.findById(iban)
+                .map(mapper::toAccountOutDto)
+                .orElseThrow(() -> new ResourceNotFountException(String.format("Account with iban = %s not found", iban)));
     }
 
-    public List<Account> getAccountsByCustomerId(UUID id) {
-        return accRepo.findByCustomerId(id);
+    @Transactional(readOnly = true)
+    public List<AccountFullOutDto> getAllAccounts(Pageable pageable) {
+        return accRepo.findAll(pageable).toList()
+                .stream()
+                .map(mapper::toAccountFullOutDto)
+                .toList();
     }
 
+    @Transactional(readOnly = true)
+    public List<AccountOutDto> getAccountsByCustomerId(UUID id) {
+        return accRepo.findByCustomerId(id).stream()
+                .map(mapper::toAccountOutDto)
+                .toList();
+    }
+
+    @Transactional
     public void deleteAccountByIban(String iban) {
         accRepo.deleteById(iban);
     }
 
+    @Transactional
     public AccountOutDto createAccount(AccountInDto inDto) {
         Account account = mapper.toAccount(inDto);
         Optional<Account> accountInDb = accRepo.findById(account.getIban());
         if (accountInDb.isPresent()) {
             throw new RequestBodyIncorrectException("Data with such Iban already exist");
         }
-        account = accRepo.save(account);
-        return mapper.toAccountOutDto(account);
+        return mapper.toAccountOutDto(accRepo.save(account));
     }
 
-    public Account updateAccountName(Account acc) {
-        Account account = accRepo.findByIban(acc.getIban()).orElseThrow(() -> new ResourceNotFountException(
+    @Transactional
+    public AccountOutDto updateAccount(AccountInDto inDto) {
+        Account acc = mapper.toAccount(inDto);
+        Account accountInDb = accRepo.findById(acc.getIban()).orElseThrow(() -> new ResourceNotFountException(
                 String.format("Account with IBAN=%s not found", acc.getIban())));
-        if (!account.getCustomerId().equals(acc.getCustomerId())) {
-            throw new RuntimeException("Incorrect customer");
+        if (!accountInDb.getCustomerId().equals(acc.getCustomerId())) {
+            throw new RequestBodyIncorrectException("Incorrect customer_id in request");
         }
-        account.setName(acc.getName());
-        accRepo.save(account);
-        return account;
+        accountInDb.setName(acc.getName());
+        accountInDb.setMainAcc(acc.isMainAcc());
+        accountInDb.setCustomerType(acc.getCustomerType());
+        return mapper.toAccountOutDto(accRepo.save(accountInDb));
     }
 
+    @Transactional
     public AccountOutDto saveAccountFromRabbit(String message) {
         try {
             AccountInDtoRabbit rabbitDto = jacksonMapper.readValue(message, AccountInDtoRabbit.class);
             Account account = mapper.toAccount(rabbitDto.getPayload());
-            account = accRepo.save(account);
-            return mapper.toAccountOutDto(account);
+            return mapper.toAccountOutDto(accRepo.save(account));
         } catch (JsonProcessingException e) {
             throw new RequestBodyIncorrectException("Data in the request body isn't correct: " + message);
         }
     }
-
-
-
-/*    @Transactional
-    public Account updateAccountSum(AccountChangeSumDto acc) {
-        Account account = accRepo.findByIban(acc.getIban()).orElseThrow(() -> new ResourceNotFountException(
-                String.format("Account with IBAN=%s not found", acc.getIban())));
-        if (acc.getCurrencyCode() != account.getCurrencyCode()) {
-            throw new RuntimeException("Incorrect currency");
-        }
-        long newSum = account.getAmount() + acc.getChange();
-        if (newSum < 0) {
-            throw new RuntimeException("There isn't enough many");
-        }
-        account.setAmount(newSum);
-        accRepo.save(account);
-        return account;
-    }*/
 
 }

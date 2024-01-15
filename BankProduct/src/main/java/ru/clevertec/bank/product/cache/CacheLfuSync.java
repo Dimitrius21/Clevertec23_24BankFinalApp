@@ -19,12 +19,12 @@ import java.util.concurrent.locks.ReentrantLock;
  * @param <V> тип кэшируемой сущности
  */
 @Slf4j
-public class CacheLfuSync<V> implements Cacheable<Long, V> {
+public class CacheLfuSync<V> implements Cacheable<String, V> {
 
     private final int maxSize;
     private String entityRepo;
     private List<Node> nodeList;
-    private Map<Long, Node> store = new ConcurrentHashMap<>();
+    private Map<String, Node> store = new ConcurrentHashMap<>();
     private int qNode;
     private final Lock lock = new ReentrantLock();
 
@@ -36,7 +36,7 @@ public class CacheLfuSync<V> implements Cacheable<Long, V> {
         log.info("Cache Lfu has been created  for {}", entityRepo);
     }
 
-    public V put(Long id, V value) {
+    public V put(String id, V value) {
         Node<V> node = store.get(id);
         if (Objects.nonNull(node)) {
             node.incrementFrequency();
@@ -78,7 +78,7 @@ public class CacheLfuSync<V> implements Cacheable<Long, V> {
             lock.lock();
             try {
                 while (iterator.hasNext()) {
-                    if ((Long) iterator.next().getKey() == key) {
+                    if (iterator.next().getKey().equals(key)) {
                         iterator.remove();
                         qNode--;
                         break;
@@ -118,15 +118,15 @@ public class CacheLfuSync<V> implements Cacheable<Long, V> {
      */
     private class Node<V> {
         private AtomicLong frequency = new AtomicLong(1);
-        private long key;
+        private String key;
         private V value;
 
-        public Node(long key, V value) {
+        public Node(String key, V value) {
             this.value = value;
             this.key = key;
         }
 
-        public long getKey() {
+        public String getKey() {
             return key;
         }
 
