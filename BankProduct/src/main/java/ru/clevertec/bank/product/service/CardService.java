@@ -52,7 +52,7 @@ public class CardService {
             card = cardByCardNumber.get();
             cardMapper.updateFromRabbitDto(request, card);
         }
-        Account account = accountRepository.findByIban(request.iban()).orElseThrow(() ->
+        Account account = accountRepository.findById(request.iban()).orElseThrow(() ->
                 new ResourceNotFountException(String.format("Account with iban=%s not found", request.iban())));
         card.setAccount(account);
         cardRepository.save(card);
@@ -65,7 +65,7 @@ public class CardService {
         }
         checkCardNumber(request.cardNumber());
         Card card = cardMapper.toCard(request);
-        Account account = accountRepository.findByIban(request.iban()).orElseThrow(() ->
+        Account account = accountRepository.findById(request.iban()).orElseThrow(() ->
                 new ResourceNotFountException(String.format("Account with iban=%s not found", request.iban())));
         card.setAccount(account);
         Card cardSaved = cardRepository.save(card);
@@ -111,7 +111,7 @@ public class CardService {
         }
         Card card = cardRepository.findCardByCardNumber(id).orElseThrow(() ->
                 new ResourceNotFountException(String.format("Card with id=%s not found", id)));
-        Account account = accountRepository.findByIban(request.iban()).orElseThrow(() ->
+        Account account = accountRepository.findById(request.iban()).orElseThrow(() ->
                 new ResourceNotFountException(String.format("Account with iban=%s not found", request.iban())));
         cardMapper.updateFromDto(request, card);
         card.setAccount(account);

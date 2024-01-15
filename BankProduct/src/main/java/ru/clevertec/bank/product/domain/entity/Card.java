@@ -1,23 +1,52 @@
 package ru.clevertec.bank.product.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.id.IdentifierGenerator;
+import ru.clevertec.bank.product.util.CardStatus;
+import ru.clevertec.bank.product.util.CustomerType;
 
 import java.util.UUID;
 
-@Data
 @Entity
+@Data
 @Table(name = "cards")
-public class Card {
+@AllArgsConstructor
+@NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Card implements IdentifierGenerator {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "card_number")
-    private String cardNumber; //": "5200000000001096",
+    @GeneratedValue(generator = "custom")
+    @GenericGenerator(name = "custom", type = Card.class)
+    private String cardNumber;
 
-    @Column(name = "iban")
-    private String iban; //": "AABBCCCDDDDEEEEEEEEEEEEEEEE",
+    @Column(name = "customer_id")
+    private UUID customerId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "customer_type")
+    private CustomerType customerType;
 
     @Column(name = "cardholder")
-    private String cardholder; //": "CARDHOLDER NAME",
+    private String cardholder;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "card_status")
+    private CardStatus cardStatus;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "iban")
+    private Account account;
+
+    @Override
+    public Object generate(SharedSessionContractImplementor session, Object object) {
+        Card card = (Card) object;
+        return card.getCardNumber();
+    }
 }

@@ -45,7 +45,7 @@ public class Account implements IdentifierGenerator {
     @Column(name = "rate")
     private double rate;
 
-    @OneToMany(mappedBy = "iban", fetch = FetchType.LAZY )
+    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY )
     @BatchSize(size = 50)
     private List<Card> cards;
 

@@ -33,7 +33,7 @@ dependencies {
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:$openApiVersion"
     implementation "org.mapstruct:mapstruct:$mapstructVersion"
 //	implementation 'org.springframework.cloud:spring-cloud-starter-config'
-//	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
     //implementation project(':controller-logging-starter')
     implementation project(':exception-handling-starter')
