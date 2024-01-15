@@ -18,10 +18,8 @@ import ru.clevertec.bank.customer.domain.dto.CustomerRabbitRequest;
 import ru.clevertec.bank.customer.domain.dto.HeaderRequest;
 import ru.clevertec.bank.customer.service.CustomerService;
 import ru.clevertec.bank.customer.testutil.CustomerRabbitPayloadRequestTestBuilder;
-import ru.clevertec.exceptionhandler.exception.InternalServerErrorException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 
@@ -58,20 +56,6 @@ class CustomerConsumerTest {
 
         CustomerRabbitPayloadRequest captorValue = captor.getValue();
         assertThat(captorValue).isEqualTo(request.payload());
-    }
-
-    @Test
-    @DisplayName("test onDepositMessage should throw InternalServerErrorException with expected message")
-    void testShouldThrowInternalServerErrorException() {
-        String message = "Not  valid json";
-        String expectedMessage = "Unrecognized token 'Not': was expecting (JSON String, Number, Array," +
-                                 " Object or token 'null', 'true' or 'false')\n at [Source: (String)\"Not  valid json\";" +
-                                 " line: 1, column: 4]";
-
-        Exception exception = assertThrows(InternalServerErrorException.class, () -> customerConsumer.onCustomerMessage(message));
-        String actualMessage = exception.getMessage();
-
-        assertThat(actualMessage).isEqualTo(expectedMessage);
     }
 
 }

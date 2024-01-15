@@ -13,16 +13,9 @@ public class RabbitProperties {
 
     private String exchange;
     private QueueProperties queue;
-    private HeaderProperties header;
 
     @Data
     public static class QueueProperties {
-        private String customer;
-    }
-
-    @Data
-    public static class HeaderProperties {
-        private String key;
         private String customer;
     }
 
