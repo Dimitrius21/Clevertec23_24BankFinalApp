@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.clevertec.exceptionhandler.domain.ErrorIfo;
+import ru.clevertec.exceptionhandler.domain.ErrorInfo;
 import ru.clevertec.exceptionhandler.domain.ValidationExceptionResponse;
 import ru.clevertec.exceptionhandler.domain.Violation;
 import ru.clevertec.exceptionhandler.exception.AccessDeniedForRoleException;
@@ -17,62 +17,51 @@ import ru.clevertec.exceptionhandler.exception.InternalServerErrorException;
 import ru.clevertec.exceptionhandler.exception.NotValidRequestParametersException;
 import ru.clevertec.exceptionhandler.exception.RequestBodyIncorrectException;
 import ru.clevertec.exceptionhandler.exception.ResourceNotFountException;
+import ru.clevertec.loggingstarter.annotation.Loggable;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * Класс для обработки возникающих в приложении исключений
- */
-
+@Loggable
 @RestControllerAdvice
 @ConditionalOnMissingBean
 public class AppExceptionHandler {
 
 
     @ExceptionHandler(ResourceNotFountException.class)
-    protected ResponseEntity<Object> handleEntityNotFoundEx(ResourceNotFountException ex) {
-        ErrorIfo error = new ErrorIfo(LocalDateTime.now(), HttpStatus.NOT_FOUND.value(), ex.getMessage(), ex.getErrorDetails());
-        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    public ResponseEntity<ErrorInfo> handleEntityNotFoundEx(ResourceNotFountException exception) {
+        return sendResponse(exception.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(NotValidRequestParametersException.class)
-    protected ResponseEntity<Object> handleNotValidRequestData(NotValidRequestParametersException ex) {
-        ErrorIfo error = new ErrorIfo(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ErrorInfo> handleNotValidRequestData(NotValidRequestParametersException exception) {
+        return sendResponse(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(RequestBodyIncorrectException.class)
-    protected ResponseEntity<Object> handleNotValidRequestData(RequestBodyIncorrectException ex) {
-        ErrorIfo error = new ErrorIfo(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ErrorInfo> handleNotValidRequestData(RequestBodyIncorrectException exception) {
+        return sendResponse(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ErrorIfo> handleDataIntegrityViolationException(DataIntegrityViolationException exception) {
+    public ResponseEntity<ErrorInfo> handleDataIntegrityViolationException(DataIntegrityViolationException exception) {
         Throwable rootCause = exception.getRootCause();
-        ErrorIfo errorIfo = new ErrorIfo(LocalDateTime.now(), HttpStatus.CONFLICT.value(),
-                Objects.nonNull(rootCause) ? rootCause.getMessage() : exception.getMessage(), null);
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorIfo);
+        return sendResponse(Objects.nonNull(rootCause) ? rootCause.getMessage() : exception.getMessage(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(AccessDeniedForRoleException.class)
-    public ResponseEntity<ErrorIfo> handleAccessDeniedForRoleException(AccessDeniedForRoleException exception) {
-        ErrorIfo errorIfo = new ErrorIfo(LocalDateTime.now(), HttpStatus.FORBIDDEN.value(), exception.getMessage(), null);
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorIfo);
+    public ResponseEntity<ErrorInfo> handleAccessDeniedForRoleException(AccessDeniedForRoleException exception) {
+        return sendResponse(exception.getMessage(), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(InternalServerErrorException.class)
-    public ResponseEntity<ErrorIfo> handleInternalServerErrorException(InternalServerErrorException exception) {
-        ErrorIfo errorIfo = new ErrorIfo(LocalDateTime.now(), HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage(), null);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorIfo);
+    public ResponseEntity<ErrorInfo> handleInternalServerErrorException(InternalServerErrorException exception) {
+        return sendResponse(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(PropertyReferenceException.class)
-    public ResponseEntity<ErrorIfo> propertyReferenceException(PropertyReferenceException exception) {
-        ErrorIfo errorIfo = new ErrorIfo(LocalDateTime.now(), HttpStatus.NOT_ACCEPTABLE.value(), exception.getMessage(), null);
-        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(errorIfo);
+    public ResponseEntity<ErrorInfo> propertyReferenceException(PropertyReferenceException exception) {
+        return sendResponse(exception.getMessage(), HttpStatus.NOT_ACCEPTABLE);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -93,6 +82,11 @@ public class AppExceptionHandler {
                 .map(fieldError -> new Violation(fieldError.getField(), fieldError.getDefaultMessage()))
                 .toList();
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ValidationExceptionResponse(violations));
+    }
+
+    private ResponseEntity<ErrorInfo> sendResponse(String message, HttpStatus httpStatus) {
+        ErrorInfo errorInfo = new ErrorInfo(httpStatus.value(), message);
+        return ResponseEntity.status(httpStatus).body(errorInfo);
     }
 
 }

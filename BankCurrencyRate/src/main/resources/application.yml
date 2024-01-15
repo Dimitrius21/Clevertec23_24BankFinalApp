@@ -23,6 +23,9 @@ spring-doc:
 exception:
   custom-handler:
     enable: true
+aop:
+  logging:
+    enabled: true
 rabbit:
   queue:
     account: account

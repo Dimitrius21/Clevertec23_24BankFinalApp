@@ -20,9 +20,11 @@ import ru.clevertec.bank.customer.domain.dto.CustomerResponse;
 import ru.clevertec.bank.customer.domain.dto.CustomerUpdateRequest;
 import ru.clevertec.bank.customer.domain.dto.DeleteResponse;
 import ru.clevertec.bank.customer.service.CustomerService;
+import ru.clevertec.loggingstarter.annotation.Loggable;
 
 import java.util.UUID;
 
+@Loggable
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/customers")

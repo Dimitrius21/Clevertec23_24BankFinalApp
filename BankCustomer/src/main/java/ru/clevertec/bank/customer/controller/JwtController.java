@@ -11,7 +11,9 @@ import ru.clevertec.bank.customer.controller.openapi.JwtControllerOpenApi;
 import ru.clevertec.bank.customer.domain.dto.JwtRequest;
 import ru.clevertec.bank.customer.domain.dto.JwtResponse;
 import ru.clevertec.bank.customer.service.JwtService;
+import ru.clevertec.loggingstarter.annotation.Loggable;
 
+@Loggable
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/jwt")
