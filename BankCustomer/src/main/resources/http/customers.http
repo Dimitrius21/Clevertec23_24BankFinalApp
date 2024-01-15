@@ -1,0 +1,46 @@
+###findById
+GET http://localhost:8082/customers/1a72a05f-4b8f-43c5-a889-1ebc6d9dc724
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6IjFhNzJhMDVmLTRiOGYtNDNjNS1hODg5LTFlYmM2ZDlkYzcyOSIsImlhdCI6MTcwNTIzNzM5MywiZXhwIjoxNzA1MzIzNzkzfQ.dfSwqQUZtQaIxYalatxM7IzEsaR6KQuovOqHk3pLBhSg0lGY6N2qOMdBVqx_KrTK
+
+###findAll
+GET http://localhost:8082/customers?page=0&size=2
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiQURNSU5JU1RSQVRPUiIsInN1YiI6IjFhNzJhMDVmLTRiOGYtNDNjNS1hODg5LTFlYmM2ZDlkYzcyOSIsImlhdCI6MTcwNTMxNTU2MiwiZXhwIjoxNzA1NDAxOTYyfQ.20cxhRY-hEDUz_6lNFMcywZ34qRsp5NZNzlNGJh_ZcU9J3oKD0omQJ5jW92wSFT8
+
+###save
+POST http://localhost:8082/customers
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiQURNSU5JU1RSQVRPUiIsInN1YiI6IjFhNzJhMDVmLTRiOGYtNDNjNS1hODg5LTFlYmM2ZDlkYzcyOSIsImlhdCI6MTcwNTIzNzgwMSwiZXhwIjoxNzA1MzI0MjAxfQ.Sfjt-NqgAKVB3-aVTLy2oo7bqDzwVedOywzsSVLy9wQrBswmS9Ci9f7nhhErv6Lr
+
+{
+  "customer_type": "LEGAL",
+  "unp": "ABCDEFGHI",
+  "email": "example@email.com",
+  "phoneCode": "37529",
+  "phoneNumber": "1112233",
+  "customer_fullname": "Иванов Иван Иванович"
+}
+
+###updateById
+PUT http://localhost:8082/customers/1a72a05f-4b8f-43c5-a889-1ebc6d9dc726
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiQURNSU5JU1RSQVRPUiIsInN1YiI6IjFhNzJhMDVmLTRiOGYtNDNjNS1hODg5LTFlYmM2ZDlkYzcyOSIsImlhdCI6MTcwNTIzNzgwMSwiZXhwIjoxNzA1MzI0MjAxfQ.Sfjt-NqgAKVB3-aVTLy2oo7bqDzwVedOywzsSVLy9wQrBswmS9Ci9f7nhhErv6Lr
+
+{
+  "email": "singleton@email.com",
+  "phoneCode": "37533",
+  "phoneNumber": "2223344"
+}
+
+###deleteById
+DELETE http://localhost:8082/customers/1a72a05f-4b8f-43c5-a889-1ebc6d9dc724
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiU1VQRVJfVVNFUiIsInN1YiI6IjFhNzJhMDVmLTRiOGYtNDNjNS1hODg5LTFlYmM2ZDlkYzcyOSIsImlhdCI6MTcwNTIzODgzNywiZXhwIjoxNzA1MzI1MjM3fQ.034lpy_Lx8XE8jXVJ7XGANw8DqX_oEwD0cmglmzngGgt9zG-v0SDv0n8kCPjSBnk
+
+###restoreById
+PATCH http://localhost:8082/customers/1a72a05f-4b8f-43c5-a889-1ebc6d9dc724
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiU1VQRVJfVVNFUiIsInN1YiI6IjFhNzJhMDVmLTRiOGYtNDNjNS1hODg5LTFlYmM2ZDlkYzcyOSIsImlhdCI6MTcwNTIzODgzNywiZXhwIjoxNzA1MzI1MjM3fQ.034lpy_Lx8XE8jXVJ7XGANw8DqX_oEwD0cmglmzngGgt9zG-v0SDv0n8kCPjSBnk
