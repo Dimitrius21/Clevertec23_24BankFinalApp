@@ -22,6 +22,7 @@ import ru.clevertec.exceptionhandler.exception.ResourceNotFountException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -30,7 +31,7 @@ import java.util.stream.Collectors;
 public class CardService {
 
     private static final String CURRENCY_NAME_BYN = "BYN";
-    public static final int NUMBER_FOR_CONVER_TO_RUBLE = 100;
+    public static final int NUMBER_FOR_CONVERT_TO_RUBLE = 100;
 
     private final CardRepository cardRepository;
     private final AccountRepository accountRepository;
@@ -43,7 +44,14 @@ public class CardService {
             throw new RequestBodyIncorrectException("Empty request from Rabbit for save card");
         }
         checkCardNumber(request.cardNumber());
-        Card card = cardMapper.toCard(request);
+        Card card;
+        Optional<Card> cardByCardNumber = cardRepository.findCardByCardNumber(request.cardNumber());
+        if (cardByCardNumber.isEmpty()) {
+            card = cardMapper.toCard(request);
+        } else {
+            card = cardByCardNumber.get();
+            cardMapper.updateFromRabbitDto(request, card);
+        }
         Account account = accountRepository.findByIban(request.iban()).orElseThrow(() ->
                 new ResourceNotFountException(String.format("Account with iban=%s not found", request.iban())));
         card.setAccount(account);
@@ -73,7 +81,7 @@ public class CardService {
     public CardResponseWithAmount findById(String id) {
         Card card = cardRepository.findWithAccountByCardNumber(id).orElseThrow(() ->
                 new ResourceNotFountException(String.format("Card with id=%s not found", id)));
-        BigDecimal amount = BigDecimal.valueOf(card.getAccount().getAmount() / NUMBER_FOR_CONVER_TO_RUBLE).setScale(2);
+        BigDecimal amount = BigDecimal.valueOf(card.getAccount().getAmount() / NUMBER_FOR_CONVERT_TO_RUBLE).setScale(2);
         List<Rate> exchangeRates  = currencyRateClient.getCurrent().getExchangeRates();
         List<Amount> amounts = exchangeRates.stream()
                 .filter(r -> CURRENCY_NAME_BYN.equals(r.getReqCurr()))
@@ -112,9 +120,9 @@ public class CardService {
     }
 
     public String remove(String id) {
-        Card card = cardRepository.findCardByCardNumber(id).orElseThrow(() ->
+        cardRepository.findCardByCardNumber(id).orElseThrow(() ->
                 new ResourceNotFountException(String.format("Card with id=%s not found", id)));
-        cardRepository.delete(card);
+        cardRepository.deleteById(id);
         return id;
     }
 }

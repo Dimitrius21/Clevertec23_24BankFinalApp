@@ -26,7 +26,7 @@ public class CardController {
     private final CardService cardService;
 
     @PostMapping
-    public ResponseEntity<CardResponse> create(@Valid @RequestBody CardRequest request){
+    public ResponseEntity<CardResponse> save(@Valid @RequestBody CardRequest request){
         return new ResponseEntity<>(cardService.save(request), HttpStatus.CREATED);
     }
 
@@ -53,7 +53,7 @@ public class CardController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable String id){
+    public ResponseEntity<String> deleteById(@PathVariable String id){
         return new ResponseEntity<>(cardService.remove(id), HttpStatus.OK);
     }
 }

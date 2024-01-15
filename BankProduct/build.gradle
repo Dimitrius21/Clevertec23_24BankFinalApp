@@ -39,6 +39,8 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
 
     annotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 compileJava {
@@ -53,4 +55,8 @@ dependencyManagement {
     imports {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion"
     }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
 }

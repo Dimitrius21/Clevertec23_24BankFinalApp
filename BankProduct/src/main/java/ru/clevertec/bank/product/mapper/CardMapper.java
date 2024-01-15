@@ -24,4 +24,7 @@ public interface CardMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateFromDto(CardUpdateRequest request, @MappingTarget Card card);
 
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateFromRabbitDto(CardRabbitPayloadRequest request, @MappingTarget Card card);
+
 }
