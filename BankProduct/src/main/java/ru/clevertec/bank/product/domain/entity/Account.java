@@ -1,8 +1,11 @@
 package ru.clevertec.bank.product.domain.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.id.IdentifierGenerator;
@@ -10,9 +13,11 @@ import ru.clevertec.bank.product.util.CustomerType;
 import ru.clevertec.bank.product.util.StringIdEmptyGenerator;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "accounts")
@@ -39,6 +44,10 @@ public class Account implements IdentifierGenerator {
     private CustomerType customerType;
     @Column(name = "rate")
     private double rate;
+
+    @OneToMany(mappedBy = "iban", fetch = FetchType.LAZY )
+    @BatchSize(size = 50)
+    private List<Card> cards;
 
     @Override
     public Object generate(SharedSessionContractImplementor session, Object object) {

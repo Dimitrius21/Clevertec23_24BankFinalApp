@@ -53,22 +53,3 @@ databaseChangeLog:
                   name: rate
                   type: double
                   constraints:
-                    nullable: false
-  - changeSet:
-      id: create_card
-      author: group1
-      changes:
-        - createTable:
-            tableName: cards
-            columns:
-              - column:
-                  name: id
-                  type: bigint
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: card_number
-                  type: VARCHAR(50)
-

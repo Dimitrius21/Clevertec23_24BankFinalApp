@@ -20,6 +20,7 @@ ext {
     openApiVersion = '2.1.0'
     mapstructVersion = '1.5.5.Final'
     testContainersVersion = '1.19.3'
+
 }
 
 dependencies {
@@ -32,7 +33,7 @@ dependencies {
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:$openApiVersion"
     implementation "org.mapstruct:mapstruct:$mapstructVersion"
 //	implementation 'org.springframework.cloud:spring-cloud-starter-config'
-	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+//	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
     //implementation project(':controller-logging-starter')
     implementation project(':exception-handling-starter')
@@ -41,8 +42,13 @@ dependencies {
 
     annotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
 
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    //https://mvnrepository.com/artifact/com.github.tomakehurst/wiremock-standalone
+    testImplementation 'com.github.tomakehurst:wiremock-standalone:3.0.0-beta-10'
     testImplementation "org.testcontainers:postgresql:$testContainersVersion"
+    testImplementation "org.testcontainers:testcontainers:$testContainersVersion"
+    testImplementation "org.testcontainers:junit-jupiter:$testContainersVersion"
+    testImplementation 'org.assertj:assertj-core:3.25.1'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 compileJava {
@@ -59,6 +65,7 @@ dependencyManagement {
     }
 }
 
-test {
+tasks.named('test') {
     useJUnitPlatform()
+    //ignoreFailures = true
 }

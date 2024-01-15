@@ -62,16 +62,16 @@ public class CacheHandler implements InvocationHandler {
 
     private Object createHandle(Object proxy, Method method, Object[] args) throws InvocationTargetException, IllegalAccessException {
         Object res = method.invoke(obj, args);
-        long id = getId(res);
+        Object id = getId(res);
         cache.put(id, res);
         return res;
     }
 
-    private long getId(Object obj) throws IllegalAccessException {
+    private Object getId(Object obj) throws IllegalAccessException {
         Field[] fields = obj.getClass().getDeclaredFields();
         Field fieldId = Arrays.stream(fields).filter(f -> f.isAnnotationPresent(Id.class)).findFirst().get();
         fieldId.setAccessible(true);
-        long id = fieldId.getLong(obj);
+        Object id = fieldId.get(obj);
         return id;
     }
 

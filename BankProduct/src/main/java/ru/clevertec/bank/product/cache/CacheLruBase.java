@@ -11,7 +11,7 @@ import java.util.Map;
  * @param <V> тип кэшируемой сущности
  */
 @Slf4j
-public class CacheLruBase<V> extends LinkedHashMap<Long, V> {
+public class CacheLruBase<V> extends LinkedHashMap<String, V> {
     private int maxCapacity;
 
     public CacheLruBase(int maxCapacity) {

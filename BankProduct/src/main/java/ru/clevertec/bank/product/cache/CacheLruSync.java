@@ -11,11 +11,11 @@ import java.util.Map;
  * @param <V> тип кэшируемой сущности
  */
 @Slf4j
-public class CacheLruSync<V> implements Cacheable<Long,V> {
+public class CacheLruSync<V> implements Cacheable<String,V> {
 
     private String entityRepo;
 
-    private Map<Long, V> cache;
+    private Map<String, V> cache;
 
     public CacheLruSync(String entityRepo, int maxCapacity) {
         cache = new CacheLruBase<>(maxCapacity);
@@ -25,7 +25,7 @@ public class CacheLruSync<V> implements Cacheable<Long,V> {
 
 
     @Override
-    public synchronized V put(Long key, V value) {
+    public synchronized V put(String key, V value) {
         return cache.put(key, value);
     }
 
