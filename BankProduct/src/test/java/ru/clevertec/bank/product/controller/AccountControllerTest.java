@@ -33,7 +33,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-//@WireMockTest(httpPort = 8090)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class AccountControllerTest {
 

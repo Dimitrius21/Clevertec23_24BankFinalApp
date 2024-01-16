@@ -5,9 +5,10 @@ import org.springframework.stereotype.Repository;
 import ru.clevertec.bank.currency.domain.entity.Rates;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Repository
 public interface CurrencyRateRepository extends JpaRepository<Rates, Long> {
-    Rates findFirstByStartBeforeOrderByStartDesc(LocalDateTime start);
+    Rates findFirstByStartBeforeOrderByStartDesc(ZonedDateTime start);
 
 }
