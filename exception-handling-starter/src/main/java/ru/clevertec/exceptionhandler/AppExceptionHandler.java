@@ -17,16 +17,15 @@ import ru.clevertec.exceptionhandler.exception.InternalServerErrorException;
 import ru.clevertec.exceptionhandler.exception.NotValidRequestParametersException;
 import ru.clevertec.exceptionhandler.exception.RequestBodyIncorrectException;
 import ru.clevertec.exceptionhandler.exception.ResourceNotFountException;
-import ru.clevertec.loggingstarter.annotation.Loggable;
+import ru.clevertec.loggingstarter.annotation.ExceptionLoggable;
 
 import java.util.List;
 import java.util.Objects;
 
-@Loggable
+@ExceptionLoggable
 @RestControllerAdvice
 @ConditionalOnMissingBean
 public class AppExceptionHandler {
-
 
     @ExceptionHandler(ResourceNotFountException.class)
     public ResponseEntity<ErrorInfo> handleEntityNotFoundEx(ResourceNotFountException exception) {
