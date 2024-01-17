@@ -1,6 +1,7 @@
 package ru.clevertec.bank.currency.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import ru.clevertec.loggingstarter.annotation.Loggable;
 
 import java.time.ZonedDateTime;
 
+@Slf4j
 @Loggable
 @RestController
 @RequestMapping("/rate")
@@ -35,6 +37,7 @@ public class CurrencyRateController implements CurrencyRateOpenAPI {
     @PostMapping
     public ResponseEntity<RatesOutDto> create(@RequestBody RatesInDto inDto) {
         RatesOutDto outDto = ratesService.createRates(inDto);
+        log.info("Data with rates has been saved id BD");
         return new ResponseEntity<>(outDto, HttpStatus.CREATED);
     }
 

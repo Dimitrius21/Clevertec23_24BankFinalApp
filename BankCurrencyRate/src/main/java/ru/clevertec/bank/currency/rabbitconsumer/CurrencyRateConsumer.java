@@ -18,7 +18,9 @@ public class CurrencyRateConsumer {
     @RabbitListener(queues = {"${rabbit.queue.rates}"})
     public void handleAccountMessage(String message) {
         try {
+            log.info("Get rates from RabbitMQ");
             service.saveRatesFromRabbit(message);
+            log.info("Data has been saved id BD");
         } catch (RequestBodyIncorrectException e) {
             log.error(e.getMessage());
         }

@@ -31,6 +31,8 @@ public interface CurrencyRateOpenAPI {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Successful operation",
                     content = {@Content(schema = @Schema(implementation = RatesOutDto.class), mediaType = "application/json")}),
+            @ApiResponse(responseCode = "400", description = "Incorrect input data",
+                    content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "500", description = "Inner server error",
                     content = {@Content(schema = @Schema())})})
     public ResponseEntity<RatesOutDto> getLastForTime(@PathVariable ZonedDateTime time);
@@ -43,6 +45,8 @@ public interface CurrencyRateOpenAPI {
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Successful operation",
                     content = {@Content(schema = @Schema(implementation = RatesOutDto.class), mediaType = "application/json")}),
+            @ApiResponse(responseCode = "400", description = "Incorrect input data",
+                    content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "500", description = "Inner server error",
                     content = {@Content(schema = @Schema())})})
     public ResponseEntity<RatesOutDto> create(@RequestBody RatesInDto inDto);
