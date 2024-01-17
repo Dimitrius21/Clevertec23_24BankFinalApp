@@ -1,4 +1,4 @@
-package ru.clevertec.bank.product.integration.service;
+package ru.clevertec.bank.product.integration;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.boot.test.context.SpringBootTest;

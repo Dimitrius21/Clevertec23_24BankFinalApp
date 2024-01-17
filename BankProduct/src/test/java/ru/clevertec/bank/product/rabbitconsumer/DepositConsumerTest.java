@@ -18,10 +18,8 @@ import ru.clevertec.bank.product.domain.dto.deposit.request.DepositRabbitInfoReq
 import ru.clevertec.bank.product.domain.dto.deposit.request.DepositRabbitPayloadRequest;
 import ru.clevertec.bank.product.service.DepositService;
 import ru.clevertec.bank.product.testutil.deposit.DepositRabbitPayloadRequestTestBuilder;
-import ru.clevertec.exceptionhandler.exception.ResourceNotFountException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 
@@ -58,20 +56,6 @@ class DepositConsumerTest {
 
         DepositRabbitPayloadRequest captorValue = captor.getValue();
         assertThat(captorValue).isEqualTo(request.payload());
-    }
-
-    @Test
-    @DisplayName("test onDepositMessage should throw ResourceNotFountException with expected message")
-    void testShouldThrowResourceNotFountException() {
-        String iban = "Not  valid json";
-        String expectedMessage = "Unrecognized token 'Not': was expecting (JSON String, Number, Array," +
-                                 " Object or token 'null', 'true' or 'false')\n at [Source: (String)\"Not  valid json\";" +
-                                 " line: 1, column: 4]";
-
-        Exception exception = assertThrows(ResourceNotFountException.class, () -> depositConsumer.onDepositMessage(iban));
-        String actualMessage = exception.getMessage();
-
-        assertThat(actualMessage).isEqualTo(expectedMessage);
     }
 
 }

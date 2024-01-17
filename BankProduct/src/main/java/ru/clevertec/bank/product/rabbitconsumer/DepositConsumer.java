@@ -9,7 +9,6 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import ru.clevertec.bank.product.domain.dto.deposit.request.DepositRabbitInfoRequest;
 import ru.clevertec.bank.product.service.DepositService;
-import ru.clevertec.exceptionhandler.exception.ResourceNotFountException;
 
 @Slf4j
 @Component
@@ -29,7 +28,6 @@ public class DepositConsumer {
             log.info("Request successfully saved in Postgresql");
         } catch (JsonProcessingException e) {
             log.error(e.getMessage());
-            throw new ResourceNotFountException(e.getMessage()); // TODO add better exception later
         }
     }
 
