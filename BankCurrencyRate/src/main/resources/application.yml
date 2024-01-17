@@ -4,7 +4,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/rates
     username: postgres
-    password: postgres
+    password: 1234
     driver: org.postgresql.Driver
   jpa:
     show-sql: true
@@ -28,10 +28,8 @@ aop:
     enabled: true
 rabbit:
   queue:
-    account: account
-    card: card
-    credit: credit
-    deposit: deposit
+    rates: rates
+
 server:
   port: 8083
 
@@ -41,8 +39,6 @@ spring:
   config:
     activate:
       on-profile: dev
-#  liquibase:
-#    contexts: dev
 
 ---
 

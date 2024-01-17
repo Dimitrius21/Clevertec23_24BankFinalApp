@@ -37,7 +37,7 @@ public class AccountInDto {
     private boolean mainAcc;
     @NotNull
     private UUID customerId;
-    @Pattern(regexp = "LEGAL|PHYSIC")
+    @NotNull
     private CustomerType customerType;
     @PositiveOrZero
     private double rate;

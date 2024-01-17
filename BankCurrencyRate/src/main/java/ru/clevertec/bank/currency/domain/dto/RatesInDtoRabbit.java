@@ -11,7 +11,6 @@ import java.util.Map;
 @Data
 @NoArgsConstructor
 public class RatesInDtoRabbit {
-    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
     private Map<String, String> header;
     private RatesInDto payload;
 }

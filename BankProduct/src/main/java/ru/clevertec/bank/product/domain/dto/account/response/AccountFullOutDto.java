@@ -3,6 +3,7 @@ package ru.clevertec.bank.product.domain.dto.account.response;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import ru.clevertec.bank.product.domain.entity.Card;
 import ru.clevertec.bank.product.util.CustomerType;
 

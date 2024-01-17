@@ -1,13 +1,15 @@
 package ru.clevertec.bank.currency.domain.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @Entity
 @Table(name = "rates")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Rate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
