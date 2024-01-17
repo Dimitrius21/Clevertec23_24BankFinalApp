@@ -15,11 +15,10 @@ import org.springframework.lang.NonNull;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import ru.clevertec.exceptionhandler.domain.ErrorIfo;
+import ru.clevertec.exceptionhandler.domain.ErrorInfo;
 import ru.clevertec.exceptionhandler.exception.AccessDeniedForRoleException;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 
 @Slf4j
 @Component
@@ -47,9 +46,9 @@ public class ExceptionFilter extends OncePerRequestFilter {
         response.setStatus(status);
         response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString());
         response.setCharacterEncoding("utf-8");
-        ErrorIfo errorIfo = new ErrorIfo(LocalDateTime.now(), status, e.getMessage(), null);
-        String responseMessage = objectMapper.writeValueAsString(errorIfo);
-        log.error(errorIfo.toString());
+        ErrorInfo errorInfo = new ErrorInfo(status, e.getMessage());
+        String responseMessage = objectMapper.writeValueAsString(errorInfo);
+        log.error(errorInfo.toString());
         response.getWriter().write(responseMessage);
     }
 

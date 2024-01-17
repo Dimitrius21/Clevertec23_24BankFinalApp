@@ -10,10 +10,12 @@ import ru.clevertec.bank.product.domain.dto.credit.request.CreateCreditDTO;
 import ru.clevertec.bank.product.domain.dto.credit.response.CreditResponseDTO;
 import ru.clevertec.bank.product.domain.dto.credit.request.UpdateCreditDTO;
 import ru.clevertec.bank.product.service.CreditService;
+import ru.clevertec.loggingstarter.annotation.Loggable;
 
 import java.util.List;
 import java.util.UUID;
 
+@Loggable
 @RestController
 @RequestMapping("/credits")
 @RequiredArgsConstructor

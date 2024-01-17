@@ -25,6 +25,9 @@ server:
 exception:
   custom-handler:
     enable: true
+aop:
+  logging:
+    enabled: true
 rabbit:
   exchange: bank
   queue:

@@ -10,10 +10,12 @@ import ru.clevertec.bank.product.domain.dto.account.response.AccountFullOutDto;
 import ru.clevertec.bank.product.domain.dto.account.request.AccountInDto;
 import ru.clevertec.bank.product.domain.dto.account.response.AccountOutDto;
 import ru.clevertec.bank.product.service.AccountService;
+import ru.clevertec.loggingstarter.annotation.Loggable;
 
 import java.util.List;
 import java.util.UUID;
 
+@Loggable
 @RestController
 @RequestMapping("/account")
 @RequiredArgsConstructor

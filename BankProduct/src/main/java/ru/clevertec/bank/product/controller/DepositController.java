@@ -21,7 +21,9 @@ import ru.clevertec.bank.product.domain.dto.deposit.request.DepositFilterRequest
 import ru.clevertec.bank.product.domain.dto.deposit.request.DepositInfoRequest;
 import ru.clevertec.bank.product.domain.dto.deposit.response.DepositInfoResponse;
 import ru.clevertec.bank.product.service.DepositService;
+import ru.clevertec.loggingstarter.annotation.Loggable;
 
+@Loggable
 @Validated
 @RestController
 @RequestMapping("/deposits")

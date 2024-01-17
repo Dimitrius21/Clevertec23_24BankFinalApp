@@ -7,9 +7,11 @@ import org.springframework.web.bind.annotation.*;
 import ru.clevertec.bank.currency.domain.dto.RatesInDto;
 import ru.clevertec.bank.currency.domain.dto.RatesOutDto;
 import ru.clevertec.bank.currency.service.CurrencyRateService;
+import ru.clevertec.loggingstarter.annotation.Loggable;
 
 import java.time.LocalDateTime;
 
+@Loggable
 @RestController
 @RequestMapping("/rate")
 @RequiredArgsConstructor

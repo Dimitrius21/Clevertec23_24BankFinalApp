@@ -21,7 +21,7 @@ import ru.clevertec.bank.customer.domain.dto.CustomerResponse;
 import ru.clevertec.bank.customer.domain.dto.CustomerUpdateRequest;
 import ru.clevertec.bank.customer.domain.dto.DeleteResponse;
 import ru.clevertec.bank.customer.validation.ValidLegalUnp;
-import ru.clevertec.exceptionhandler.domain.ErrorIfo;
+import ru.clevertec.exceptionhandler.domain.ErrorInfo;
 import ru.clevertec.exceptionhandler.domain.ValidationExceptionResponse;
 
 import java.util.UUID;
@@ -50,27 +50,24 @@ public interface CustomerControllerOpenApi {
                             """))),
             @ApiResponse(responseCode = "401", description = "Not Authenticated User",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorIfo.class), examples = @ExampleObject("""
+                            schema = @Schema(implementation = ErrorInfo.class), examples = @ExampleObject("""
                             {
-                              "time": "2024-01-14 16:04:39",
                               "errorCode": 401,
                               "errorMessage": "Full authentication is required to access this resource"
                             }
                             """))),
             @ApiResponse(responseCode = "403", description = "Access denied for User with this role",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorIfo.class), examples = @ExampleObject("""
+                            schema = @Schema(implementation = ErrorInfo.class), examples = @ExampleObject("""
                             {
-                              "time": "2024-01-14 16:06:44",
                               "errorCode": 403,
                               "errorMessage": "With a ROLE_USER, you can only view/update your customer"
                             }
                             """))),
             @ApiResponse(responseCode = "404", description = "No Customer with this id in database",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorIfo.class), examples = @ExampleObject("""
+                            schema = @Schema(implementation = ErrorInfo.class), examples = @ExampleObject("""
                             {
-                              "time": "2024-01-14 15:49:49",
                               "errorCode": 404,
                               "errorMessage": "Customer with id 1a72a05f-4b8f-43c5-a889-1ebc6d9dc111 is not found"
                             }
@@ -142,9 +139,8 @@ public interface CustomerControllerOpenApi {
                             """))),
             @ApiResponse(responseCode = "401", description = "Not Authenticated User",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorIfo.class), examples = @ExampleObject("""
+                            schema = @Schema(implementation = ErrorInfo.class), examples = @ExampleObject("""
                             {
-                              "time": "2024-01-14 16:04:39",
                               "errorCode": 401,
                               "errorMessage": "Full authentication is required to access this resource"
                             }
@@ -183,16 +179,15 @@ public interface CustomerControllerOpenApi {
                             """))),
             @ApiResponse(responseCode = "401", description = "Not Authenticated User",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorIfo.class), examples = @ExampleObject("""
+                            schema = @Schema(implementation = ErrorInfo.class), examples = @ExampleObject("""
                             {
-                              "time": "2024-01-14 16:04:39",
                               "errorCode": 401,
                               "errorMessage": "Full authentication is required to access this resource"
                             }
                             """))),
             @ApiResponse(responseCode = "409", description = "Validation error",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorIfo.class),
+                            schema = @Schema(implementation = ErrorInfo.class),
                             examples = @ExampleObject("""
                                     {
                                       "violations": [
@@ -234,27 +229,24 @@ public interface CustomerControllerOpenApi {
                             """))),
             @ApiResponse(responseCode = "401", description = "Not Authenticated User",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorIfo.class), examples = @ExampleObject("""
+                            schema = @Schema(implementation = ErrorInfo.class), examples = @ExampleObject("""
                             {
-                              "time": "2024-01-14 16:04:39",
                               "errorCode": 401,
                               "errorMessage": "Full authentication is required to access this resource"
                             }
                             """))),
             @ApiResponse(responseCode = "403", description = "Access denied for User with this role",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorIfo.class), examples = @ExampleObject("""
+                            schema = @Schema(implementation = ErrorInfo.class), examples = @ExampleObject("""
                             {
-                              "time": "2024-01-14 16:06:44",
                               "errorCode": 403,
                               "errorMessage": "With a ROLE_USER, you can only view/update your customer"
                             }
                             """))),
             @ApiResponse(responseCode = "404", description = "No Customer with this id in database",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorIfo.class), examples = @ExampleObject("""
+                            schema = @Schema(implementation = ErrorInfo.class), examples = @ExampleObject("""
                             {
-                              "time": "2024-01-14 15:49:49",
                               "errorCode": 404,
                               "errorMessage": "Customer with id 1a72a05f-4b8f-43c5-a889-1ebc6d9dc111 is not found"
                             }
@@ -288,18 +280,16 @@ public interface CustomerControllerOpenApi {
                             """))),
             @ApiResponse(responseCode = "401", description = "Not Authenticated User",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorIfo.class), examples = @ExampleObject("""
+                            schema = @Schema(implementation = ErrorInfo.class), examples = @ExampleObject("""
                             {
-                              "time": "2024-01-14 16:04:39",
                               "errorCode": 401,
                               "errorMessage": "Full authentication is required to access this resource"
                             }
                             """))),
             @ApiResponse(responseCode = "404", description = "No Customer with this id in database",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorIfo.class), examples = @ExampleObject("""
+                            schema = @Schema(implementation = ErrorInfo.class), examples = @ExampleObject("""
                             {
-                              "time": "2024-01-14 15:49:49",
                               "errorCode": 404,
                               "errorMessage": "Customer with id 1a72a05f-4b8f-43c5-a889-1ebc6d9dc111 is not found"
                             }
@@ -327,18 +317,16 @@ public interface CustomerControllerOpenApi {
                             """))),
             @ApiResponse(responseCode = "401", description = "Not Authenticated User",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorIfo.class), examples = @ExampleObject("""
+                            schema = @Schema(implementation = ErrorInfo.class), examples = @ExampleObject("""
                             {
-                              "time": "2024-01-14 16:04:39",
                               "errorCode": 401,
                               "errorMessage": "Full authentication is required to access this resource"
                             }
                             """))),
             @ApiResponse(responseCode = "404", description = "No Customer with this id in database",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorIfo.class), examples = @ExampleObject("""
+                            schema = @Schema(implementation = ErrorInfo.class), examples = @ExampleObject("""
                             {
-                              "time": "2024-01-14 15:49:49",
                               "errorCode": 404,
                               "errorMessage": "Customer with id 1a72a05f-4b8f-43c5-a889-1ebc6d9dc111 is not found"
                             }
