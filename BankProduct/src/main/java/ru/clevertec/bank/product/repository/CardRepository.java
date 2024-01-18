@@ -12,8 +12,6 @@ import java.util.UUID;
 @Repository
 public interface CardRepository extends JpaRepository<Card, String>, PagingAndSortingRepository<Card, String> {
 
-    Optional<Card> findCardByCardNumber(String cardNumber);
-
     Optional<Card> findByCustomerId(UUID uuid);
 
     @EntityGraph(attributePaths = {"account"})
