@@ -36,9 +36,7 @@ public class CardController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<CardResponse>> getAll(@RequestParam int page,
-                                                    @RequestParam int size){
-        Pageable pageable = PageRequest.of(page, size);
+    public ResponseEntity<Page<CardResponse>> getAll(Pageable pageable){
         return new ResponseEntity<>(cardService.findAll(pageable), HttpStatus.OK);
     }
 

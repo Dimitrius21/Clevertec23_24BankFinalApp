@@ -43,9 +43,8 @@ public class CardService {
         if (request == null) {
             throw new RequestBodyIncorrectException("Empty request from Rabbit for save card");
         }
-        checkCardNumber(request.cardNumber());
         Card card;
-        Optional<Card> cardByCardNumber = cardRepository.findCardByCardNumber(request.cardNumber());
+        Optional<Card> cardByCardNumber = cardRepository.findById(request.cardNumber());
         if (cardByCardNumber.isEmpty()) {
             card = cardMapper.toCard(request);
         } else {
@@ -73,7 +72,7 @@ public class CardService {
     }
 
     private void checkCardNumber(String cardNumber) {
-        if (cardRepository.findCardByCardNumber(cardNumber).isPresent()) {
+        if (cardRepository.findById(cardNumber).isPresent()) {
             throw new GeneralException(String.format("Card with number: %s is already exist", cardNumber));
         }
     }
@@ -109,7 +108,7 @@ public class CardService {
         if (request == null) {
             throw new RequestBodyIncorrectException("Empty request for update card");
         }
-        Card card = cardRepository.findCardByCardNumber(id).orElseThrow(() ->
+        Card card = cardRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFountException(String.format("Card with id=%s not found", id)));
         Account account = accountRepository.findById(request.iban()).orElseThrow(() ->
                 new ResourceNotFountException(String.format("Account with iban=%s not found", request.iban())));
@@ -120,7 +119,7 @@ public class CardService {
     }
 
     public String remove(String id) {
-        cardRepository.findCardByCardNumber(id).orElseThrow(() ->
+        cardRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFountException(String.format("Card with id=%s not found", id)));
         cardRepository.deleteById(id);
         return id;
