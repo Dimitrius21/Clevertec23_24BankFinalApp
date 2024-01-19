@@ -1,0 +1,9 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+#  liquibase:
+#    contexts: dev
+caching:
+  type: lfu
+  size: 5

@@ -1,84 +1,99 @@
 package ru.clevertec.bank.product.controller.openapi;
 
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
+import org.springdoc.core.converters.models.PageableAsQueryParam;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import ru.clevertec.bank.product.domain.dto.account.request.AccountInDto;
+import ru.clevertec.bank.product.domain.dto.account.response.AccountFullOutDto;
+import ru.clevertec.bank.product.domain.dto.account.response.AccountOutDto;
+import ru.clevertec.exceptionhandler.domain.ErrorInfo;
+
+import java.util.List;
+import java.util.UUID;
+
 public interface AccountOpenAPI {
-/*    @Operation(summary = "Find News by ID",
-            description = "Get a News object by specifying its id (without Comments).")
-    @Parameter(in = ParameterIn.PATH, name = "id", description = "News Id")
+    @Operation(summary = "Find Account by Iban",
+            description = "Get the date about Account by specifying Iban number.")
+    @Parameter(in = ParameterIn.PATH, name = "iban", description = "Iban number")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Successful operation",
-                    content = {@Content(schema = @Schema(implementation = NewsShortDto.class), mediaType = "application/json")}),
-            @ApiResponse(responseCode = "404", description = "Content hasn't found for submitted ID",  content = {@Content(schema = @Schema())}),
-            @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})})
-    public ResponseEntity<NewsShortDto> getNewsById(@PathVariable long id);
+                    content = {@Content(schema = @Schema(implementation = AccountOutDto.class), mediaType = "application/json")}),
+            @ApiResponse(responseCode = "404", description = "Content hasn't found for submitted ID",
+                    content = {@Content(schema = @Schema(implementation = ErrorInfo.class), mediaType = "application/json")}),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = {@Content(schema = @Schema())})})
+    public ResponseEntity<AccountOutDto> getById(@PathVariable String iban);
+
+    @Operation(summary = "Find Accounts of customer",
+            description = "Get a list of accounts for customer with specifying UUID.")
+    @Parameter(in = ParameterIn.PATH, name = "uuid", description = "uuid of customer")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Successful operation",
+                    content = {@Content(array = @ArraySchema(schema = @Schema(implementation = AccountOutDto.class)), mediaType = "application/json")}),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = {@Content(schema = @Schema())})})
+    public ResponseEntity<List<AccountOutDto>> getByCustomerId(@PathVariable UUID id);
 
 
-    @Operation(summary = "Find News by ID",
-            description = "Get a News object by specifying its id with Comments to it.")
-    @Parameter(in = ParameterIn.PATH, name = "id", description = "News Id")
+    @Operation(summary = "Get all account",
+            description = "Get the list of all accounts with linked cards)")
     @Parameter(name = "pageable", hidden = true)
     @PageableAsQueryParam
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Successful operation",
-                    content = {@Content(array = @ArraySchema(schema = @Schema(implementation = NewsFullDto.class)), mediaType = "application/json")}),
-            @ApiResponse(responseCode = "404", description = "Content hasn't found for submitted ID",  content = {@Content(schema = @Schema())}),
-            @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})})
-    public ResponseEntity<NewsFullDto> getNewsWithCommentsById(@PathVariable long id, Pageable pageable);
+                    content = {@Content(array = @ArraySchema(schema = @Schema(implementation = AccountFullOutDto.class)), mediaType = "application/json")}),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = {@Content(schema = @Schema())})})
+    public ResponseEntity<List<AccountFullOutDto>> getAll(Pageable pageable);
 
 
-    @Operation(summary = "Get all News",
-            description = "Get all News (without Comments)")
-    @Parameter(name = "pageable", hidden = true)
-    @PageableAsQueryParam
+    @Operation(summary = "Delete Account by Iban",
+            description = "Delete from DB the account with a specifying Iban number.")
+    @Parameter(in = ParameterIn.PATH, name = "iban", description = "Iban number")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Successful operation",
-                    content = {@Content(array = @ArraySchema(schema = @Schema(implementation = NewsShortDto.class)), mediaType = "application/json")}),
-            @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})})
-    public ResponseEntity<List<NewsShortDto>> getAllNews(Pageable pageable);
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = {@Content(schema = @Schema())})})
+    public void delete(@PathVariable String iban);
 
-
-    @Operation(summary = "Find News by value of its fields",
-            description = "Find News by value of required its fields ")
-    @Parameter(in = ParameterIn.QUERY, name = "field", required = true, description = "Name of News's field that take part in search (except ID)")
-    @Parameter(in = ParameterIn.QUERY, name = "value", required = true, description = "Value of above field that searching")
-    @Parameter(name = "pageable", hidden = true)
-    @PageableAsQueryParam
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Successful operation",
-                    content = {@Content(array = @ArraySchema(schema = @Schema(implementation = NewsShortDto.class)), mediaType = "application/json")}),
-            @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})})
-    public ResponseEntity<List<NewsShortDto>> getNewsBySearch(@RequestParam String[] field,
-                                                              @RequestParam String[] value,
-                                                              Pageable pageable);
-
-    @Operation(summary = "Delete News by ID",
-            description = "Delete a note about a News by specifying ID. ")
-    @Parameter(in = ParameterIn.PATH, name = "id", description = "Comment Id")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Successful operation", content = {@Content(schema = @Schema(implementation = Long.class), mediaType = "application/json")}),
-            @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})})
-    public ResponseEntity deleteNews(@PathVariable long id);
-
-    @Operation(summary = "Create(save) News",
-            description = "Create(save) submitted News.")
-    @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, description = "News for save",
-            content = {@Content(schema = @Schema(implementation = News.class), mediaType = "application/json")})
+    @Operation(summary = "Create(save) Account",
+            description = "Create(save) submitted Account.")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, description = "Account for save",
+            content = {@Content(schema = @Schema(implementation = AccountInDto.class), mediaType = "application/json")})
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Successful operation",
-                    content = {@Content(schema = @Schema(implementation = NewsShortDto.class), mediaType = "application/json")}),
-            @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})})
-    public ResponseEntity<NewsShortDto> createNews(@RequestBody News news);
+                    content = {@Content(schema = @Schema(implementation = AccountOutDto.class), mediaType = "application/json")}),
+            @ApiResponse(responseCode = "400", description = "Data in request body is not correct",
+                    content = {@Content(schema = @Schema(implementation = ErrorInfo.class), mediaType = "application/json")}),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = {@Content(schema = @Schema())})})
+    public ResponseEntity<AccountOutDto> create(@RequestBody @Valid AccountInDto dtoIn);
 
 
-    @Operation(summary = "Update News",
-            description = "Update News to submitted one.")
+    @Operation(summary = "Update Account",
+            description = "Update Account to submitted one (only possible fields).")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, description = "Comment for update",
-            content = {@Content(schema = @Schema(implementation = NewsShortDto.class), mediaType = "application/json")})
+            content = {@Content(schema = @Schema(implementation = AccountInDto.class), mediaType = "application/json")})
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Successful operation",
-                    content = {@Content(schema = @Schema(implementation = NewsShortDto.class), mediaType = "application/json")}),
-            @ApiResponse(responseCode = "404", description = "There's no News with submitted ID for update",
-                    content = {@Content(schema = @Schema())}),
-            @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})})
-    public ResponseEntity<NewsShortDto> updateNews(@RequestBody News news);*/
+                    content = {@Content(schema = @Schema(implementation = AccountOutDto.class), mediaType = "application/json")}),
+            @ApiResponse(responseCode = "400", description = "Data in request body is not correct",
+                    content = {@Content(schema = @Schema(implementation = ErrorInfo.class), mediaType = "application/json")}),
+            @ApiResponse(responseCode = "404", description = "There's no Account with submitted Iban for update",
+                    content = {@Content(schema = @Schema(implementation = ErrorInfo.class), mediaType = "application/json")}),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = {@Content(schema = @Schema())})})
+    public ResponseEntity<AccountOutDto> update(@RequestBody AccountInDto inDto);
 }

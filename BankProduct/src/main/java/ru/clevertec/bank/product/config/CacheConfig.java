@@ -35,7 +35,7 @@ public class CacheConfig {
         template.setConnectionFactory(connectionFactory);
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
-        template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+       // template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
         return template;
     }
 

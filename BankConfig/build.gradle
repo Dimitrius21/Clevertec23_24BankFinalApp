@@ -7,9 +7,15 @@ plugins {
 java {
     sourceCompatibility = targetCompatibility = '17'
 }
+version = '1.0'
 
 ext {
     springCloudVersion = '2022.0.4'
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
 }
 
 dependencies {

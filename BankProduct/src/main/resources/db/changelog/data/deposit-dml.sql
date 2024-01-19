@@ -1,6 +1,6 @@
 --liquibase formatted sql
 
---changeset Grigoryev_Pavel:2
+--changeset Grigoryev_Pavel:2 contextFilter:dev
 INSERT INTO deposits (acc_iban, customer_id, customer_type, acc_open_date, curr_amount, curr_amount_currency,
                       rate,
                       term_val, term_scale, exp_date, dep_type, auto_renew)

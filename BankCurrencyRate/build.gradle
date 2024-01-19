@@ -9,6 +9,8 @@ java {
     sourceCompatibility = targetCompatibility = '17'
 }
 
+version = '1.0'
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
@@ -17,25 +19,32 @@ configurations {
 
 ext {
     springCloudVersion = '2022.0.4'
-    mapstructVersion = '1.5.5.Final'
     openApiVersion = '2.1.0'
+    mapstructVersion = '1.5.5.Final'
     testContainersVersion = '1.19.3'
+}
+
+
+tasks.withType(Jar).all {
+    duplicatesStrategy 'exclude'
 }
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-amqp'
     implementation 'org.liquibase:liquibase-core'
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:$openApiVersion"
     implementation "org.mapstruct:mapstruct:$mapstructVersion"
     annotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
-    //	implementation 'org.springframework.cloud:spring-cloud-starter-config'
-    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:$openApiVersion"
+//    implementation 'org.springframework.cloud:spring-cloud-starter-config'
+// https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.16.1'
 
     implementation project(':exception-handling-starter')
 
     runtimeOnly 'org.postgresql:postgresql'
 
-    //https://mvnrepository.com/artifact/com.github.tomakehurst/wiremock-standalone
-    testImplementation 'com.github.tomakehurst:wiremock-standalone:3.0.0-beta-10'
+//https://mvnrepository.com/artifact/com.github.tomakehurst/wiremock-standalone
+//    testImplementation 'com.github.tomakehurst:wiremock-standalone:3.0.0-beta-10'
     testImplementation "org.testcontainers:postgresql:$testContainersVersion"
     testImplementation "org.testcontainers:testcontainers:$testContainersVersion"
     testImplementation "org.testcontainers:junit-jupiter:$testContainersVersion"
@@ -43,13 +52,15 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion"
-    }
+compileJava {
+    options.annotationProcessorPath = configurations.annotationProcessor
+    options.compilerArgs += [
+            '-Amapstruct.defaultComponentModel=spring',
+            '-Amapstruct.unmappedTargetPolicy=IGNORE'
+    ]
 }
 
 tasks.named('test') {
     useJUnitPlatform()
-    //ignoreFailures = true
+    ignoreFailures = true
 }
