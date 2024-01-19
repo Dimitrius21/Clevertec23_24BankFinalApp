@@ -18,7 +18,7 @@ configurations {
 }
 
 ext {
-    springCloudVersion = '2022.0.4'
+    springCloudVersion = '4.0.4'
     openApiVersion = '2.1.0'
     mapstructVersion = '1.5.5.Final'
     testContainersVersion = '1.19.3'
@@ -35,7 +35,7 @@ dependencies {
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:$openApiVersion"
     implementation "org.mapstruct:mapstruct:$mapstructVersion"
     annotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
-//    implementation 'org.springframework.cloud:spring-cloud-starter-config'
+    implementation "org.springframework.cloud:spring-cloud-starter-config:$springCloudVersion"
 // https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.16.1'
 

@@ -1,0 +1,52 @@
+version: '3.5'
+services:
+    db:
+      image: postgres:alpine
+      restart: always
+      environment:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: '1234'
+        POSTGRES_DB: rates
+      ports:
+        - "5432:5432"
+      volumes: 
+        - db:/var/lib/postgresql/data
+    rabbitmq:
+      container_name: rabbitmq
+      image: rabbitmq:management-alpine
+      hostname: app-rabbitmq
+      ports:
+        - 5672:5672
+        - 15672:15672
+      volumes:
+        - ./init_r/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+        - ./init_r/definitions.json:/etc/rabbitmq/definitions.json:ro
+
+    config-server:
+      build:
+        context: ./BankConfig
+      container_name: config-server
+      restart: always
+      ports:
+        - "8888:8888"
+
+    rates:
+      build:
+        dockerfile: DockerfileR
+      container_name: rates-server
+      restart: always
+      environment:
+        SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/rates
+        CONFIGHOST: http://config-server:8888
+        RABBIT-HOST : rabbitmq
+        ACTIVE: dev
+      ports:
+        - "8083:8083"
+      depends_on:
+        - db
+        - rabbitmq
+
+volumes:
+  db:
+
+

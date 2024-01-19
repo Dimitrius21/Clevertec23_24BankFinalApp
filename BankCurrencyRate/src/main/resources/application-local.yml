@@ -1,6 +1,6 @@
 spring:
   application:
-    name: rates_service
+    name: rates
   datasource:
     url: jdbc:postgresql://localhost:5432/rates
     username: postgres
@@ -32,13 +32,6 @@ rabbit:
 
 server:
   port: 8083
-
----
-
-spring:
-  config:
-    activate:
-      on-profile: dev
 
 ---
 
