@@ -44,7 +44,7 @@ public class CashingBeanPostProcessor implements BeanPostProcessor {
                 Cacheable cacheable = cacheBeanFactory.apply(beanName);
                 CacheHandler handler = new CacheHandler((JpaRepository) bean, cacheable);
                 Object proxyRepo = Proxy.newProxyInstance(bean.getClass().getClassLoader(), interfaces, handler);
-                log.info("Class {} has AppRepositoryInterface, Cache type - {}", bean.getClass().getName(), cacheable.getClass().getSimpleName());
+                log.debug("Class {} has AppRepositoryInterface, Cache type - {}", bean.getClass().getName(), cacheable.getClass().getSimpleName());
                 return proxyRepo;
             }
         }

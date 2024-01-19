@@ -47,11 +47,13 @@ public class CacheHandler implements InvocationHandler {
             return Optional.of(entity);
         } else {
             Optional<?> optionalEntity = (Optional<?>) method.invoke(obj, args);
-            if (optionalEntity.isPresent()) {
+/*            if (optionalEntity.isPresent()) {
                 cache.put(args[0], optionalEntity.get());
-            }
+            }*/
+            optionalEntity.ifPresent(v -> cache.put(args[0], v));
             return optionalEntity;
         }
+
     }
 
     private Object deleteByIdHandle(Object proxy, Method method, Object[] args) throws InvocationTargetException, IllegalAccessException {

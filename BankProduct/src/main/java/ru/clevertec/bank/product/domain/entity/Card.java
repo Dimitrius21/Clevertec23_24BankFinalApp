@@ -42,6 +42,7 @@ public class Card implements IdentifierGenerator {
     private CardStatus cardStatus;
 
     @JsonIgnore
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "iban")
     private Account account;
