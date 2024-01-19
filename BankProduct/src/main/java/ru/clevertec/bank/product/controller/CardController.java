@@ -3,7 +3,6 @@ package ru.clevertec.bank.product.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,32 +25,32 @@ public class CardController {
     private final CardService cardService;
 
     @PostMapping
-    public ResponseEntity<CardResponse> save(@Valid @RequestBody CardRequest request){
+    public ResponseEntity<CardResponse> save(@Valid @RequestBody CardRequest request) {
         return new ResponseEntity<>(cardService.save(request), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CardResponseWithAmount> getById(@PathVariable String id){
+    public ResponseEntity<CardResponseWithAmount> getById(@PathVariable String id) {
         return new ResponseEntity<>(cardService.findById(id), HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<Page<CardResponse>> getAll(Pageable pageable){
+    public ResponseEntity<Page<CardResponse>> getAll(Pageable pageable) {
         return new ResponseEntity<>(cardService.findAll(pageable), HttpStatus.OK);
     }
 
     @GetMapping("/client/{id}")
-    public ResponseEntity<CardResponse> getByClientId(@PathVariable UUID id){
+    public ResponseEntity<CardResponse> getByClientId(@PathVariable UUID id) {
         return new ResponseEntity<>(cardService.findByCustomerId(id), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CardResponse> update(@PathVariable String id, @RequestBody @Valid CardUpdateRequest request){
+    public ResponseEntity<CardResponse> update(@PathVariable String id, @RequestBody @Valid CardUpdateRequest request) {
         return new ResponseEntity<>(cardService.update(id, request), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteById(@PathVariable String id){
+    public ResponseEntity<String> deleteById(@PathVariable String id) {
         return new ResponseEntity<>(cardService.remove(id), HttpStatus.OK);
     }
 }

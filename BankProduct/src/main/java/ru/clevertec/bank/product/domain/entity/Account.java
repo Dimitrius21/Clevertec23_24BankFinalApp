@@ -1,7 +1,6 @@
 package ru.clevertec.bank.product.domain.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,7 +10,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.id.IdentifierGenerator;
 import ru.clevertec.bank.product.util.CustomerType;
-import ru.clevertec.bank.product.util.StringIdEmptyGenerator;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -47,7 +45,7 @@ public class Account implements IdentifierGenerator {
     private double rate;
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY )
+    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
     @BatchSize(size = 50)
     private List<Card> cards;
 

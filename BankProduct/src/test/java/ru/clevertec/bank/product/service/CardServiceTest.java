@@ -1,5 +1,7 @@
 package ru.clevertec.bank.product.service;
 
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -7,10 +9,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.web.servlet.MockMvc;
 import ru.clevertec.bank.product.client.CurrencyRateClient;
 import ru.clevertec.bank.product.domain.dto.card.request.CardRabbitPayloadRequest;
 import ru.clevertec.bank.product.domain.dto.card.request.CardRequest;
@@ -91,6 +95,9 @@ public class CardServiceTest {
                 new Amount(BigDecimal.valueOf(2000l), "BYN"));
         cardResponseWithAmount = new CardResponseWithAmount(cardNumber, iban, uuid, CustomerType.LEGAL, cardholder, CardStatus.NEW, null);
         cardUpdateRequest = new CardUpdateRequest(iban, "LEGAL", "NEW");
+        RateFeign rateFeign = new RateFeign(1l, LocalDateTime.of(2023, 12, 22, 13, 55),
+                List.of(new Rate(1l, 3.33d, 3.43d, "EUR", "BYN"),
+                        new Rate(1l, 3.05d, 3.15d, "USD", "BYN")));
     }
 
     @Test
