@@ -55,9 +55,9 @@ services:
       restart: always
       environment:
         SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/customer
-        #          CONFIGHOST: http://config-server:8888
+        CONFIGHOST: http://config-server:8888
         RABBIT-HOST: rabbitmq
-        ACTIVE: dev
+        ACTIVE: prod
       ports:
         - "8082:8082"
       depends_on:
