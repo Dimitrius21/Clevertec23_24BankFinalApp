@@ -1,6 +1,7 @@
 ###findByIban
 GET http://localhost:8081/deposits/FR7630001007941234567890185
 Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiQURNSU5JU1RSQVRPUiIsInN1YiI6IjFhNzJhMDVmLTRiOGYtNDNjNS1hODg5LTFlYmM2ZDlkYzcyOSIsImlhdCI6MTcwNTgzMjk4NiwiZXhwIjoxNzA1OTE5Mzg2fQ.T6BvB0HbeBtdAiZSbxRlTQARFgeiHod4xAYocNhV3bypBCliQ0y3EQ-IsDyBKuv8
 
 ###findAll
 GET http://localhost:8081/deposits?page=0&size=2&sort=depInfo.expDate
@@ -45,3 +46,4 @@ Content-Type: application/json
 ###deleteByIban
 DELETE http://localhost:8081/deposits/FR7630001007941234567890185
 Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiQURNSU5JU1RSQVRPUiIsInN1YiI6IjFhNzJhMDVmLTRiOGYtNDNjNS1hODg5LTFlYmM2ZDlkYzcyOSIsImlhdCI6MTcwNTgzMjk4NiwiZXhwIjoxNzA1OTE5Mzg2fQ.T6BvB0HbeBtdAiZSbxRlTQARFgeiHod4xAYocNhV3bypBCliQ0y3EQ-IsDyBKuv8

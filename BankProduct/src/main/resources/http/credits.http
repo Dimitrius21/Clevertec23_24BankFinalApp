@@ -26,7 +26,8 @@ Content-Type: application/json
 }
 
 ###findAllByCustomerId
-GET http://localhost:8081/credits/customers/1a72a05f-4b8f-43c5-a889-1ebc6d9dc729
+GET http://localhost:8081/credits/customers/1a72a05f-4b8f-43c5-a889-1ebc6d9dc728
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6IjFhNzJhMDVmLTRiOGYtNDNjNS1hODg5LTFlYmM2ZDlkYzcyOSIsImlhdCI6MTcwNTg0Mjg3OSwiZXhwIjoxNzA1OTI5Mjc5fQ.djvw3_f2I253dm3sNaIr8_trcs6OUPpoRqFkH516g6C94_yOj3kbhsYZFi7-7ToK
 
 ###deleteById
 DELETE http://localhost:8081/credits/11-0216444-2-0
