@@ -36,6 +36,15 @@
             }
         },
       {
+        "name": "customer",
+        "vhost": "/",
+        "durable": true,
+        "auto_delete": false,
+        "arguments": {
+          "x-queue-type": "classic"
+        }
+      },
+      {
         "name": "account",
         "vhost": "/",
         "durable": true,
@@ -92,6 +101,14 @@
             "routing_key": "rates",
             "arguments": {}
         },
+      {
+        "source": "bank_exchange",
+        "vhost": "/",
+        "destination": "customer",
+        "destination_type": "queue",
+        "routing_key": "customer",
+        "arguments": {}
+      },
       {
         "source": "bank_exchange",
         "vhost": "/",

@@ -6,11 +6,13 @@ services:
       environment:
         POSTGRES_USER: postgres
         POSTGRES_PASSWORD: '1234'
-        POSTGRES_DB: rates
+        POSTGRES_MULTIPLE_DATABASES: customer, bank, rates
       ports:
         - "5432:5432"
-      volumes: 
+      volumes:
+        - ./bd_bases:/docker-entrypoint-initdb.d
         - db:/var/lib/postgresql/data
+
     rabbitmq:
       container_name: rabbitmq
       image: rabbitmq:management-alpine
@@ -45,6 +47,22 @@ services:
       depends_on:
         - db
         - rabbitmq
+
+    customer:
+      build:
+        dockerfile: DockerfileC
+      container_name: customer-server
+      restart: always
+      environment:
+        SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/customer
+        #          CONFIGHOST: http://config-server:8888
+        RABBIT-HOST: rabbitmq
+        ACTIVE: dev
+      ports:
+        - "8082:8082"
+      depends_on:
+        - db
+
 
 volumes:
   db:
