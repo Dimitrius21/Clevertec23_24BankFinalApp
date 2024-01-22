@@ -40,8 +40,8 @@ public class CreditController {
     }
 
     @PostMapping
-    public CreditResponseDTO save(@RequestBody CreateCreditDTO dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(creditService.save(dto)).getBody();
+    public ResponseEntity<CreditResponseDTO> save(@RequestBody CreateCreditDTO dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(creditService.save(dto));
     }
 
     @PutMapping("/{contractNumber}")
