@@ -3,50 +3,50 @@ package ru.clevertec.bank.product.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import ru.clevertec.exceptionhandler.exception.RequestBodyIncorrectException;
-import ru.clevertec.exceptionhandler.exception.ResourceNotFountException;
 import ru.clevertec.bank.product.util.CachedBodyHttpServletRequest;
 import ru.clevertec.exceptionhandler.domain.ErrorInfo;
+import ru.clevertec.exceptionhandler.exception.ResourceNotFountException;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 
-/**
- * Фильтр http-запроса подключающий оболочку(кэширование) для httpServletRequest
- */
-@Order(value = Ordered.HIGHEST_PRECEDENCE)
+@Slf4j
 @Component
-@AllArgsConstructor
-@WebFilter(filterName = "CachingRequestBodyFilter", urlPatterns = "/*")
+@RequiredArgsConstructor
 public class CachingRequestBodyFilter extends OncePerRequestFilter {
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(@NonNull HttpServletRequest httpServletRequest,
+                                    @NonNull HttpServletResponse httpServletResponse,
+                                    @NonNull FilterChain filterChain) throws ServletException, IOException {
         CachedBodyHttpServletRequest cachedBodyHttpServletRequest = new CachedBodyHttpServletRequest(httpServletRequest);
         try {
             filterChain.doFilter(cachedBodyHttpServletRequest, httpServletResponse);
-        } catch (RequestBodyIncorrectException | ResourceNotFountException ex) {
-/*            ErrorIfo err = new ErrorIfo(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);
-            String responseBody = objectMapper.writeValueAsString(err);
-            httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
-            httpServletResponse.setContentType("application/json");
-            httpServletResponse.getWriter().write(responseBody);*/
+        } catch (ResourceNotFountException e) {
+            handleException(httpServletResponse, e);
         }
     }
+
+    public void handleException(HttpServletResponse response, Exception e) throws IOException {
+        int status = HttpStatus.NOT_FOUND.value();
+        response.setStatus(status);
+        response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString());
+        response.setCharacterEncoding("utf-8");
+        ErrorInfo errorInfo = new ErrorInfo(status, e.getMessage());
+        String responseMessage = objectMapper.writeValueAsString(errorInfo);
+        log.error(errorInfo.toString());
+        response.getWriter().write(responseMessage);
+    }
+
 }
-
-
-

@@ -8,31 +8,29 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.stereotype.Component;
 import ru.clevertec.bank.product.domain.dto.account.request.AccountInDto;
+import ru.clevertec.bank.product.domain.dto.deposit.request.DepositInfoRequest;
 import ru.clevertec.bank.product.util.ParseRequest;
 import ru.clevertec.exceptionhandler.exception.RequestBodyIncorrectException;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class CheckCustomerForUpdate implements CheckUserInRequest {
+public class CheckCustomerForCreate implements CheckUserInRequest {
 
     private final ObjectMapper objectMapper;
-    private final Map<String, GetUuid> uuidGetters;
     private static final AuthorizationDecision CONFIRM_DECISION = new AuthorizationDecision(true);
     private static final AuthorizationDecision REJECT_DECISION = new AuthorizationDecision(false);
 
     public AuthorizationDecision check(String username, HttpServletRequest request) {
-        String entityId = ParseRequest.getLastSubString(request);
         try {
             String body = new String(request.getInputStream().readAllBytes());
             String entity = ParseRequest.getEntityName(request);
             objectMapper.enable(JsonParser.Feature.STRICT_DUPLICATE_DETECTION);
             UUID uuidForRequest = switch (entity) {
                 case "account" -> objectMapper.readValue(body, AccountInDto.class).getCustomerId();
-                case "deposits" -> uuidGetters.get("getUuidInDeposit").get(entityId);
+                case "deposits" -> UUID.fromString(objectMapper.readValue(body, DepositInfoRequest.class).customerId());
                 default -> throw new RequestBodyIncorrectException("Unexpected value: " + entity);
             };
             if (username.equals(uuidForRequest.toString())) {

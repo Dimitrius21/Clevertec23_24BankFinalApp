@@ -10,6 +10,4 @@ public interface CreditRepository extends JpaRepository<Credit, String> {
 
     List<Credit> findAllByCustomerId(UUID customerId);
 
-    boolean existsByCustomerId(UUID id);
-
 }

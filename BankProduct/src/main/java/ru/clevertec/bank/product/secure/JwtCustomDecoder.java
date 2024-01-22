@@ -1,27 +1,24 @@
 package ru.clevertec.bank.product.secure;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwsHeader;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jwt.BadJwtException;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtException;
-import ru.clevertec.bank.product.service.JwtService;
 
 import javax.crypto.SecretKey;
 import java.time.Instant;
 
-/**
- * Класс с декодером полученного Jwt-Token
- */
-
 public class JwtCustomDecoder implements JwtDecoder {
-/*    @Value("${jwt.secret}")
-    private String secret;*/
 
     @Value("${jwt.secretKey}")
     private String secretKey;
@@ -29,19 +26,15 @@ public class JwtCustomDecoder implements JwtDecoder {
     @Override
     public Jwt decode(String token) throws JwtException {
         try {
-            JwtParser parser = Jwts.parser()
+            Jws<Claims> claimsJws = Jwts.parser()
                     .verifyWith(getSigningKey())
-                    .build();
-            io.jsonwebtoken.Jwt<?, ?> parsedToken = parser.parse(token);
-
-            Header header = parsedToken.getHeader();
-            Claims claimsBody = (Claims) parsedToken.getPayload();
-            Header claimsHeader = parsedToken.getHeader();
+                    .build()
+                    .parseSignedClaims(token);
+            JwsHeader header = claimsJws.getHeader();
+            Claims claimsBody = claimsJws.getPayload();
             Instant expiration = claimsBody.getExpiration().toInstant();
             Instant issuedAt = claimsBody.getIssuedAt().toInstant();
-
-            Jwt jwt = new Jwt(token, issuedAt, expiration, header, claimsBody);
-            return jwt;
+            return new Jwt(token, issuedAt, expiration, header, claimsBody);
         } catch (ExpiredJwtException | MalformedJwtException | SignatureException ex) {
             throw new BadJwtException("Presented token isn't valid");
         }
@@ -51,4 +44,5 @@ public class JwtCustomDecoder implements JwtDecoder {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
+
 }

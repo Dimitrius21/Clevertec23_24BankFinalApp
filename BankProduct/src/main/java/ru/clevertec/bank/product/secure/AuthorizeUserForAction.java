@@ -2,6 +2,7 @@ package ru.clevertec.bank.product.secure;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.core.Authentication;
@@ -10,12 +11,9 @@ import org.springframework.security.web.access.intercept.RequestAuthorizationCon
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
-/**
- * Класс для проверки прав идентифицированного пользователя на действия для полученного запроса
- */
 @AllArgsConstructor
 public final class AuthorizeUserForAction implements AuthorizationManager<RequestAuthorizationContext> {
 
@@ -26,9 +24,14 @@ public final class AuthorizeUserForAction implements AuthorizationManager<Reques
 
     @Override
     public AuthorizationDecision check(Supplier<Authentication> authentication, RequestAuthorizationContext object) {
+        HttpServletRequest request = object.getRequest();
+        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (Objects.isNull(authHeader) || !authHeader.startsWith("Bearer ")) {
+            return REJECT_DECISION;
+        }
         Authentication auth = authentication.get();
         Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();
-        List<String> authoritiesAsString = authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
+        List<String> authoritiesAsString = authorities.stream().map(GrantedAuthority::getAuthority).toList();
         if (!auth.isAuthenticated()) {
             return REJECT_DECISION;
         }
@@ -36,11 +39,7 @@ public final class AuthorizeUserForAction implements AuthorizationManager<Reques
             return CONFIRM_DECISION;
         }
         HttpServletRequest req = object.getRequest();
-/*        String correspondedRoleForRequestEntity = ParseRequest.getCorrespondedRole(req);
-        //Check the role in the request for an action with the correspondent entity
-        if (!authoritiesAsString.contains(correspondedRoleForRequestEntity)) {
-            return REJECT_DECISION;
-        }*/
         return checkUser.check(auth.getName(), req);
     }
+
 }

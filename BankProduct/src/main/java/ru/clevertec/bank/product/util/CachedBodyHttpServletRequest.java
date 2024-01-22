@@ -4,6 +4,7 @@ import jakarta.servlet.ReadListener;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
+import ru.clevertec.exceptionhandler.exception.InternalServerErrorException;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -11,12 +12,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-/**
- * Класс создающий оболочку для HttpServletRequest для возможности многократного чтения тела запроса
- */
 public class CachedBodyHttpServletRequest extends HttpServletRequestWrapper {
 
-    private byte[] cachedBody;
+    private final byte[] cachedBody;
 
     public CachedBodyHttpServletRequest(HttpServletRequest request) throws IOException {
         super(request);
@@ -25,19 +23,19 @@ public class CachedBodyHttpServletRequest extends HttpServletRequestWrapper {
     }
 
     @Override
-    public BufferedReader getReader() throws IOException {
+    public BufferedReader getReader() {
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(cachedBody);
         return new BufferedReader(new InputStreamReader(byteArrayInputStream));
     }
 
     @Override
-    public ServletInputStream getInputStream() throws IOException {
+    public ServletInputStream getInputStream() {
         return new CachedBodyServletInputStream(cachedBody);
     }
 
-    class CachedBodyServletInputStream extends ServletInputStream {
+    static class CachedBodyServletInputStream extends ServletInputStream {
 
-        private InputStream cachedBodyInputStream;
+        private final InputStream cachedBodyInputStream;
 
         public CachedBodyServletInputStream(byte[] cachedBody) {
             this.cachedBodyInputStream = new ByteArrayInputStream(cachedBody);
@@ -53,7 +51,7 @@ public class CachedBodyHttpServletRequest extends HttpServletRequestWrapper {
             try {
                 return cachedBodyInputStream.available() == 0;
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new InternalServerErrorException(e.getMessage());
             }
         }
 
@@ -66,5 +64,7 @@ public class CachedBodyHttpServletRequest extends HttpServletRequestWrapper {
         public void setReadListener(ReadListener listener) {
             throw new UnsupportedOperationException();
         }
+
     }
+
 }

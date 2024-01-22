@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.clevertec.bank.customer.service.CustomerService;
 import ru.clevertec.bank.customer.service.JwtService;
+import ru.clevertec.bank.customer.util.Role;
 import ru.clevertec.exceptionhandler.exception.AccessDeniedForRoleException;
 
 import java.io.IOException;
@@ -47,11 +48,11 @@ public class JwtFilter extends OncePerRequestFilter {
             String requestURI = request.getRequestURI();
             if (("GET".equals(method) || "PUT".equals(method)) && requestURI.matches("^/customers/.+$")) {
                 UUID requestId = UUID.fromString(requestURI.substring(11));
-                if (role.equals("USER") && !requestId.equals(id)) {
-                    throw new AccessDeniedForRoleException("With a %s role, you can only view/update your customer".formatted(role));
+                if (role.equals(Role.USER.getName()) && !requestId.equals(id)) {
+                    throw new AccessDeniedForRoleException("With a %s, you can only view/update your customer".formatted(role));
                 }
             }
-            User user = new User(id.toString(), "", List.of(new SimpleGrantedAuthority("ROLE_%s".formatted(role))));
+            User user = new User(id.toString(), "", List.of(new SimpleGrantedAuthority(role)));
             UsernamePasswordAuthenticationToken authenticationToken =
                     new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
