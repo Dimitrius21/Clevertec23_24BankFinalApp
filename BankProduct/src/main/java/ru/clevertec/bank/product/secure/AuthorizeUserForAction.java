@@ -19,6 +19,7 @@ public final class AuthorizeUserForAction implements AuthorizationManager<Reques
 
     private static final AuthorizationDecision CONFIRM_DECISION = new AuthorizationDecision(true);
     private static final AuthorizationDecision REJECT_DECISION = new AuthorizationDecision(false);
+    private static final String ADMINISTRATOR = "ROLE_ADMINISTRATOR";
 
     private CheckUserInRequest checkUser;
 
@@ -30,16 +31,15 @@ public final class AuthorizeUserForAction implements AuthorizationManager<Reques
             return REJECT_DECISION;
         }
         Authentication auth = authentication.get();
-        Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();
-        List<String> authoritiesAsString = authorities.stream().map(GrantedAuthority::getAuthority).toList();
         if (!auth.isAuthenticated()) {
             return REJECT_DECISION;
         }
-        if (authoritiesAsString.contains("ROLE_ADMINISTRATOR")) {
+        Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();
+        List<String> authoritiesAsString = authorities.stream().map(GrantedAuthority::getAuthority).toList();
+        if (authoritiesAsString.contains(ADMINISTRATOR)) {
             return CONFIRM_DECISION;
         }
-        HttpServletRequest req = object.getRequest();
-        return checkUser.check(auth.getName(), req);
+        return checkUser.check(auth.getName(), request);
     }
 
 }

@@ -37,17 +37,11 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/account/{iban}", "/cards/{id}", "/credits/{contractNumber}", "deposits/{iban}")
                         .hasRole(Role.SUPER_USER.name())
 
-                        .requestMatchers(HttpMethod.POST, "/cards", "/credits")
-                        .hasRole(Role.ADMINISTRATOR.name())
-
-                        .requestMatchers(HttpMethod.POST, "/account", "/deposits")
+                        .requestMatchers(HttpMethod.POST, "/cards", "/credits", "/account", "/deposits")
                         .access(new AuthorizeUserForAction(authorizationCheckers.get("checkCustomerForCreate")))
 
-                        .requestMatchers(HttpMethod.PUT, "/account", "/deposits/{iban}")
+                        .requestMatchers(HttpMethod.PUT, "/account", "/deposits/{iban}", "/cards/{id}", "/credits/{contractNumber}" )
                         .access(new AuthorizeUserForAction(authorizationCheckers.get("checkCustomerForUpdate")))
-
-                        .requestMatchers(HttpMethod.PUT, "/cards/{id}", "/credits/{contractNumber}")
-                        .hasRole(Role.ADMINISTRATOR.name())
 
                         .requestMatchers(HttpMethod.GET, "/account", "/cards", "/credits", "/deposits",
                                 "/account/customer/{id}", "/cards/client/{id}", "/credits/customers/{id}", "/deposits/filter")
