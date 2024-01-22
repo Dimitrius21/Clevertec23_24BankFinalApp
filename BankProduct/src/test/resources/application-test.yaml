@@ -1,7 +1,9 @@
 spring:
+  config:
+    import: "optional:configserver:${confighost}"
   datasource:
-    username: postgres
-    password: 1234
+    username: test
+    password: test
   jpa:
     hibernate:
       ddl-auto: none

@@ -1,5 +1,5 @@
 databaseChangeLog:
   - include:
-#      file: db/changelog/test-deposit-ddl.sql
+      file: db/changelog/test-credit-ddl.sql
   - include:
-#      file: db/changelog/test-deposit-dml.sql
+      file: db/changelog/data/test-credit-dml.sql
