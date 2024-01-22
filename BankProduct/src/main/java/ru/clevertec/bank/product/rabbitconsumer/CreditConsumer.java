@@ -18,20 +18,16 @@ public class CreditConsumer {
     private final CreditService creditService;
     private final ObjectMapper objectMapper;
 
-    @RabbitListener(queues = {"#{'${rabbit.queue.credit}'}"})
-    public void getAccountMessage(String message){
+    @RabbitListener(queues = {"${rabbit.queue.credit}"})
+    public void handleAccountMessage(String message) {
         try {
             ObjectWriter prettyPrinter = objectMapper.writerWithDefaultPrettyPrinter();
             CreditRabbitRequestDTO request = objectMapper.readValue(message, CreditRabbitRequestDTO.class);
             log.info("Received request from RabbitMQ:\n{}", prettyPrinter.writeValueAsString(request));
-            creditService.save(request.getPayload());
-            log.info("Request successfully saved");
+            creditService.saveCreditFromRabbit(message);
+            log.info("Request successfully saved in Postgresql");
         } catch (JsonProcessingException e) {
             log.error(e.getMessage());
-        } catch (Throwable t) {
-            log.error(t.getMessage());
         }
     }
-
-
 }

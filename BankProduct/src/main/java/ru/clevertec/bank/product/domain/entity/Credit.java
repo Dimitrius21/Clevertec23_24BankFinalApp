@@ -11,22 +11,20 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
-@Getter
-@Setter
-@ToString
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "credits")
 public class Credit implements IdentifierGenerator {
-
-    @Column(name = "customer_id")
-    private UUID customerId;
 
     @Id
     @GeneratedValue(generator = "custom")
     @GenericGenerator(name = "custom", type = Credit.class)
     @Column(name = "contract_number")
     private String contractNumber;
+
+    @Column(name = "customer_id")
+    private UUID customerId;
 
     @Column(name = "contract_start_date")
     private LocalDate contractStartDate;

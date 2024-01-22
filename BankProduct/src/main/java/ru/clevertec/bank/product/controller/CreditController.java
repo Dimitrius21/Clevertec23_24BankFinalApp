@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.clevertec.bank.product.domain.dto.DeleteResponse;
 import ru.clevertec.bank.product.domain.dto.credit.request.CreateCreditDTO;
 import ru.clevertec.bank.product.domain.dto.credit.response.CreditResponseDTO;
 import ru.clevertec.bank.product.domain.dto.credit.request.UpdateCreditDTO;
@@ -27,6 +28,7 @@ public class CreditController {
     public ResponseEntity<CreditResponseDTO> findByContractNumber(@PathVariable String contractNumber) {
         return ResponseEntity.ok(creditService.findByContractNumber(contractNumber));
     }
+
     @GetMapping
     public ResponseEntity<Page<CreditResponseDTO>> findALl(Pageable pageable) {
         return ResponseEntity.ok(creditService.findAll(pageable));
@@ -48,8 +50,8 @@ public class CreditController {
     }
 
     @DeleteMapping("/{contractNumber}")
-    public void deleteByContactNumber(@PathVariable String contractNumber) {
-        creditService.deleteByContractNumber(contractNumber);
+    public ResponseEntity<DeleteResponse> deleteByContactNumber(@PathVariable String contractNumber) {
+        return ResponseEntity.ok(creditService.deleteByContractNumber(contractNumber));
     }
 }
 
