@@ -34,7 +34,7 @@ public class SecurityConfig {
         return httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
 
-                        .requestMatchers(HttpMethod.DELETE, "/account/{iban}", "/cards/{id}", "/credits/{contractNumber}", "deposits/{iban}")
+                        .requestMatchers(HttpMethod.DELETE, "/account/{iban}", "/cards/{id}", "/credits/{contractNumber}", "/deposits/{iban}")
                         .hasRole(Role.SUPER_USER.name())
 
                         .requestMatchers(HttpMethod.POST, "/cards", "/credits", "/account", "/deposits")
