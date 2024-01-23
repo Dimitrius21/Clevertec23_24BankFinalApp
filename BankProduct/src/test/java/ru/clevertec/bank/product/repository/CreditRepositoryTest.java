@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @ActiveProfiles("test")
-public class CreditRepositoryTest {
+class CreditRepositoryTest {
 
     @Autowired
     CreditRepository creditRepository;

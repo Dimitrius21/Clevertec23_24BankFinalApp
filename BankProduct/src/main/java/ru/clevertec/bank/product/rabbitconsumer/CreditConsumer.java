@@ -19,7 +19,7 @@ public class CreditConsumer {
     private final ObjectMapper objectMapper;
 
     @RabbitListener(queues = {"${rabbit.queue.credit}"})
-    public void handleAccountMessage(String message) {
+    public void onCreditMessage(String message) {
         try {
             ObjectWriter prettyPrinter = objectMapper.writerWithDefaultPrettyPrinter();
             CreditRabbitRequestDTO request = objectMapper.readValue(message, CreditRabbitRequestDTO.class);
