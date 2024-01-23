@@ -51,24 +51,12 @@ public class DepositControllerIntegrationTest extends BaseIntegrationTest {
     @Nested
     class FindByIbanGetEndPointTest {
 
-        @Test
-        @DisplayName("test should return expected json and status 200 for ADMINISTRATOR")
-        void testShouldReturnExpectedJsonAndStatus200ForASMINISTRATOR() throws Exception {
+        @ParameterizedTest(name = "{arguments} test")
+        @MethodSource("ru.clevertec.bank.product.integration.controller.DepositControllerIntegrationTest#getArgumentsForRoleTest")
+        @DisplayName("test should return expected json and status 200 for USER and ADMINISTRATOR")
+        void testShouldReturnExpectedJsonAndStatus200ForUSERandASMINISTRATOR(Role role) throws Exception {
             DepositInfoResponse response = DepositInfoResponseTestBuilder.aDepositInfoResponse().build();
-            String token = jwtGenerator.generateTokenByIdWithRole(response.customerId(), Role.ADMINISTRATOR);
-            String json = objectMapper.writeValueAsString(response);
-
-            mockMvc.perform(get("/deposits/%s".formatted(IBAN))
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(token)))
-                    .andExpect(status().isOk())
-                    .andExpect(content().json(json));
-        }
-
-        @Test
-        @DisplayName("test should return expected json and status 200 for USER")
-        void testShouldReturnExpectedJsonAndStatus200ForUSER() throws Exception {
-            DepositInfoResponse response = DepositInfoResponseTestBuilder.aDepositInfoResponse().build();
-            String token = jwtGenerator.generateTokenByIdWithRole(response.customerId(), Role.USER);
+            String token = jwtGenerator.generateTokenByIdWithRole(response.customerId(), role);
             String json = objectMapper.writeValueAsString(response);
 
             mockMvc.perform(get("/deposits/%s".formatted(IBAN))
@@ -375,39 +363,16 @@ public class DepositControllerIntegrationTest extends BaseIntegrationTest {
     @Nested
     class SavePostEndpointTest {
 
-        @Test
-        @DisplayName("test should return expected json and status 201 with role USER")
-        void testShouldReturnExpectedJsonAndStatus201WithRoleUser() throws Exception {
+        @ParameterizedTest(name = "{arguments} test")
+        @MethodSource("ru.clevertec.bank.product.integration.controller.DepositControllerIntegrationTest#getArgumentsForRoleTest")
+        @DisplayName("test should return expected json and status 201 with role USER and ADMINISTRATOR")
+        void testShouldReturnExpectedJsonAndStatus201WithRoleUserAndAdministrator(Role role) throws Exception {
             DepositInfoRequest request = DepositInfoRequestTestBuilder.aDepositInfoRequest()
                     .withAccInfo(AccInfoRequestTestBuilder.aAccInfoRequest()
                             .withAccIban("AABBCCCDDDDEEEEEEEEEEEEEEEEZ")
                             .build())
                     .build();
-            String token = jwtGenerator.generateTokenByIdWithRole(UUID.fromString(request.customerId()), Role.USER);
-            String content = objectMapper.writeValueAsString(request);
-
-            mockMvc.perform(post("/deposits")
-                            .content(content)
-                            .contentType(APPLICATION_JSON)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(token)))
-                    .andExpect(status().isCreated())
-                    .andExpect(jsonPath("$.customer_id").value(request.customerId()))
-                    .andExpect(jsonPath("$.customer_type").value(request.customerType()))
-                    .andExpect(jsonPath("$.acc_info.acc_iban").value(request.accInfo().accIban()))
-                    .andExpect(jsonPath("$.acc_info.curr_amount_currency").value(request.accInfo().currAmountCurrency()))
-                    .andExpect(jsonPath("$.dep_info.rate").value(request.depInfo().rate()))
-                    .andExpect(jsonPath("$.dep_info.dep_type").value(request.depInfo().depType()));
-        }
-
-        @Test
-        @DisplayName("test should return expected json and status 201 with role ADMINISTRATOR")
-        void testShouldReturnExpectedJsonAndStatus201WithRoleADMINISTRATOR() throws Exception {
-            DepositInfoRequest request = DepositInfoRequestTestBuilder.aDepositInfoRequest()
-                    .withAccInfo(AccInfoRequestTestBuilder.aAccInfoRequest()
-                            .withAccIban("AABBCCCDDDDEEEEEEEEEEEEEEEEZ")
-                            .build())
-                    .build();
-            String token = jwtGenerator.generateTokenByIdWithRole(UUID.fromString(request.customerId()), Role.ADMINISTRATOR);
+            String token = jwtGenerator.generateTokenByIdWithRole(UUID.fromString(request.customerId()), role);
             String content = objectMapper.writeValueAsString(request);
 
             mockMvc.perform(post("/deposits")
@@ -531,30 +496,13 @@ public class DepositControllerIntegrationTest extends BaseIntegrationTest {
     @Nested
     class UpdateByIbanPutEndpointTest {
 
-        @Test
-        @DisplayName("test should return expected json and status 201 with role USER")
-        void testShouldReturnExpectedJsonAndStatus201WithRoleUSER() throws Exception {
+        @ParameterizedTest(name = "{arguments} test")
+        @MethodSource("ru.clevertec.bank.product.integration.controller.DepositControllerIntegrationTest#getArgumentsForRoleTest")
+        @DisplayName("test should return expected json and status 201 with role USER and ADMINISTRATOR")
+        void testShouldReturnExpectedJsonAndStatus201WithRoleUSERandADMINISTRATOR(Role role) throws Exception {
             UUID customerId = UUID.fromString("1a72a05f-4b8f-43c5-a889-1ebc6d9dc721");
             DepInfoUpdateRequest request = DepInfoUpdateRequestTestBuilder.aDepInfoUpdateRequest().build();
-            String token = jwtGenerator.generateTokenByIdWithRole(customerId, Role.USER);
-            String content = objectMapper.writeValueAsString(request);
-
-            mockMvc.perform(put("/deposits/%s".formatted(IBAN))
-                            .content(content)
-                            .contentType(APPLICATION_JSON)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(token)))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.acc_info.acc_iban").value(IBAN))
-                    .andExpect(jsonPath("$.dep_info.dep_type").value(request.depType()))
-                    .andExpect(jsonPath("$.dep_info.auto_renew").value(request.autoRenew()));
-        }
-
-        @Test
-        @DisplayName("test should return expected json and status 201 with role ADMINISTRATOR")
-        void testShouldReturnExpectedJsonAndStatus201WithRoleADMINISTRATOR() throws Exception {
-            UUID customerId = UUID.fromString("1a72a05f-4b8f-43c5-a889-1ebc6d9dc721");
-            DepInfoUpdateRequest request = DepInfoUpdateRequestTestBuilder.aDepInfoUpdateRequest().build();
-            String token = jwtGenerator.generateTokenByIdWithRole(customerId, Role.ADMINISTRATOR);
+            String token = jwtGenerator.generateTokenByIdWithRole(customerId, role);
             String content = objectMapper.writeValueAsString(request);
 
             mockMvc.perform(put("/deposits/%s".formatted(IBAN))
@@ -736,7 +684,7 @@ public class DepositControllerIntegrationTest extends BaseIntegrationTest {
 
         @ParameterizedTest(name = "{arguments} test")
         @DisplayName("test should return expected header and status 403 for role USER and ADMINISTRATOR")
-        @MethodSource("ru.clevertec.bank.product.integration.controller.DepositControllerIntegrationTest#getArgumentsForDeleteTest")
+        @MethodSource("ru.clevertec.bank.product.integration.controller.DepositControllerIntegrationTest#getArgumentsForRoleTest")
         void testShouldReturnExpectedHeaderAndStatus403(Role role) throws Exception {
             UUID userId = UUID.fromString("1a72a05f-4b8f-43c5-a889-1ebc6d9dc729");
             String token = jwtGenerator.generateTokenByIdWithRole(userId, role);
@@ -768,7 +716,7 @@ public class DepositControllerIntegrationTest extends BaseIntegrationTest {
 
     }
 
-    private static Stream<Arguments> getArgumentsForDeleteTest() {
+    private static Stream<Arguments> getArgumentsForRoleTest() {
         return Stream.of(
                 Arguments.of(Role.USER),
                 Arguments.of(Role.ADMINISTRATOR));
