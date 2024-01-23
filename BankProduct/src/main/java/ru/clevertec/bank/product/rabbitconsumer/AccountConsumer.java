@@ -14,7 +14,7 @@ public class AccountConsumer {
     private final AccountService accService;
 
     @RabbitListener(queues = {"${rabbit.queue.account}"})
-    public void getAccountMessage(String message) {
+    public void handleAccountMessage(String message) {
         try {
             accService.saveAccountFromRabbit(message);
         }

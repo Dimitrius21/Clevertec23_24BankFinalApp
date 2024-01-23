@@ -1,19 +1,21 @@
+rabbit-host: localhost
 spring:
   application:
     name: rates_service
   datasource:
     url: jdbc:postgresql://localhost:5432/rates
     username: postgres
-    password: postgres
+    password: 1234
     driver: org.postgresql.Driver
   jpa:
     show-sql: true
     properties:
       hibernate:
         format_sql: true
-#    open-in-view: false
-  profiles:
-    active: dev
+  rabbitmq:
+    host: ${rabbit-host}
+#  profiles:
+#    active: dev
   liquibase:
     enabled: true
     contexts: dev
@@ -23,32 +25,11 @@ spring-doc:
 exception:
   custom-handler:
     enable: true
+aop:
+  logging:
+    enabled: true
 rabbit:
   queue:
-    account: account
-    card: card
-    credit: credit
-    deposit: deposit
+    rates: rates
 server:
   port: 8083
-
----
-
-spring:
-  config:
-    activate:
-      on-profile: dev
-#  liquibase:
-#    contexts: dev
-
----
-
-spring:
-  config:
-    activate:
-      on-profile: test
-  datasource:
-    url: jdbc:postgresql://localhost:5432/rates_test
-  liquibase:
-    contexts: test
-

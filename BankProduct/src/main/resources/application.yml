@@ -26,14 +26,16 @@ spring:
 spring-doc:
   packagesToScan: ru.clevertec.bank.product.controller
 caching:
-  repository: accountRepository
-  #, cardRepository, creditRepository, depositRepository
+  repository: accountRepository, cardRepository, creditRepository, depositRepository
 #feign:
 #  name: auth-server
 #  url : http://localhost:8090
 exception:
   custom-handler:
     enable: true
+aop:
+  logging:
+    enabled: true
 rabbit:
   exchange: bank
   queue:

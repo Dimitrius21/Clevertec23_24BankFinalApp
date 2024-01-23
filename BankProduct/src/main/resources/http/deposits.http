@@ -3,11 +3,11 @@ GET http://localhost:8081/deposits/FR7630001007941234567890185
 Accept: application/json
 
 ###findAll
-GET http://localhost:8081/deposits?page=0&size=10&sort=depInfo.expDate
+GET http://localhost:8081/deposits?page=0&size=2&sort=depInfo.expDate
 Accept: application/json
 
 ###findAllByFilter
-GET http://localhost:8081/deposits/filter?greaterThan=true&amount=1000&currency=EUR&page=0&size=5
+GET http://localhost:8081/deposits/filter?accIban=FR7630001007941234567890185&greaterThan=true&amount=1000&currency=EUR&page=0&size=2&sort=depInfo.expDate
 Accept: application/json
 
 ###save

@@ -1,4 +1,4 @@
-rootProject.name = 'Clevertec23_24BankFinalApp'
+rootProject.name = 'BankFinalApp'
 include 'BankCustomer',
         'BankConfig',
         'BankCurrencyRate',

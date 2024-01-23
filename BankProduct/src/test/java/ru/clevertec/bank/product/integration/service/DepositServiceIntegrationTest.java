@@ -13,6 +13,7 @@ import ru.clevertec.bank.product.domain.dto.deposit.request.DepositFilterRequest
 import ru.clevertec.bank.product.domain.dto.deposit.request.DepositInfoRequest;
 import ru.clevertec.bank.product.domain.dto.deposit.request.DepositRabbitPayloadRequest;
 import ru.clevertec.bank.product.domain.dto.deposit.response.DepositInfoResponse;
+import ru.clevertec.bank.product.integration.BaseIntegrationTest;
 import ru.clevertec.bank.product.service.DepositService;
 import ru.clevertec.bank.product.testutil.deposit.AccInfoRequestTestBuilder;
 import ru.clevertec.bank.product.testutil.deposit.AccInfoResponseTestBuilder;
@@ -23,10 +24,12 @@ import ru.clevertec.bank.product.testutil.deposit.DepositInfoRequestTestBuilder;
 import ru.clevertec.bank.product.testutil.deposit.DepositInfoResponseTestBuilder;
 import ru.clevertec.bank.product.testutil.deposit.DepositRabbitPayloadRequestTestBuilder;
 import ru.clevertec.bank.product.testutil.deposit.RabbitAccInfoRequestTestBuilder;
+import ru.clevertec.bank.product.util.CustomerType;
 import ru.clevertec.bank.product.util.DepositType;
 import ru.clevertec.exceptionhandler.exception.RequestBodyIncorrectException;
 import ru.clevertec.exceptionhandler.exception.ResourceNotFountException;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -56,8 +59,25 @@ public class DepositServiceIntegrationTest extends BaseIntegrationTest {
         @Test
         @DisplayName("test should return expected response")
         void testShouldReturnExpectedResponse() {
-            DepositInfoResponse expected = DepositInfoResponseTestBuilder.aDepositInfoResponse().build();
-            String iban = "SA0380000000608010167519";
+            String iban = "GB29NWBK60161331926819";
+            DepositInfoResponse expected = DepositInfoResponseTestBuilder.aDepositInfoResponse()
+                    .withCustomerId(UUID.fromString("1a72a05f-4b8f-43c5-a889-1ebc6d9dc727"))
+                    .withCustomerType(CustomerType.LEGAL)
+                    .withAccInfo(AccInfoResponseTestBuilder.aAccInfoResponse()
+                            .withAccOpenDate(LocalDate.of(2024, 1, 3))
+                            .withAccIban(iban)
+                            .withCurrAmount(BigDecimal.valueOf(2000.33))
+                            .withCurrAmountCurrency("GBP")
+                            .build())
+                    .withDepInfo(DepInfoResponseTestBuilder.aDepInfoResponse()
+                            .withRate(BigDecimal.valueOf(0.02))
+                            .withTermVal(3)
+                            .withTermScale('M')
+                            .withExpDate(LocalDate.of(2024, 3, 31))
+                            .withDepType(DepositType.REVOCABLE)
+                            .withAutoRenew(true)
+                            .build())
+                    .build();
 
             DepositInfoResponse actual = depositService.findByIban(iban);
 

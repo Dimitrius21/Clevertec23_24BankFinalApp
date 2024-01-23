@@ -13,9 +13,11 @@ import ru.clevertec.bank.product.domain.dto.card.request.CardUpdateRequest;
 import ru.clevertec.bank.product.domain.dto.card.response.CardResponse;
 import ru.clevertec.bank.product.domain.dto.card.response.CardResponseWithAmount;
 import ru.clevertec.bank.product.service.CardService;
+import ru.clevertec.loggingstarter.annotation.Loggable;
 
 import java.util.UUID;
 
+@Loggable
 @Validated
 @RestController
 @RequestMapping("/cards")

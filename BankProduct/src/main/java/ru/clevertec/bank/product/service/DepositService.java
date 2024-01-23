@@ -1,9 +1,6 @@
 package ru.clevertec.bank.product.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,6 +14,7 @@ import ru.clevertec.bank.product.domain.dto.deposit.response.DepositInfoResponse
 import ru.clevertec.bank.product.mapper.DepositMapper;
 import ru.clevertec.bank.product.repository.DepositRepository;
 import ru.clevertec.bank.product.repository.specification.DepositSpecification;
+import ru.clevertec.exceptionhandler.exception.InternalServerErrorException;
 import ru.clevertec.exceptionhandler.exception.RequestBodyIncorrectException;
 import ru.clevertec.exceptionhandler.exception.ResourceNotFountException;
 
@@ -31,7 +29,6 @@ public class DepositService {
     private final DepositRepository depositRepository;
     private final DepositMapper depositMapper;
 
-    @Cacheable(value = "deposit")
     public DepositInfoResponse findByIban(String iban) {
         return depositRepository.findById(iban)
                 .map(depositMapper::toDepositInfoResponse)
@@ -49,7 +46,6 @@ public class DepositService {
     }
 
     @Transactional
-    @CachePut(value = "deposit", key = "#result.accInfo().accIban()")
     public DepositInfoResponse save(DepositInfoRequest request) {
         depositRepository.findById(request.accInfo().accIban())
                 .ifPresent(deposit -> {
@@ -59,7 +55,7 @@ public class DepositService {
                 .map(depositMapper::toDeposit)
                 .map(depositRepository::save)
                 .map(depositMapper::toDepositInfoResponse)
-                .orElseThrow(() -> new ResourceNotFountException("Cant save deposit")); // TODO add better exception for this message later
+                .orElseThrow(() -> new InternalServerErrorException("Cant save customer"));
     }
 
     @Transactional
@@ -70,7 +66,6 @@ public class DepositService {
     }
 
     @Transactional
-    @CachePut(value = "deposit", key = "#result.accInfo().accIban()")
     public DepositInfoResponse updateByIban(String iban, DepInfoUpdateRequest request) {
         return depositRepository.findById(iban)
                 .map(deposit -> depositMapper.updateDeposit(request, deposit))
@@ -80,7 +75,6 @@ public class DepositService {
     }
 
     @Transactional
-    @CacheEvict(value = "deposit", key = "#iban")
     public DeleteResponse deleteByIban(String iban) {
         return depositRepository.findById(iban)
                 .map(deposit -> {

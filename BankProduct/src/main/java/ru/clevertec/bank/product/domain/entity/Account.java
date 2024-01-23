@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
@@ -44,7 +43,6 @@ public class Account implements IdentifierGenerator {
     @Column(name = "rate")
     private double rate;
 
-    @ToString.Exclude
     @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
     @BatchSize(size = 50)
     private List<Card> cards;

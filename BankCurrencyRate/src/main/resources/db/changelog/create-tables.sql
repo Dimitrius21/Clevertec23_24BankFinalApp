@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset group1:create_tables contextFilter:dev
+--changeset group1:create_tables
 
 CREATE TABLE rates_list (
 id bigserial PRIMARY KEY,
