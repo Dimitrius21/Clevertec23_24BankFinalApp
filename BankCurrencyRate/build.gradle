@@ -18,10 +18,10 @@ configurations {
 }
 
 ext {
-    springCloudVersion = '4.0.4'
     openApiVersion = '2.1.0'
     mapstructVersion = '1.5.5.Final'
     testContainersVersion = '1.19.3'
+    springCloudVersion = '2022.0.4'
 }
 
 
@@ -35,9 +35,10 @@ dependencies {
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:$openApiVersion"
     implementation "org.mapstruct:mapstruct:$mapstructVersion"
     annotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
-    implementation "org.springframework.cloud:spring-cloud-starter-config:$springCloudVersion"
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
 // https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.16.1'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 
     implementation project(':exception-handling-starter')
 
@@ -58,6 +59,12 @@ compileJava {
             '-Amapstruct.defaultComponentModel=spring',
             '-Amapstruct.unmappedTargetPolicy=IGNORE'
     ]
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion"
+    }
 }
 
 tasks.named('test') {
