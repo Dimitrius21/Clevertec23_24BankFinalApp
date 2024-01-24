@@ -40,7 +40,7 @@ public class JwtService {
     }
 
     public String extractRole(String token) {
-        return extractClaim(token, claims -> claims.get("role", String.class));
+        return extractClaim(token, claims -> claims.get("scope", String.class));
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
@@ -49,7 +49,7 @@ public class JwtService {
     }
 
     public String generateTokenByIdWithRole(UUID id, Role role) {
-        return generateTokenByIdWithRole(Map.of("role", role.name()), id);
+        return generateTokenByIdWithRole(Map.of("scope", role.getName()), id);
     }
 
     public String generateTokenByIdWithRole(Map<String, String> extraClaims, UUID id) {

@@ -49,7 +49,8 @@ rabbit:
     key: message_type
     deposit: deposit_info
     credit: credit-details
-
+jwt:
+  secretKey: 73357638792F423F4528482B4D6251655468576D5A7133743677397A24432646
 
 server:
   port: 8081

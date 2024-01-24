@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springdoc.core.annotations.ParameterObject;
@@ -28,6 +29,7 @@ import ru.clevertec.exceptionhandler.domain.ValidationExceptionResponse;
 public interface DepositOpenApi {
 
     @Operation(summary = "Find Deposit by iban.", tags = "Deposit",
+            security = @SecurityRequirement(name = "Bearer Authentication"),
             parameters = @Parameter(name = "iban", description = "Enter iban here", example = "FR7630001007941234567890185"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Deposit retrieved successfully",
@@ -64,6 +66,7 @@ public interface DepositOpenApi {
     ResponseEntity<DepositInfoResponse> findByIban(String iban);
 
     @Operation(summary = "Find all Deposits with pagination.", tags = "Deposit",
+            security = @SecurityRequirement(name = "Bearer Authentication"),
             parameters = {
                     @Parameter(name = "page", description = "Enter your page number here", example = "0"),
                     @Parameter(name = "size", description = "Enter your page size here", example = "2"),
@@ -162,6 +165,7 @@ public interface DepositOpenApi {
     ResponseEntity<Page<DepositInfoResponse>> findAll(@ParameterObject Pageable pageable);
 
     @Operation(summary = "Find all Deposits by filter with pagination.", tags = "Deposit",
+            security = @SecurityRequirement(name = "Bearer Authentication"),
             parameters = {
                     @Parameter(name = "accIban", description = "Enter your accIban here", example = "FR7630001007941234567890185"),
                     @Parameter(name = "greaterThan", description = "Enter your greaterThan(true or false) here", example = "true"),
@@ -247,6 +251,7 @@ public interface DepositOpenApi {
                                                               @ParameterObject Pageable pageable);
 
     @Operation(summary = "Save new Deposit.", tags = "Deposit",
+            security = @SecurityRequirement(name = "Bearer Authentication"),
             requestBody = @RequestBody(description = "RequestBody for DepositInfoRequest",
                     content = @Content(schema = @Schema(implementation = DepositInfoRequest.class),
                             examples = @ExampleObject("""
@@ -316,6 +321,7 @@ public interface DepositOpenApi {
     ResponseEntity<DepositInfoResponse> save(@Valid DepositInfoRequest request);
 
     @Operation(summary = "Update Deposit by iban.", tags = "Deposit",
+            security = @SecurityRequirement(name = "Bearer Authentication"),
             parameters = @Parameter(name = "iban", description = "Enter iban here", example = "FR7630001007941234567890185"),
             requestBody = @RequestBody(description = "RequestBody for DepInfoUpdateRequest",
                     content = @Content(schema = @Schema(implementation = DepInfoUpdateRequest.class),
@@ -373,6 +379,7 @@ public interface DepositOpenApi {
     ResponseEntity<DepositInfoResponse> updateByIban(String iban, @Valid DepInfoUpdateRequest request);
 
     @Operation(summary = "Delete Deposit by iban.", tags = "Deposit",
+            security = @SecurityRequirement(name = "Bearer Authentication"),
             parameters = @Parameter(name = "iban", description = "Enter iban here", example = "FR7630001007941234567890185"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Deposit deleted successfully",

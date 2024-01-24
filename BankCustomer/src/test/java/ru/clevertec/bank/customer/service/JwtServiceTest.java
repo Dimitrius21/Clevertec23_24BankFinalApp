@@ -56,7 +56,7 @@ class JwtServiceTest {
         JwtResponse response = jwtService.generateJwt(request);
         String role = jwtService.extractRole(response.jwt());
 
-        assertThat(role).isEqualTo(request.role());
+        assertThat(role).isEqualTo("ROLE_" + request.role());
     }
 
     @Test

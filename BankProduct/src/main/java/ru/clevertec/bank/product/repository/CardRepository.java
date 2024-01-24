@@ -18,4 +18,5 @@ public interface CardRepository extends JpaRepository<Card, String>, PagingAndSo
 
     @EntityGraph(attributePaths = {"account"})
     Optional<Card> findWithAccountByCardNumber(String cardNumber);
+
 }
