@@ -83,7 +83,7 @@ public class CreditService {
         Credit credit = creditRepository.findById(contractNumber).orElseThrow(() -> new ResourceNotFountException(
                 String.format("Credit with contractNumber = %s not found", contractNumber)));
         creditRepository.delete(credit);
-        return new DeleteResponse("Credit with contract number %s was successfully deleted"
+        return new DeleteResponse("Credit with contractNumber %s was successfully deleted"
                 .formatted(credit.getContractNumber()));
     }
 }
