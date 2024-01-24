@@ -85,7 +85,7 @@ public class CreditServiceIntegrationTest extends BaseIntegrationTest {
     void deleteByContractNumberTest() {
         String contractNumber = "11-0216444-2-0";
         DeleteResponse response = new DeleteResponse(
-                "Credit with contract number %s was successfully deleted".formatted(contractNumber));
+                "Credit with contractNumber %s was successfully deleted".formatted(contractNumber));
 
         DeleteResponse actual = creditService.deleteByContractNumber(contractNumber);
 

@@ -129,7 +129,7 @@ class CreditServiceTest {
     void deleteByContractNumberTest() {
         String contractNumber = "11-0216444-2-1";
         Credit credit = getCredit(contractNumber);
-        DeleteResponse response = new DeleteResponse("Credit with contract number %s was successfully deleted"
+        DeleteResponse response = new DeleteResponse("Credit with contractNumber %s was successfully deleted"
                 .formatted(contractNumber));
 
         when(creditRepository.findById(contractNumber)).thenReturn(Optional.of(credit));
