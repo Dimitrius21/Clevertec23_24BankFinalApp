@@ -11,7 +11,10 @@ import ru.clevertec.bank.product.domain.dto.card.request.CardRequest;
 import ru.clevertec.bank.product.domain.dto.card.request.CardUpdateRequest;
 import ru.clevertec.bank.product.domain.dto.card.response.CardResponse;
 import ru.clevertec.bank.product.domain.dto.card.response.CardResponseWithAmount;
-import ru.clevertec.bank.product.domain.entity.*;
+import ru.clevertec.bank.product.domain.entity.Account;
+import ru.clevertec.bank.product.domain.entity.Amount;
+import ru.clevertec.bank.product.domain.entity.Card;
+import ru.clevertec.bank.product.domain.entity.Rate;
 import ru.clevertec.bank.product.mapper.CardMapper;
 import ru.clevertec.bank.product.repository.AccountRepository;
 import ru.clevertec.bank.product.repository.CardRepository;
@@ -77,7 +80,7 @@ public class CardService {
         }
     }
 
-    public CardResponseWithAmount findById(String id) {
+    public CardResponseWithAmount findById(String id, List<Rate> exchangeRates) {
         Card card = cardRepository.findWithAccountByCardNumber(id).orElseThrow(() ->
                 new ResourceNotFountException(String.format("Card with id=%s not found", id)));
         BigDecimal amount = BigDecimal.valueOf(card.getAccount().getAmount() / NUMBER_FOR_CONVERT_TO_RUBLE).setScale(2);
