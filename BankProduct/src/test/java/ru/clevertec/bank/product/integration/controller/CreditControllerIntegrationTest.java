@@ -18,7 +18,6 @@ import ru.clevertec.bank.product.domain.dto.credit.request.UpdateCreditDTO;
 import ru.clevertec.bank.product.domain.dto.credit.response.CreditResponseDTO;
 import ru.clevertec.bank.product.domain.entity.Credit;
 import ru.clevertec.bank.product.integration.BaseIntegrationTest;
-import ru.clevertec.bank.product.mapper.CreditMapper;
 import ru.clevertec.bank.product.testutil.jwt.JwtGenerator;
 import ru.clevertec.bank.product.util.CustomerType;
 import ru.clevertec.bank.product.util.Role;
@@ -41,7 +40,6 @@ class CreditControllerIntegrationTest extends BaseIntegrationTest {
     private final MockMvc mockMvc;
     private final JwtGenerator jwtGenerator;
     private final ObjectMapper objectMapper;
-    private final CreditMapper creditMapper;
     private static final String contractNumber = "20-0216444-2-0";
     private static final String WWW_AUTHENTICATE = "WWW-Authenticate";
 
@@ -49,9 +47,9 @@ class CreditControllerIntegrationTest extends BaseIntegrationTest {
     class FindByContractNumberGetEndPointTest {
         @ParameterizedTest(name = "{arguments} test")
         @MethodSource("ru.clevertec.bank.product.integration.controller.CreditControllerIntegrationTest#getArgumentsForRoleTest")
+        @DisplayName("test should return expected json and status 200 for USER and ADMINISTRATOR")
         void testShouldReturnExpectedJsonAndStatus200(Role role) throws Exception {
-            Credit credit = getCredit(contractNumber);
-            CreditResponseDTO response = creditMapper.toCreditResponseDTO(credit);
+            CreditResponseDTO response = getCreditResponse(contractNumber);
             String token = jwtGenerator.generateTokenByIdWithRole(response.getCustomerId(), role);
 
             mockMvc.perform(get("/credits/%s".formatted(contractNumber))
@@ -224,7 +222,7 @@ class CreditControllerIntegrationTest extends BaseIntegrationTest {
             Credit credit = getCredit(contractNumber);
             String customerId = credit.getCustomerId().toString();
             String token = jwtGenerator.generateTokenByIdWithRole(UUID.fromString(customerId), Role.ADMINISTRATOR);
-            List<CreditResponseDTO> creditResponseList = List.of(creditMapper.toCreditResponseDTO(credit));
+            List<CreditResponseDTO> creditResponseList = List.of(getCreditResponse(contractNumber));
 
             mockMvc.perform(get("/credits/customers/{id}", customerId)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(token)))
@@ -278,15 +276,13 @@ class CreditControllerIntegrationTest extends BaseIntegrationTest {
     @Nested
     class SavePostEndpointTest {
 
-        @ParameterizedTest(name = "{arguments} test")
-        @MethodSource("ru.clevertec.bank.product.integration.controller.CreditControllerIntegrationTest#getArgumentsForRoleTest")
-        @DisplayName("test should return expected json and status 201 with role USER and ADMINISTRATOR")
-        void testShouldReturnExpectedJsonAndStatus201WithRoleUserAndAdministrator(Role role) throws Exception {
+        @Test
+        @DisplayName("test should return expected json and status 201 with role ADMINISTRATOR")
+        void testShouldReturnExpectedJsonAndStatus201WithRoleAdministrator() throws Exception {
             String contractNumber = "99-0777444-2-1";
-            Credit credit = getCredit(contractNumber);
             CreateCreditDTO request = getCreateCreditDTO(contractNumber);
-            CreditResponseDTO response = creditMapper.toCreditResponseDTO(credit);
-            String token = jwtGenerator.generateTokenByIdWithRole((request.getCustomerId()), role);
+            CreditResponseDTO response = getCreditResponse(contractNumber);
+            String token = jwtGenerator.generateTokenByIdWithRole((request.getCustomerId()), Role.ADMINISTRATOR);
             String content = objectMapper.writeValueAsString(request);
 
             mockMvc.perform(post("/credits")
@@ -295,6 +291,28 @@ class CreditControllerIntegrationTest extends BaseIntegrationTest {
                             .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(token)))
                     .andExpect(status().isCreated())
                     .andExpect(content().json(objectMapper.writeValueAsString(response)));
+        }
+
+        @Test
+        @DisplayName("test should return expected header and status 403 for role USER")
+        void testShouldReturnExpectedHeaderAndStatus403() throws Exception {
+            UUID userId = UUID.fromString("1a72a05f-4b8f-43c5-a889-1ebc6d9dc729");
+            String contractNumber = "99-0777444-2-1";
+            CreateCreditDTO request = getCreateCreditDTO(contractNumber);
+            request.setCustomerId(userId);
+            String content = objectMapper.writeValueAsString(request);
+            String token = jwtGenerator.generateTokenByIdWithRole(userId, Role.USER);
+            String bearerErrorHeader = "Bearer error=\"insufficient_scope\"";
+            String bearerErrorDescription = "error_description=\"The request requires higher privileges than provided" +
+                    " by the access token.\"";
+
+            mockMvc.perform(post("/credits")
+                            .content(content)
+                            .contentType(APPLICATION_JSON)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(token)))
+                    .andExpect(status().isForbidden())
+                    .andExpect(header().string(WWW_AUTHENTICATE, containsString(bearerErrorHeader)))
+                    .andExpect(header().string(WWW_AUTHENTICATE, containsString(bearerErrorDescription)));
         }
 
         @Test
@@ -372,14 +390,12 @@ class CreditControllerIntegrationTest extends BaseIntegrationTest {
 
     @Nested
     class UpdateByContractNumberPutEndpointTest {
-
-        @ParameterizedTest(name = "{arguments} test")
-        @MethodSource("ru.clevertec.bank.product.integration.controller.CreditControllerIntegrationTest#getArgumentsForRoleTest")
-        @DisplayName("test should return expected json and status 201 with role USER and ADMINISTRATOR")
-        void testShouldReturnExpectedJsonAndStatus201WithRoleUSERandADMINISTRATOR(Role role) throws Exception {
+        @Test
+        @DisplayName("test should return expected json and status 201 with role ADMINISTRATOR")
+        void testShouldReturnExpectedJsonAndStatus201WithRoleADMINISTRATOR() throws Exception {
             UUID customerId = UUID.fromString("1a72a05f-4b8f-43c5-a889-1ebc6d9dc721");
             UpdateCreditDTO request = getUpdateCreditDTO();
-            String token = jwtGenerator.generateTokenByIdWithRole(customerId, role);
+            String token = jwtGenerator.generateTokenByIdWithRole(customerId, Role.ADMINISTRATOR);
             String content = objectMapper.writeValueAsString(request);
 
             mockMvc.perform(put("/credits/%s".formatted(contractNumber))
@@ -390,6 +406,26 @@ class CreditControllerIntegrationTest extends BaseIntegrationTest {
                     .andExpect(jsonPath("$.rate").value(request.getRate()))
                     .andExpect(jsonPath("$.isClosed").value(request.getIsClosed()))
                     .andExpect(jsonPath("$.possibleRepayment").value(request.getPossibleRepayment()));
+        }
+
+        @Test
+        @DisplayName("test should return expected header and status 403 for role USER")
+        void testShouldReturnExpectedHeaderAndStatus403() throws Exception {
+            UpdateCreditDTO request = getUpdateCreditDTO();
+            String content = objectMapper.writeValueAsString(request);
+            UUID userId = UUID.fromString("1a72a05f-4b8f-43c5-a889-1ebc6d9dc729");
+            String token = jwtGenerator.generateTokenByIdWithRole(userId, Role.USER);
+            String bearerErrorHeader = "Bearer error=\"insufficient_scope\"";
+            String bearerErrorDescription = "error_description=\"The request requires higher privileges than provided" +
+                    " by the access token.\"";
+
+            mockMvc.perform(put("/credits/%s".formatted(contractNumber))
+                            .content(content)
+                            .contentType(APPLICATION_JSON)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(token)))
+                    .andExpect(status().isForbidden())
+                    .andExpect(header().string(WWW_AUTHENTICATE, containsString(bearerErrorHeader)))
+                    .andExpect(header().string(WWW_AUTHENTICATE, containsString(bearerErrorDescription)));
         }
 
         @Test
@@ -439,26 +475,6 @@ class CreditControllerIntegrationTest extends BaseIntegrationTest {
                             .contentType(APPLICATION_JSON)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(badSignatureToken)))
                     .andExpect(status().isUnauthorized())
-                    .andExpect(header().string(WWW_AUTHENTICATE, containsString(bearerErrorHeader)))
-                    .andExpect(header().string(WWW_AUTHENTICATE, containsString(bearerErrorDescription)));
-        }
-
-        @Test
-        @DisplayName("test should return expected header and status 403 for role USER")
-        void testShouldReturnExpectedHeaderAndStatus403() throws Exception {
-            UpdateCreditDTO request = getUpdateCreditDTO();
-            String content = objectMapper.writeValueAsString(request);
-            UUID userId = UUID.fromString("1a72a05f-4b8f-43c5-a889-1ebc6d9dc729");
-            String token = jwtGenerator.generateTokenByIdWithRole(userId, Role.USER);
-            String bearerErrorHeader = "Bearer error=\"insufficient_scope\"";
-            String bearerErrorDescription = "error_description=\"The request requires higher privileges than provided" +
-                    " by the access token.\"";
-
-            mockMvc.perform(put("/credits/%s".formatted(contractNumber))
-                            .content(content)
-                            .contentType(APPLICATION_JSON)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(token)))
-                    .andExpect(status().isForbidden())
                     .andExpect(header().string(WWW_AUTHENTICATE, containsString(bearerErrorHeader)))
                     .andExpect(header().string(WWW_AUTHENTICATE, containsString(bearerErrorDescription)));
         }
@@ -578,6 +594,13 @@ class CreditControllerIntegrationTest extends BaseIntegrationTest {
     private Credit getCredit(String contractNumber) {
         return new Credit(contractNumber, UUID.fromString("1a72a05f-4b8f-43c5-a889-1ebc6d9dc721"),
                 LocalDate.of(2022, 1, 1), 811399L, 36199L, "BYN",
+                LocalDate.of(2025, 1, 1), 18.8, "AABBCCCDDDDEEEEEEEEEEEEEEEE",
+                true, false, CustomerType.LEGAL);
+    }
+
+    private CreditResponseDTO getCreditResponse(String contractNumber) {
+        return new CreditResponseDTO(contractNumber, UUID.fromString("1a72a05f-4b8f-43c5-a889-1ebc6d9dc721"),
+                LocalDate.of(2022, 1, 1), BigDecimal.valueOf(8113.99), BigDecimal.valueOf(361.99), "BYN",
                 LocalDate.of(2025, 1, 1), 18.8, "AABBCCCDDDDEEEEEEEEEEEEEEEE",
                 true, false, CustomerType.LEGAL);
     }
