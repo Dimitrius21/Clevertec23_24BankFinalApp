@@ -37,7 +37,7 @@ public class CheckCustomerForUpdate implements CheckUserInRequest {
                 case "account" -> objectMapper.readValue(body, AccountInDto.class).getCustomerId();
                 case "deposits" -> uuidGetters.get("getUuidInDeposit").get(entityId);
                 case "cards" -> throw new AccessDeniedForRoleException("cards");
-                case "credits" -> uuidGetters.get("getUuidInCredit").get(entityId);
+                case "credits" -> throw new AccessDeniedForRoleException("credits");
                 default -> throw new RequestBodyIncorrectException("Unexpected value: " + entity);
             };
             if (username.equals(uuidForRequest.toString())) {

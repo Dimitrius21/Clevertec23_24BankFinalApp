@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.stereotype.Component;
 import ru.clevertec.bank.product.domain.dto.account.request.AccountInDto;
-import ru.clevertec.bank.product.domain.dto.credit.request.CreateCreditDTO;
 import ru.clevertec.bank.product.domain.dto.deposit.request.DepositInfoRequest;
 import ru.clevertec.bank.product.util.ParseRequest;
 import ru.clevertec.exceptionhandler.exception.AccessDeniedForRoleException;
@@ -35,7 +34,7 @@ public class CheckCustomerForCreate implements CheckUserInRequest {
                 case "account" -> objectMapper.readValue(body, AccountInDto.class).getCustomerId();
                 case "deposits" -> UUID.fromString(objectMapper.readValue(body, DepositInfoRequest.class).customerId());
                 case "cards" -> throw new AccessDeniedForRoleException("cards");
-                case "credits" -> objectMapper.readValue(body, CreateCreditDTO.class).getCustomerId();
+                case "credits" -> throw new AccessDeniedForRoleException("credits");
                 default -> throw new RequestBodyIncorrectException("Unexpected value: " + entity);
             };
             if (username.equals(uuidForRequest.toString())) {
