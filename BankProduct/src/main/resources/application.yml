@@ -23,8 +23,11 @@ spring:
   liquibase:
     enabled: true
     contexts: dev
-spring-doc:
-  packagesToScan: ru.clevertec.bank.product.controller
+springdoc:
+  api-docs:
+    path: /products/v3/api-docs
+  swagger-ui:
+    path: /products/swagger-ui.html
 caching:
   repository: accountRepository, cardRepository, creditRepository, depositRepository
 #feign:
@@ -52,6 +55,7 @@ jwt:
 
 server:
   port: 8081
+  forward-headers-strategy: framework
 
 client:
   name: "currency"

@@ -34,7 +34,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/customers/{id}").hasAnyRole(Role.USER.name(), Role.ADMINISTRATOR.name())
                         .requestMatchers(HttpMethod.DELETE, "/customers/{id}").hasRole(Role.SUPER_USER.name())
                         .requestMatchers(HttpMethod.PATCH, "/customers/{id}").hasRole(Role.SUPER_USER.name())
-                        .requestMatchers("/jwt", "/swagger-ui/**", "/v3/api-docs/**")
+                        .requestMatchers("/jwt", "/customers/swagger-ui/**", "/customers/v3/api-docs/**")
                         .permitAll()
                         .anyRequest()
                         .authenticated())
