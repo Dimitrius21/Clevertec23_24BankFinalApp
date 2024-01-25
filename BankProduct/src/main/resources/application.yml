@@ -1,6 +1,8 @@
 spring:
   application:
     name: product_service
+  config:
+    import: "optional:configserver:${confighost}"
   datasource:
     url: jdbc:postgresql://localhost:5432/bank
     username: postgres

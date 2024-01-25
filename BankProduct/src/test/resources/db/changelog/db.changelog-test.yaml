@@ -3,3 +3,7 @@ databaseChangeLog:
       file: db/changelog/test-deposit-ddl.sql
   - include:
       file: db/changelog/data/test-deposit-dml.sql
+  - include:
+      file: db/changelog/test-credit-ddl.sql
+  - include:
+      file: db/changelog/data/test-credit-dml.sql

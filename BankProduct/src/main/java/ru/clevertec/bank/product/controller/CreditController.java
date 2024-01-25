@@ -6,6 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.clevertec.bank.product.controller.openapi.CreditOpenApi;
+import ru.clevertec.bank.product.domain.dto.DeleteResponse;
 import ru.clevertec.bank.product.domain.dto.credit.request.CreateCreditDTO;
 import ru.clevertec.bank.product.domain.dto.credit.response.CreditResponseDTO;
 import ru.clevertec.bank.product.domain.dto.credit.request.UpdateCreditDTO;
@@ -19,7 +21,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/credits")
 @RequiredArgsConstructor
-public class CreditController {
+public class CreditController implements CreditOpenApi {
 
     private final CreditService creditService;
 
@@ -27,6 +29,7 @@ public class CreditController {
     public ResponseEntity<CreditResponseDTO> findByContractNumber(@PathVariable String contractNumber) {
         return ResponseEntity.ok(creditService.findByContractNumber(contractNumber));
     }
+
     @GetMapping
     public ResponseEntity<Page<CreditResponseDTO>> findALl(Pageable pageable) {
         return ResponseEntity.ok(creditService.findAll(pageable));
@@ -38,8 +41,8 @@ public class CreditController {
     }
 
     @PostMapping
-    public CreditResponseDTO save(@RequestBody CreateCreditDTO dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(creditService.save(dto)).getBody();
+    public ResponseEntity<CreditResponseDTO> save(@RequestBody CreateCreditDTO dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(creditService.save(dto));
     }
 
     @PutMapping("/{contractNumber}")
@@ -48,8 +51,8 @@ public class CreditController {
     }
 
     @DeleteMapping("/{contractNumber}")
-    public void deleteByContactNumber(@PathVariable String contractNumber) {
-        creditService.deleteByContractNumber(contractNumber);
+    public ResponseEntity<DeleteResponse> deleteByContractNumber(@PathVariable String contractNumber) {
+        return ResponseEntity.ok(creditService.deleteByContractNumber(contractNumber));
     }
 }
 
