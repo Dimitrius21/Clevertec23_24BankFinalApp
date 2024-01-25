@@ -1,13 +1,5 @@
 databaseChangeLog:
   - include:
-      file: db/changelog/test-account-ddl.yaml
-  - include:
-      file: db/changelog/test-account-dml.sql
-  - include:
       file: db/changelog/test-deposit-ddl.sql
   - include:
-      file: db/changelog/test-deposit-dml.sql
-  - include:
-      file: db/changelog/test-card-ddl.sql
-  - include:
-      file: db/changelog/test-card-dml.sql
+      file: db/changelog/data/test-deposit-dml.sql
