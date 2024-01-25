@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.clevertec.bank.product.controller.openapi.CreditOpenApi;
 import ru.clevertec.bank.product.domain.dto.DeleteResponse;
 import ru.clevertec.bank.product.domain.dto.credit.request.CreateCreditDTO;
 import ru.clevertec.bank.product.domain.dto.credit.response.CreditResponseDTO;
@@ -20,7 +21,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/credits")
 @RequiredArgsConstructor
-public class CreditController {
+public class CreditController implements CreditOpenApi {
 
     private final CreditService creditService;
 
@@ -50,7 +51,7 @@ public class CreditController {
     }
 
     @DeleteMapping("/{contractNumber}")
-    public ResponseEntity<DeleteResponse> deleteByContactNumber(@PathVariable String contractNumber) {
+    public ResponseEntity<DeleteResponse> deleteByContractNumber(@PathVariable String contractNumber) {
         return ResponseEntity.ok(creditService.deleteByContractNumber(contractNumber));
     }
 }
