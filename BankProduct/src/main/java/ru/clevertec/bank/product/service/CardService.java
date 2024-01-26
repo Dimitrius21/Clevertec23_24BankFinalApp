@@ -11,7 +11,10 @@ import ru.clevertec.bank.product.domain.dto.card.request.CardRequest;
 import ru.clevertec.bank.product.domain.dto.card.request.CardUpdateRequest;
 import ru.clevertec.bank.product.domain.dto.card.response.CardResponse;
 import ru.clevertec.bank.product.domain.dto.card.response.CardResponseWithAmount;
-import ru.clevertec.bank.product.domain.entity.*;
+import ru.clevertec.bank.product.domain.entity.Account;
+import ru.clevertec.bank.product.domain.entity.Amount;
+import ru.clevertec.bank.product.domain.entity.Card;
+import ru.clevertec.bank.product.domain.entity.Rate;
 import ru.clevertec.bank.product.mapper.CardMapper;
 import ru.clevertec.bank.product.repository.AccountRepository;
 import ru.clevertec.bank.product.repository.CardRepository;
@@ -43,9 +46,8 @@ public class CardService {
         if (request == null) {
             throw new RequestBodyIncorrectException("Empty request from Rabbit for save card");
         }
-        checkCardNumber(request.cardNumber());
         Card card;
-        Optional<Card> cardByCardNumber = cardRepository.findCardByCardNumber(request.cardNumber());
+        Optional<Card> cardByCardNumber = cardRepository.findById(request.cardNumber());
         if (cardByCardNumber.isEmpty()) {
             card = cardMapper.toCard(request);
         } else {
@@ -73,12 +75,12 @@ public class CardService {
     }
 
     private void checkCardNumber(String cardNumber) {
-        if (cardRepository.findCardByCardNumber(cardNumber).isPresent()) {
+        if (cardRepository.findById(cardNumber).isPresent()) {
             throw new GeneralException(String.format("Card with number: %s is already exist", cardNumber));
         }
     }
 
-    public CardResponseWithAmount findById(String id) {
+    public CardResponseWithAmount findById(String id, List<Rate> exchangeRates) {
         Card card = cardRepository.findWithAccountByCardNumber(id).orElseThrow(() ->
                 new ResourceNotFountException(String.format("Card with id=%s not found", id)));
         BigDecimal amount = BigDecimal.valueOf(card.getAccount().getAmount() / NUMBER_FOR_CONVERT_TO_RUBLE).setScale(2);
@@ -109,7 +111,7 @@ public class CardService {
         if (request == null) {
             throw new RequestBodyIncorrectException("Empty request for update card");
         }
-        Card card = cardRepository.findCardByCardNumber(id).orElseThrow(() ->
+        Card card = cardRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFountException(String.format("Card with id=%s not found", id)));
         Account account = accountRepository.findById(request.iban()).orElseThrow(() ->
                 new ResourceNotFountException(String.format("Account with iban=%s not found", request.iban())));
@@ -120,7 +122,7 @@ public class CardService {
     }
 
     public String remove(String id) {
-        cardRepository.findCardByCardNumber(id).orElseThrow(() ->
+        cardRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFountException(String.format("Card with id=%s not found", id)));
         cardRepository.deleteById(id);
         return id;

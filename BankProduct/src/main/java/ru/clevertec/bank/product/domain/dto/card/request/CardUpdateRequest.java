@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Pattern;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record CardUpdateRequest(
-                                @Pattern(regexp = "^[A-Z]{27}$")
+                                @Pattern(regexp = "^[A-Z0-9]{27}$")
                                 String iban,
 
                                 @Pattern(regexp = "LEGAL|PHYSIC")
