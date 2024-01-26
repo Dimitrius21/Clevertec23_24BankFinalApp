@@ -1,0 +1,56 @@
+###generateJwt
+POST http://localhost:8765/jwt
+Accept: application/json
+Content-Type: application/json
+
+{
+  "id" : "1a72a05f-4b8f-43c5-a889-1ebc6d9dc729",
+  "role": "ADMINISTRATOR"
+}
+
+###findById
+GET http://localhost:8765/customers/1a72a05f-4b8f-43c5-a889-1ebc6d9dc724
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzY29wZSI6IlJPTEVfQURNSU5JU1RSQVRPUiIsInN1YiI6IjFhNzJhMDVmLTRiOGYtNDNjNS1hODg5LTFlYmM2ZDlkYzcyOSIsImlhdCI6MTcwNjExMjQzNywiZXhwIjoxNzA2MTk4ODM3fQ.N2V-OaGbnqUF5xUxVbnos2x7PWJu5s-R32Fy4rQaCr1B-D2K9VzETWZ4F9lcZvIS
+
+###findAll
+GET http://localhost:8765/customers?page=0&size=2
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzY29wZSI6IlJPTEVfQURNSU5JU1RSQVRPUiIsInN1YiI6IjFhNzJhMDVmLTRiOGYtNDNjNS1hODg5LTFlYmM2ZDlkYzcyOSIsImlhdCI6MTcwNjExMjQzNywiZXhwIjoxNzA2MTk4ODM3fQ.N2V-OaGbnqUF5xUxVbnos2x7PWJu5s-R32Fy4rQaCr1B-D2K9VzETWZ4F9lcZvIS
+
+###save
+POST http://localhost:8765/customers
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzY29wZSI6IlJPTEVfQURNSU5JU1RSQVRPUiIsInN1YiI6IjFhNzJhMDVmLTRiOGYtNDNjNS1hODg5LTFlYmM2ZDlkYzcyOSIsImlhdCI6MTcwNjExMjQzNywiZXhwIjoxNzA2MTk4ODM3fQ.N2V-OaGbnqUF5xUxVbnos2x7PWJu5s-R32Fy4rQaCr1B-D2K9VzETWZ4F9lcZvIS
+
+{
+  "customer_type": "LEGAL",
+  "unp": "ABCDEFGHI",
+  "email": "example@email.com",
+  "phoneCode": "37529",
+  "phoneNumber": "1112233",
+  "customer_fullname": "Иванов Иван Иванович"
+}
+
+###updateById
+PUT http://localhost:8765/customers/1a72a05f-4b8f-43c5-a889-1ebc6d9dc726
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzY29wZSI6IlJPTEVfQURNSU5JU1RSQVRPUiIsInN1YiI6IjFhNzJhMDVmLTRiOGYtNDNjNS1hODg5LTFlYmM2ZDlkYzcyOSIsImlhdCI6MTcwNjExMjQzNywiZXhwIjoxNzA2MTk4ODM3fQ.N2V-OaGbnqUF5xUxVbnos2x7PWJu5s-R32Fy4rQaCr1B-D2K9VzETWZ4F9lcZvIS
+
+{
+  "email": "singleton@email.com",
+  "phoneCode": "37533",
+  "phoneNumber": "2223344"
+}
+
+###deleteById
+DELETE http://localhost:8765/customers/1a72a05f-4b8f-43c5-a889-1ebc6d9dc724
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzY29wZSI6IlJPTEVfU1VQRVJfVVNFUiIsInN1YiI6IjFhNzJhMDVmLTRiOGYtNDNjNS1hODg5LTFlYmM2ZDlkYzcyOSIsImlhdCI6MTcwNjExMjcxMSwiZXhwIjoxNzA2MTk5MTExfQ.f3i3Dv2mQwJRCUsIrHoWWL3dYMKupyV-P8FBeBfUge-P1o8KGpk8J7LTACRzV4Mr
+
+###restoreById
+PATCH http://localhost:8765/customers/1a72a05f-4b8f-43c5-a889-1ebc6d9dc724
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzY29wZSI6IlJPTEVfU1VQRVJfVVNFUiIsInN1YiI6IjFhNzJhMDVmLTRiOGYtNDNjNS1hODg5LTFlYmM2ZDlkYzcyOSIsImlhdCI6MTcwNjExMjcxMSwiZXhwIjoxNzA2MTk5MTExfQ.f3i3Dv2mQwJRCUsIrHoWWL3dYMKupyV-P8FBeBfUge-P1o8KGpk8J7LTACRzV4Mr

@@ -21,6 +21,7 @@ spring:
     host: ${rabbit-host}
 server:
   port: 8082
+  forward-headers-strategy: framework
 exception:
   custom-handler:
     enable: true
@@ -34,3 +35,8 @@ rabbit:
 jwt:
   secretKey: "73357638792F423F4528482B4D6251655468576D5A7133743677397A24432646"
   expiration: 86400000
+springdoc:
+  api-docs:
+    path: /customers/v3/api-docs
+  swagger-ui:
+    path: /customers/swagger-ui.html
