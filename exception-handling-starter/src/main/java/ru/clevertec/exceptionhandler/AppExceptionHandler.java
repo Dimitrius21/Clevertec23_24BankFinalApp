@@ -12,11 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.clevertec.exceptionhandler.domain.ErrorInfo;
 import ru.clevertec.exceptionhandler.domain.ValidationExceptionResponse;
 import ru.clevertec.exceptionhandler.domain.Violation;
-import ru.clevertec.exceptionhandler.exception.AccessDeniedForRoleException;
-import ru.clevertec.exceptionhandler.exception.InternalServerErrorException;
-import ru.clevertec.exceptionhandler.exception.NotValidRequestParametersException;
-import ru.clevertec.exceptionhandler.exception.RequestBodyIncorrectException;
-import ru.clevertec.exceptionhandler.exception.ResourceNotFountException;
+import ru.clevertec.exceptionhandler.exception.*;
 import ru.clevertec.loggingstarter.annotation.ExceptionLoggable;
 
 import java.util.List;
@@ -53,7 +49,7 @@ public class AppExceptionHandler {
         return sendResponse(exception.getMessage(), HttpStatus.FORBIDDEN);
     }
 
-    @ExceptionHandler(InternalServerErrorException.class)
+    @ExceptionHandler({InternalServerErrorException.class, GeneralException.class})
     public ResponseEntity<ErrorInfo> handleInternalServerErrorException(InternalServerErrorException exception) {
         return sendResponse(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }

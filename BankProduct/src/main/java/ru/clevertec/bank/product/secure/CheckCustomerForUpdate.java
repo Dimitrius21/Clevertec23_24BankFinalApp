@@ -12,6 +12,7 @@ import ru.clevertec.bank.product.domain.dto.account.request.AccountInDto;
 import ru.clevertec.bank.product.util.ParseRequest;
 import ru.clevertec.exceptionhandler.exception.AccessDeniedForRoleException;
 import ru.clevertec.exceptionhandler.exception.RequestBodyIncorrectException;
+import ru.clevertec.exceptionhandler.exception.ResourceNotFountException;
 
 import java.io.IOException;
 import java.util.Map;
@@ -37,8 +38,8 @@ public class CheckCustomerForUpdate implements CheckUserInRequest {
                 case "account" -> objectMapper.readValue(body, AccountInDto.class).getCustomerId();
                 case "deposits" -> uuidGetters.get("getUuidInDeposit").get(entityId);
                 case "cards" -> throw new AccessDeniedForRoleException("cards");
-                case "credit" -> throw new AccessDeniedForRoleException("credit");
-                default -> throw new RequestBodyIncorrectException("Unexpected value: " + entity);
+                case "credits" -> throw new AccessDeniedForRoleException("credit");
+                default -> throw new ResourceNotFountException("Unexpected value: " + entity);
             };
             if (username.equals(uuidForRequest.toString())) {
                 return CONFIRM_DECISION;

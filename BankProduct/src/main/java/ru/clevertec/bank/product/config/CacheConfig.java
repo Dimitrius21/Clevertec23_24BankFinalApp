@@ -29,7 +29,8 @@ public class CacheConfig {
     private int maxSize;
 
     @Bean
-    @Profile("redis")
+    //@Profile("redis")
+    @ConditionalOnProperty(prefix = "caching", name = "type", havingValue = "redis")
     public RedisTemplate<String, ?> redisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, ?> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
@@ -40,7 +41,8 @@ public class CacheConfig {
     }
 
     @Bean
-    @Profile("redis")
+    @ConditionalOnProperty(prefix = "caching", name = "type", havingValue = "redis")
+    //@Profile("redis")
     public Function<String, Cacheable> CacheRedisBeanFactory(RedisTemplate redisTemplate) {
         return name -> CacheRedis(redisTemplate, name);
     }

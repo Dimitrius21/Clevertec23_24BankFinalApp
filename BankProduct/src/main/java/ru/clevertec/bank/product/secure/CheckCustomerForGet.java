@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import ru.clevertec.bank.product.util.ParseRequest;
 import ru.clevertec.exceptionhandler.exception.InternalServerErrorException;
 import ru.clevertec.exceptionhandler.exception.RequestBodyIncorrectException;
+import ru.clevertec.exceptionhandler.exception.ResourceNotFountException;
 
 import java.util.Map;
 import java.util.UUID;
@@ -28,7 +29,7 @@ public class CheckCustomerForGet implements CheckUserInRequest {
                 case "cards" -> getter("getUuidInCard").get(entityId);
                 case "credits" -> getter("getUuidInCredit").get(entityId);
                 case "deposits" -> getter("getUuidInDeposit").get(entityId);
-                default -> throw new RequestBodyIncorrectException("Unexpected value: " + entity);
+                default -> throw new ResourceNotFountException("Unexpected value: " + entity);
             };
             if (username.equals(uuidForRequest.toString())) {
                 return CONFIRM_DECISION;
