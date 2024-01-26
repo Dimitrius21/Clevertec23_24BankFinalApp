@@ -1,6 +1,6 @@
 active: prod
 spring:
   application:
-    name: customer_service
+    name: customer-service
   profiles:
     active: ${active}

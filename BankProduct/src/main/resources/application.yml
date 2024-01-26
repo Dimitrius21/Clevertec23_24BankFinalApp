@@ -1,6 +1,6 @@
 spring:
   application:
-    name: product_service
+    name: product-service
   datasource:
     url: jdbc:postgresql://localhost:5432/bank
     username: postgres
