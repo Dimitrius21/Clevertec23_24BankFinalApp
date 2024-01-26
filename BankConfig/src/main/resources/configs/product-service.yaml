@@ -33,8 +33,11 @@ spring:
       time-to-live: 300s
   rabbitmq:
     host: localhost
-spring-doc:
-  packagesToScan: ru.clevertec.bank.product.controller
+springdoc:
+  api-docs:
+    path: /products/v3/api-docs
+  swagger-ui:
+    path: /products/swagger-ui.html
 caching:
   repository: accountRepository, cardRepository, creditRepository, depositRepository
   type: redis
@@ -61,6 +64,11 @@ jwt:
 
 server:
   port: 8081
+  forward-headers-strategy: framework
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka
 
 client:
   name: "currency"

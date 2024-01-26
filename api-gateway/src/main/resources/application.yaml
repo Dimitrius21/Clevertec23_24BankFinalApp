@@ -1,5 +1,6 @@
+confighost: http://localhost:8888
 spring:
   config:
-    import: configserver:http://localhost:8888
+    import: "optional:configserver:${confighost}"
   application:
     name: api-gateway

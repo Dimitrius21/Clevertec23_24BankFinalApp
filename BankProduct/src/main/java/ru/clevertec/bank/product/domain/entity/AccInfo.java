@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -13,7 +14,7 @@ import java.time.LocalDate;
 @Setter
 @ToString
 @Embeddable
-public class AccInfo {
+public class AccInfo implements Serializable {
 
     @Column(insertable = false, updatable = false)
     private String accIban;

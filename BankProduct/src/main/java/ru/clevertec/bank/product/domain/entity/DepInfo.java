@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 import ru.clevertec.bank.product.util.DepositType;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -15,7 +16,7 @@ import java.time.LocalDate;
 @Setter
 @ToString
 @Embeddable
-public class DepInfo {
+public class DepInfo implements Serializable {
 
     private BigDecimal rate;
     private Integer termVal;

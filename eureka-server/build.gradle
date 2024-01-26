@@ -8,6 +8,13 @@ java {
     sourceCompatibility = targetCompatibility = '17'
 }
 
+version = '1.0'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
 ext {
     springCloudVersion = '2022.0.4'
 }

@@ -18,6 +18,7 @@ import ru.clevertec.bank.product.domain.entity.util.DepositIdentifierGenerator;
 import ru.clevertec.bank.product.domain.entity.util.DepositListener;
 import ru.clevertec.bank.product.util.CustomerType;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -29,7 +30,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "deposits")
 @EntityListeners(DepositListener.class)
-public class Deposit {
+public class Deposit implements Serializable {
 
     @Id
     @GeneratedValue(generator = "custom")

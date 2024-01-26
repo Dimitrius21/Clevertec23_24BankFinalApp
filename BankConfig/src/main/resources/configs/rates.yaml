@@ -32,6 +32,10 @@ rabbit:
 server:
   port: 8083
   forward-headers-strategy: framework
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka
 springdoc:
   api-docs:
     path: /rate/v3/api-docs
