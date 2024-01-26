@@ -67,9 +67,17 @@ spring:
       on-profile: dev
 #  liquibase:
 #    contexts: dev
+  cache:
+    redis:
+      time-to-live: 300s
+  data:
+    redis:
+      host: localhost
+      port: 6379
 caching:
-  type: lfu
+  type: redis
   size: 5
+
 
 ---
 

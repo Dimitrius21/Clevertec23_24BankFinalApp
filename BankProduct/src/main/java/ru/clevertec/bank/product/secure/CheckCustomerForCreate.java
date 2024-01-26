@@ -13,6 +13,7 @@ import ru.clevertec.bank.product.domain.dto.deposit.request.DepositInfoRequest;
 import ru.clevertec.bank.product.util.ParseRequest;
 import ru.clevertec.exceptionhandler.exception.AccessDeniedForRoleException;
 import ru.clevertec.exceptionhandler.exception.RequestBodyIncorrectException;
+import ru.clevertec.exceptionhandler.exception.ResourceNotFountException;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -34,8 +35,8 @@ public class CheckCustomerForCreate implements CheckUserInRequest {
                 case "account" -> objectMapper.readValue(body, AccountInDto.class).getCustomerId();
                 case "deposits" -> UUID.fromString(objectMapper.readValue(body, DepositInfoRequest.class).customerId());
                 case "cards" -> throw new AccessDeniedForRoleException("cards");
-                case "credits" -> throw new AccessDeniedForRoleException("credits");
-                default -> throw new RequestBodyIncorrectException("Unexpected value: " + entity);
+                case "credits" -> throw new AccessDeniedForRoleException("credit");
+                default -> throw new ResourceNotFountException("Unexpected value: " + entity);
             };
             if (username.equals(uuidForRequest.toString())) {
                 return CONFIRM_DECISION;

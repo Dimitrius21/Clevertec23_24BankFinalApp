@@ -7,27 +7,27 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.util.MultiValueMapAdapter;
 import ru.clevertec.bank.product.domain.dto.account.request.AccountInDto;
 import ru.clevertec.bank.product.domain.dto.account.response.AccountOutDto;
 import ru.clevertec.bank.product.domain.entity.Account;
-import org.springframework.test.web.servlet.MockMvc;
 import ru.clevertec.bank.product.mapper.AccountMapper;
+import ru.clevertec.bank.product.testutil.jwt.JwtGenerator;
 import ru.clevertec.bank.product.util.CustomerType;
+import ru.clevertec.bank.product.util.Role;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 @SpringBootTest
@@ -45,39 +45,87 @@ class AccountControllerTest {
     @Autowired
     private AccountMapper mapper;
 
+    @Autowired
+    private JwtGenerator jwtGenerator;
+
     @Test
-    void getById() throws Exception {
-        String iban = "000000000000000000000000000";
+    void getByIdTest() throws Exception {
+        String iban = "AABBCCCDDDDEEEEEEEE01010102";
         Account account = getAccount(iban);
         AccountOutDto outDto = mapper.toAccountOutDto(account);
+        String token = jwtGenerator.generateTokenByIdWithRole(outDto.getCustomerId(), Role.USER);
         mockMvc.perform(
-                        get("/account/{iban}", iban))
+                        get("/account/{iban}", iban)
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(token)))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(outDto)));
     }
 
-/*    @Test
-    void getAllAccountsTest() throws Exception {
-        MultiValueMapAdapter requestParams = new MultiValueMapAdapter<>(new HashMap<>());
-        requestParams.setAll(Map.of("page", "0", "size", "3"));
+    @Test
+    void getByIdAnotherUserTest() throws Exception {
+        String iban = "AABBCCCDDDDEEEEEEEE01010102";
+        Account account = getAccount(iban);
+        AccountOutDto outDto = mapper.toAccountOutDto(account);
+        String token = jwtGenerator.generateTokenByIdWithRole(UUID.fromString("1a72a05f-4b8f-43c5-a889-1ebc6d9dc727"),
+                Role.USER);
+        mockMvc.perform(
+                        get("/account/{iban}", iban)
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(token)))
+                .andExpect(status().isForbidden());
+    }
 
-        mockMvc.perform(get("/account")
-                        .queryParams(requestParams))
+    @Test
+    void getByIdAdministratorTest() throws Exception {
+        String iban = "AABBCCCDDDDEEEEEEEE01010102";
+        Account account = getAccount(iban);
+        AccountOutDto outDto = mapper.toAccountOutDto(account);
+        String token = jwtGenerator.generateTokenByIdWithRole(UUID.fromString("1a72a05f-4b8f-43c5-a889-1ebc6d9dc727"),
+                Role.ADMINISTRATOR);
+        mockMvc.perform(
+                        get("/account/{iban}", iban)
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(token)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(3));
-    }*/
+                .andExpect(content().json(objectMapper.writeValueAsString(outDto)));
+    }
+
+
+    @Test
+    void getAllAccountsForAdministratorTest() throws Exception {
+        MultiValueMapAdapter requestParams = new MultiValueMapAdapter<>(new HashMap<>());
+        requestParams.setAll(Map.of("page", "1", "size", "2"));
+        String token = jwtGenerator.generateTokenByIdWithRole(UUID.fromString("1a72a05f-4b8f-43c5-a889-1ebc6d9dc730"),
+                Role.ADMINISTRATOR);
+        mockMvc.perform(get("/account")
+                        .queryParams(requestParams)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(token)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$.[1].cards.length()").value(1));
+    }
+
+    @Test
+    void getAllAccountsForUserTest() throws Exception {
+        MultiValueMapAdapter requestParams = new MultiValueMapAdapter<>(new HashMap<>());
+        requestParams.setAll(Map.of("page", "1", "size", "2"));
+        String token = jwtGenerator.generateTokenByIdWithRole(UUID.fromString("1a72a05f-4b8f-43c5-a889-1ebc6d9dc730"),
+                Role.USER);
+        mockMvc.perform(get("/account")
+                        .queryParams(requestParams)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(token)))
+                .andExpect(status().isForbidden());
+    }
 
     @Test
     void getByCustomerIdTest() throws Exception {
-        String iban = "000000000000000000000000000";
-        Account account = getAccount(iban);
-        String uuid = account.getCustomerId().toString();
-        List<AccountOutDto> outDtoList = List.of(mapper.toAccountOutDto(account));
+        String uuid = "1a72a05f-4b8f-43c5-a889-1ebc6d9dc727";
+        String token = jwtGenerator.generateTokenByIdWithRole(UUID.fromString("1a72a05f-4b8f-43c5-a889-1ebc6d9dc730"),
+                Role.ADMINISTRATOR);
         mockMvc.perform(
-                        get("/account/customer/{id}", uuid))
+                        get("/account/customer/{id}", uuid)
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(token)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(content().json(objectMapper.writeValueAsString(outDtoList)));
+                .andExpect(jsonPath("$.[0].iban").value("AABBCCCDDDDEEEEEEEE01010101"));
     }
 
     @Test
@@ -86,16 +134,33 @@ class AccountControllerTest {
         Account account = getAccount(iban);
         AccountInDto dto = getInDto(iban);
         AccountOutDto outDto = mapper.toAccountOutDto(account);
+        String token = jwtGenerator.generateTokenByIdWithRole(dto.getCustomerId(), Role.USER);
+        String tokenSuper = jwtGenerator.generateTokenByIdWithRole(dto.getCustomerId(), Role.SUPER_USER);
 
         mockMvc.perform(
                         post("/account")
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                .content(objectMapper.writeValueAsBytes(dto)))
-                                //.header("Authorization", "Basic TWFyazoyMDA="))
+                                .content(objectMapper.writeValueAsBytes(dto))
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(token)))
                 .andExpect(status().isCreated())
                 .andExpect(content().json(objectMapper.writeValueAsString(outDto)));
         mockMvc.perform(
-                delete("/account/{iban}", iban));
+                delete("/account/{iban}", iban)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(tokenSuper)));
+    }
+
+    @Test
+    void createAccountExistedInDbTest() throws Exception {
+        String iban = "AABBCCCDDDDEEEEEEEE01010102";
+        AccountInDto dto = getInDto(iban);
+        String token = jwtGenerator.generateTokenByIdWithRole(dto.getCustomerId(), Role.USER);
+        mockMvc.perform(
+                        post("/account")
+                                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                .content(objectMapper.writeValueAsBytes(dto))
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(token)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorMessage").value("Data with such Iban already exist"));
     }
 
     @Test
@@ -103,59 +168,140 @@ class AccountControllerTest {
         String iban = "000000000000000000000000001";
         Account account = getAccount(iban);
         AccountInDto dto = getInDto(iban);
+        String token = jwtGenerator.generateTokenByIdWithRole(dto.getCustomerId(), Role.USER);
+        String tokenSuper = jwtGenerator.generateTokenByIdWithRole(dto.getCustomerId(), Role.SUPER_USER);
 
         mockMvc.perform(
-                        post("/account")
-                                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                .content(objectMapper.writeValueAsBytes(dto)));
-                //.header("Authorization", "Basic TWFyazoyMDA="))
+                post("/account")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsBytes(dto))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(token)));
         dto.setName("Main");
         dto.setRate(1.0);
         account.setName("Main");
         AccountOutDto outDto = mapper.toAccountOutDto(account);
 
         mockMvc.perform(
-                put("/account")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(objectMapper.writeValueAsBytes(dto)))
-        //.header("Authorization", "Basic TWFyazoyMDA="))
-        .andExpect(status().isOk())
+                        put("/account")
+                                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                .content(objectMapper.writeValueAsBytes(dto))
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(token)))
+                .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(outDto)));
 
         mockMvc.perform(
-                delete("/account/{iban}", iban));
+                delete("/account/{iban}", iban)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(tokenSuper)));
+    }
+
+    @Test
+    void updateAccountNotExistedTest() throws Exception {
+        String iban = "000000000000000000000000001";
+        AccountInDto dto = getInDto(iban);
+        String token = jwtGenerator.generateTokenByIdWithRole(dto.getCustomerId(), Role.USER);
+        String error = String.format("Account with IBAN=%s not found", iban);
+
+        mockMvc.perform(
+                        put("/account")
+                                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                .content(objectMapper.writeValueAsBytes(dto))
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(token)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.errorMessage").value(error));
+    }
+
+    @Test
+    void updateAccountNotCorrespondedCustomerTest() throws Exception {
+        String iban = "AABBCCCDDDDEEEEEEEEEEEEEEE0";
+        AccountInDto dto = getInDto(iban);
+        String token = jwtGenerator.generateTokenByIdWithRole(dto.getCustomerId(), Role.USER);
+
+        mockMvc.perform(
+                        put("/account")
+                                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                .content(objectMapper.writeValueAsBytes(dto))
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(token)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorMessage").value("Incorrect customer_id in request"));
     }
 
     @Test
     void deleteAccountTest() throws Exception {
         String iban = "000000000000000000000000001";
         AccountInDto dto = getInDto(iban);
-        String res = mockMvc.perform(
-                        post("/account")
-                                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                .content(objectMapper.writeValueAsBytes(dto)))
-        //                        .header("Authorization", "Basic TWFyazoyMDA="))
-                .andReturn().getResponse().getContentAsString();
+        String token = jwtGenerator.generateTokenByIdWithRole(dto.getCustomerId(), Role.USER);
+        String tokenSuper = jwtGenerator.generateTokenByIdWithRole(dto.getCustomerId(), Role.SUPER_USER);
+        mockMvc.perform(
+                post("/account")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsBytes(dto))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(token)));
 
         mockMvc.perform(
-                        delete("/account/{iban}", iban))
-//                                .header("Authorization", "Basic TWFyazoyMDA="))
+                        delete("/account/{iban}", iban)
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(tokenSuper)))
                 .andExpect(status().isOk());
         mockMvc.perform(
-                        get("/account/{iban}", iban))
+                        get("/account/{iban}", iban)
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(token)))
                 .andExpect(status().isNotFound());
 
     }
 
+    @Test
+    void deleteAccountByUserRoleTest() throws Exception {
+        String iban = "000000000000000000000000001";
+        AccountInDto dto = getInDto(iban);
+        String token = jwtGenerator.generateTokenByIdWithRole(dto.getCustomerId(), Role.USER);
+        String tokenSuper = jwtGenerator.generateTokenByIdWithRole(dto.getCustomerId(), Role.SUPER_USER);
+        mockMvc.perform(
+                post("/account")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsBytes(dto))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(token)));
+
+        mockMvc.perform(
+                        delete("/account/{iban}", iban)
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(token)))
+                .andExpect(status().isForbidden());
+
+        mockMvc.perform(
+                delete("/account/{iban}", iban)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(tokenSuper)));
+    }
+
+    @Test
+    void deleteAccountByAdministratorRoleTest() throws Exception {
+        String iban = "000000000000000000000000001";
+        AccountInDto dto = getInDto(iban);
+        String token = jwtGenerator.generateTokenByIdWithRole(dto.getCustomerId(), Role.ADMINISTRATOR);
+        String tokenSuper = jwtGenerator.generateTokenByIdWithRole(dto.getCustomerId(), Role.SUPER_USER);
+        mockMvc.perform(
+                post("/account")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsBytes(dto))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(token)));
+
+        mockMvc.perform(
+                        delete("/account/{iban}", iban)
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(token)))
+                .andExpect(status().isForbidden());
+
+        mockMvc.perform(
+                delete("/account/{iban}", iban)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(tokenSuper)));
+    }
+
+
     private Account getAccount(String iban) {
-        return new Account(iban, "Test", 0, "BYN",
-                LocalDate.of(2024, 01, 1), true, UUID.fromString("00000000-0000-0000-0000-000000000000"),
-                CustomerType.PHYSIC, 0.0, null);
+        return new Account(iban, "Main", 40000, "BYN",
+                LocalDate.of(2024, 01, 11), true, UUID.fromString("1a72a05f-4b8f-43c5-a889-1ebc6d9dc726"),
+                CustomerType.PHYSIC, 0.01, null);
     }
 
     private AccountInDto getInDto(String iban) {
-        return new AccountInDto(iban, "Test", iban, BigDecimal.valueOf(0), 933,
-                LocalDate.of(2024, 1, 1), true, UUID.fromString("00000000-0000-0000-0000-000000000000"),
-                CustomerType.PHYSIC, 0.0);
+        return new AccountInDto(iban, "Main", iban, BigDecimal.valueOf(400), 933,
+                LocalDate.of(2024, 1, 11), true, UUID.fromString("1a72a05f-4b8f-43c5-a889-1ebc6d9dc726"),
+                CustomerType.PHYSIC, 0.01);
     }
 }
