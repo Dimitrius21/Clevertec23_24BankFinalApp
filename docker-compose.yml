@@ -23,6 +23,11 @@ services:
       volumes:
         - ./init_r/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
         - ./init_r/definitions.json:/etc/rabbitmq/definitions.json:ro
+    redis:
+      image: redis
+      restart: always
+      ports:
+        - "6379:6379"
 
     config-server:
       build:
@@ -63,6 +68,23 @@ services:
       depends_on:
         - db
 
+    product-service:
+      build:
+        dockerfile: DockerfileP
+      container_name: product-service
+      restart: always
+      ports:
+        - "8081:8081"
+      depends_on:
+        - db
+        - customer
+      environment:
+        CONFIGHOST: http://config-server:8888
+        SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/bank
+        SPRING_RABBITMQ_HOST: rabbitmq
+        FEIGN_URL: http://rates:8083/rate
+        ACTIVE: prod
+        SPRING_DATA_REDIS_HOST: redis
 
 volumes:
   db:

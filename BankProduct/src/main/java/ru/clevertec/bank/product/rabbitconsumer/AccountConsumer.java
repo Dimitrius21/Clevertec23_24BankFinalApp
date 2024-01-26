@@ -16,7 +16,9 @@ public class AccountConsumer {
     @RabbitListener(queues = {"${rabbit.queue.account}"})
     public void handleAccountMessage(String message) {
         try {
+            log.info("Get message from Account-queue: {}", message);
             accService.saveAccountFromRabbit(message);
+            log.info("Data has been saved");
         }
         catch (RequestBodyIncorrectException e){
             log.error(e.getMessage());

@@ -44,7 +44,7 @@ class GetUuidInCreditTest {
     }
 
     private Credit getCredit(String number, UUID uuid) {
-        return new Credit(uuid, number, LocalDate.now(), 100L, 100L, "BYN",
+        return new Credit(number, uuid,  LocalDate.now(), 100L, 100L, "BYN",
                 LocalDate.of(2024, 10, 10), 10.0, "", true, false,
                 CustomerType.LEGAL);
     }

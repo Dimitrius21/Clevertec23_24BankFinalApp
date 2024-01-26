@@ -25,7 +25,9 @@ exception:
   custom-handler:
     enable: true
 caching:
-  repository:
+  repository: #accountRepository, cardRepository, creditRepository, depositRepository
+  type: lfu
+  size: 5
 rabbit:
   exchange: bank
   queue:
@@ -37,6 +39,7 @@ rabbit:
     key: message_type
     deposit: deposit_info
     credit: credit-details
+
 jwt:
   secretKey: 73357638792F423F4528482B4D6251655468576D5A7133743677397A24432646
   expiration: 86400000

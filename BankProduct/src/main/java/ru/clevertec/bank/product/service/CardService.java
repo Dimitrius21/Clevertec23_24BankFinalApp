@@ -80,11 +80,12 @@ public class CardService {
         }
     }
 
-    public CardResponseWithAmount findById(String id, List<Rate> exchangeRates) {
+
+    public CardResponseWithAmount findById(String id) {
         Card card = cardRepository.findWithAccountByCardNumber(id).orElseThrow(() ->
                 new ResourceNotFountException(String.format("Card with id=%s not found", id)));
         BigDecimal amount = BigDecimal.valueOf(card.getAccount().getAmount() / NUMBER_FOR_CONVERT_TO_RUBLE).setScale(2);
-        List<Rate> exchangeRates  = currencyRateClient.getCurrent().getExchangeRates();
+        List<Rate> exchangeRates = currencyRateClient.getCurrent().getExchangeRates();
         List<Amount> amounts = exchangeRates.stream()
                 .filter(r -> CURRENCY_NAME_BYN.equals(r.getReqCurr()))
                 .map(r -> new Amount(amount.divide(BigDecimal.valueOf(r.getSellRate()), 2, RoundingMode.HALF_UP), r.getSrcCurr()))

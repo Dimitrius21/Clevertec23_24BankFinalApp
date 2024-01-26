@@ -76,8 +76,8 @@ class AccountRepositoryTest {
         Assertions.assertThat(result)
                 .hasSize(2)
                 .flatExtracting(Account::getCustomerId)
-                .containsExactly(UUID.fromString("1a72a05f-4b8f-43c5-a889-1ebc6d9dc732"),
-                        UUID.fromString("1a72a05f-4b8f-43c5-a889-1ebc6d9dc731"));
+                .containsExactly(UUID.fromString("1a72a05f-4b8f-43c5-a889-1ebc6d9dc730"),
+                        UUID.fromString("1a72a05f-4b8f-43c5-a889-1ebc6d9dc729"));
     }
 
     @Test

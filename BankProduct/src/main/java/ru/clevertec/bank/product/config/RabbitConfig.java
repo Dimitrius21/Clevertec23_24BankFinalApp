@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Profile;
 
 import java.util.Map;
 
-@Profile("prod")
+@Profile("feature")
 @EnableRabbit
 @Configuration
 @RequiredArgsConstructor

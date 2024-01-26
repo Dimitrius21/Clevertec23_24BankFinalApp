@@ -1,6 +1,15 @@
+#confighost: http://localhost:8888
+#active: dev
+feign_url: http://localhost:8083/rate
+
 spring:
   application:
-    name: product_service
+    name: product-service
+  cloud:
+    config:
+      enabled: false
+#  profiles:
+#    active: ${active}
   datasource:
     url: jdbc:postgresql://localhost:5432/bank
     username: postgres
@@ -18,18 +27,21 @@ spring:
       pageable:
         default-page-size: 20
         max-page-size: 40
-  profiles:
-    active: dev
+    redis:
+      host: localhost
+      port: 6379
   liquibase:
     enabled: true
     contexts: dev
+  cache:
+    redis:
+      time-to-live: 300s
 spring-doc:
   packagesToScan: ru.clevertec.bank.product.controller
 caching:
   repository: accountRepository, cardRepository, creditRepository, depositRepository
-#feign:
-#  name: auth-server
-#  url : http://localhost:8090
+  type: lfu
+  size: 5
 exception:
   custom-handler:
     enable: true
@@ -47,7 +59,8 @@ rabbit:
     key: message_type
     deposit: deposit_info
     credit: credit-details
-
+jwt:
+  secretKey: 73357638792F423F4528482B4D6251655468576D5A7133743677397A24432646
 
 server:
   port: 8081
@@ -55,4 +68,9 @@ server:
 client:
   name: "currency"
   url:
-    rate: "http://localhost:8083/rate"
+    rate: ${feign_url}
+    #"http://localhost:8083/rate"
+
+
+
+

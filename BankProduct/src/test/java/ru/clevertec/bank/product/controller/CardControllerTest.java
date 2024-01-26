@@ -19,7 +19,8 @@ import ru.clevertec.bank.product.domain.dto.card.request.CardRequest;
 import ru.clevertec.bank.product.domain.dto.card.response.CardResponse;
 import ru.clevertec.bank.product.domain.entity.Rate;
 import ru.clevertec.bank.product.domain.entity.RateFeign;
-import ru.clevertec.bank.product.integration.service.BaseIntegrationTest;
+//import ru.clevertec.bank.product.integration.service.BaseIntegrationTest;
+import ru.clevertec.bank.product.integration.BaseIntegrationTest;
 import ru.clevertec.bank.product.util.CardStatus;
 import ru.clevertec.bank.product.util.CustomerType;
 
