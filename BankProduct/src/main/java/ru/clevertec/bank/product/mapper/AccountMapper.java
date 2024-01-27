@@ -2,17 +2,18 @@ package ru.clevertec.bank.product.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import ru.clevertec.bank.product.domain.dto.account.response.AccountFullOutDto;
 import ru.clevertec.bank.product.domain.dto.account.request.AccountInDto;
+import ru.clevertec.bank.product.domain.dto.account.response.AccountFullOutDto;
 import ru.clevertec.bank.product.domain.dto.account.response.AccountOutDto;
 import ru.clevertec.bank.product.domain.entity.Account;
 
 import java.util.Currency;
 
-@Mapper(componentModel = "spring")
+@Mapper
 public interface AccountMapper {
     @Mapping(target = "amount", expression = "java(account.getAmount()/100 + \".\" + account.getAmount()%100)")
     AccountOutDto toAccountOutDto(Account account);
+
     AccountFullOutDto toAccountFullOutDto(Account account);
 
     @Mapping(target = "currencyCode", expression = "java(AccountMapper.getCurrencyNameByNumCode(dto.getCurrencyCode()))")
@@ -24,7 +25,7 @@ public interface AccountMapper {
                 .stream()
                 .filter(c -> c.getNumericCode() == code)
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException());
+                .orElseThrow(IllegalArgumentException::new);
         return curr.getCurrencyCode();
     }
 

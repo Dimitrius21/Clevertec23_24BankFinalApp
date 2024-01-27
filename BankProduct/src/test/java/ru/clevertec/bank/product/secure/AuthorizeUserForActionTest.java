@@ -14,7 +14,6 @@ import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
-import ru.clevertec.bank.product.testutil.jwt.JwtGenerator;
 
 import java.security.Principal;
 import java.util.List;
@@ -34,10 +33,8 @@ class AuthorizeUserForActionTest {
 
     private MockHttpServletRequest request;
 
-    private JwtGenerator jwtGenerator = new JwtGenerator();
-
     @InjectMocks
-    AuthorizeUserForAction authorizeUserForAction; // = new AuthorizeUserForAction(checkUser);
+    AuthorizeUserForAction authorizeUserForAction;
 
 
     @BeforeEach
@@ -49,45 +46,49 @@ class AuthorizeUserForActionTest {
     @Test
     void checkTest() {
         String id = "1a72a05f-4b8f-43c5-a889-1ebc6d9dc729";
-        TestingAuthenticationToken testToken = new TestingAuthenticationToken(getPrincipal(id), null, List.of(new SimpleGrantedAuthority("ROLE_ADMINISTRATOR")));
+        TestingAuthenticationToken testToken = new TestingAuthenticationToken(getPrincipal(id), null,
+                List.of(new SimpleGrantedAuthority("ROLE_ADMINISTRATOR")));
 
         authentication = () -> testToken;
         request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer ");
 
         AuthorizationDecision decision = authorizeUserForAction.check(authentication, object);
 
-        Assertions.assertThat(decision.isGranted()).isEqualTo(true);
+        Assertions.assertThat(decision.isGranted()).isTrue();
     }
 
     @Test
     void checkRequestWithoutTokenTest() {
         String id = "1a72a05f-4b8f-43c5-a889-1ebc6d9dc729";
-        TestingAuthenticationToken testToken = new TestingAuthenticationToken(getPrincipal(id), null, List.of(new SimpleGrantedAuthority("ROLE_ADMINISTRATOR")));
+        TestingAuthenticationToken testToken = new TestingAuthenticationToken(getPrincipal(id), null,
+                List.of(new SimpleGrantedAuthority("ROLE_ADMINISTRATOR")));
         testToken.setAuthenticated(true);
         authentication = () -> testToken;
 
         AuthorizationDecision decision = authorizeUserForAction.check(authentication, object);
 
-        Assertions.assertThat(decision.isGranted()).isEqualTo(false);
+        Assertions.assertThat(decision.isGranted()).isFalse();
     }
 
     @Test
     void checkNotAuthenticatedTest() {
         String id = "1a72a05f-4b8f-43c5-a889-1ebc6d9dc729";
-        TestingAuthenticationToken testToken = new TestingAuthenticationToken(getPrincipal(id), null, List.of(new SimpleGrantedAuthority("ROLE_ADMINISTRATOR")));
+        TestingAuthenticationToken testToken = new TestingAuthenticationToken(getPrincipal(id), null,
+                List.of(new SimpleGrantedAuthority("ROLE_ADMINISTRATOR")));
         testToken.setAuthenticated(false);
         authentication = () -> testToken;
         request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer ");
 
         AuthorizationDecision decision = authorizeUserForAction.check(authentication, object);
 
-        Assertions.assertThat(decision.isGranted()).isEqualTo(false);
+        Assertions.assertThat(decision.isGranted()).isFalse();
     }
 
     @Test
     void checkNotAuthorisedUserTest() {
         String id = "1a72a05f-4b8f-43c5-a889-1ebc6d9dc729";
-        TestingAuthenticationToken testToken = new TestingAuthenticationToken(getPrincipal(id), null, List.of(new SimpleGrantedAuthority("ROLE_USER")));
+        TestingAuthenticationToken testToken = new TestingAuthenticationToken(getPrincipal(id), null,
+                List.of(new SimpleGrantedAuthority("ROLE_USER")));
         testToken.setAuthenticated(true);
         authentication = () -> testToken;
         request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer ");
@@ -96,7 +97,7 @@ class AuthorizeUserForActionTest {
 
         AuthorizationDecision decision = authorizeUserForAction.check(authentication, object);
 
-        Assertions.assertThat(decision.isGranted()).isEqualTo(false);
+        Assertions.assertThat(decision.isGranted()).isFalse();
     }
 
     private Principal getPrincipal(String userName) {

@@ -18,12 +18,12 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RequiredArgsConstructor
-public class CardRepositoryTest extends BaseIntegrationTest {
+class CardRepositoryTest extends BaseIntegrationTest {
 
     private final CardRepository cardRepository;
 
     @Test
-    public void saveTest() {
+    void saveTest() {
         String cardNumber = "5200000000001099";
         String iban = "AABBCCCDDDDEEEEEEEEEEEEEEE0";
         String cardholder = "Jack Nikson";
@@ -37,7 +37,7 @@ public class CardRepositoryTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void findByIdTest() {
+    void findByIdTest() {
         String cardNumber = "5200000000001099";
         String iban = "AABBCCCDDDDEEEEEEEEEEEEEEE0";
         Optional<Card> card = cardRepository.findById(cardNumber);
@@ -46,7 +46,7 @@ public class CardRepositoryTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void findAllTest() {
+    void findAllTest() {
         String cardNumber = "5200000000001099";
         Sort sort = Sort.by(Sort.Order.desc("cardNumber"));
         Page<Card> actual = cardRepository.findAll(PageRequest.of(0, 1, sort));
@@ -56,14 +56,14 @@ public class CardRepositoryTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void findByCustomerIdTest() {
+    void findByCustomerIdTest() {
         UUID uuid = UUID.fromString("1a72a05f-4b8f-43c5-a889-1ebc6d9dc729");
         Optional<Card> actual = cardRepository.findByCustomerId(uuid);
         assertThat(actual.get().getCustomerId()).isEqualTo(uuid);
     }
 
     @Test
-    public void deleteByIdTest() {
+    void deleteByIdTest() {
         String cardNumber = "5200000000001099";
         cardRepository.deleteById(cardNumber);
         Optional<Card> card = cardRepository.findById(cardNumber);
@@ -71,7 +71,7 @@ public class CardRepositoryTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void findWithAccountByCardNumber() {
+    void findWithAccountByCardNumber() {
         String cardNumber = "5200000000001099";
         String iban = "AABBCCCDDDDEEEEEEEEEEEEEEE0";
         Optional<Card> actual = cardRepository.findWithAccountByCardNumber(cardNumber);
@@ -84,7 +84,8 @@ public class CardRepositoryTest extends BaseIntegrationTest {
         UUID uuid = UUID.fromString("1a72a05f-4b8f-43c5-a889-1ebc6d9dc729");
         String iban = "AABBCCCDDDDEEEEEEEEEEEEEEE0";
         return new Card(cardNumber, uuid, CustomerType.LEGAL, "Jack Nikson", CardStatus.INACTIVE, new Account(
-                iban, "Main", 20000, "BYN", LocalDate.of(2024, 01, 07), true, uuid, CustomerType.LEGAL, 0.0, null));
+                iban, "Main", 20000, "BYN", LocalDate.of(2024, 1, 7),
+                true, uuid, CustomerType.LEGAL, 0.0, null));
     }
 
 }

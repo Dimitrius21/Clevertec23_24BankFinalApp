@@ -17,7 +17,10 @@ import ru.clevertec.bank.product.domain.dto.card.request.CardRequest;
 import ru.clevertec.bank.product.domain.dto.card.request.CardUpdateRequest;
 import ru.clevertec.bank.product.domain.dto.card.response.CardResponse;
 import ru.clevertec.bank.product.domain.dto.card.response.CardResponseWithAmount;
-import ru.clevertec.bank.product.domain.entity.*;
+import ru.clevertec.bank.product.domain.entity.Account;
+import ru.clevertec.bank.product.domain.entity.Card;
+import ru.clevertec.bank.product.domain.entity.Rate;
+import ru.clevertec.bank.product.domain.entity.RateFeign;
 import ru.clevertec.bank.product.mapper.CardMapper;
 import ru.clevertec.bank.product.repository.AccountRepository;
 import ru.clevertec.bank.product.repository.CardRepository;
@@ -27,8 +30,6 @@ import ru.clevertec.exceptionhandler.exception.GeneralException;
 import ru.clevertec.exceptionhandler.exception.RequestBodyIncorrectException;
 import ru.clevertec.exceptionhandler.exception.ResourceNotFountException;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,10 +38,12 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class CardServiceTest {
+class CardServiceTest {
 
     @InjectMocks
     private CardService cardService;
@@ -63,42 +66,31 @@ public class CardServiceTest {
     private UUID uuid;
     private String cardNumber;
     private String iban;
-    private String cardholder;
-    private LocalDateTime localDateTime;
-    private List<Rate> exchangeRates;
     private RateFeign rateFeign;
-    private List<Amount> amounts;
 
     @BeforeEach
     public void init() {
         cardNumber = "1000000000000000";
         uuid = UUID.fromString("1a72a000-4b8f-43c5-a889-1ebc6d9dc000");
         iban = "AAAAAAAAAAAEEEEEEEEEEEEEEEE";
-        cardholder = "Mister Holder";
-        localDateTime = LocalDateTime.of(2023, 12, 22, 13, 55);
-        cardRabbitPayloadRequest = new CardRabbitPayloadRequest(cardNumber, "1000 0000 0000 0000", iban, uuid, CustomerType.LEGAL, cardholder, CardStatus.NEW);
+        String cardholder = "Mister Holder";
+        LocalDateTime localDateTime = LocalDateTime.of(2023, 12, 22, 13, 55);
+        cardRabbitPayloadRequest = new CardRabbitPayloadRequest(cardNumber, "1000 0000 0000 0000",
+                iban, uuid, CustomerType.LEGAL, cardholder, CardStatus.NEW);
         card = new Card(cardNumber, uuid, CustomerType.LEGAL, cardholder, CardStatus.NEW, account);
-        account = new Account(iban, "Account Name", 2000l, "BYN", LocalDate.now(), true, uuid, CustomerType.LEGAL, 0.01D, List.of(card));
+        account = new Account(iban, "Account Name", 2000L, "BYN", LocalDate.now(),
+                true, uuid, CustomerType.LEGAL, 0.01D, List.of(card));
         cardRequest = new CardRequest(cardNumber, " ", iban, uuid.toString(), "LEGAL", cardholder, "NEW");
         cardResponse = new CardResponse(cardNumber, null, uuid, CustomerType.LEGAL, cardholder, CardStatus.NEW);
-        exchangeRates = List.of(new Rate(1l, 3.33d, 3.43d, "EUR", "BYN"),
-                new Rate(1l, 3.05d, 3.15d, "USD", "BYN"));
-        rateFeign = new RateFeign(1l, localDateTime, List.of(new Rate(1l, 3.33d, 3.43d, "EUR", "BYN"),
-                new Rate(1l, 3.05d, 3.15d, "USD", "BYN")));
-        BigDecimal amount = BigDecimal.valueOf(2000l / 100).setScale(2);
-        amounts = List.of(new Amount(amount.divide(BigDecimal.valueOf(3.43d), 2, RoundingMode.HALF_UP), "EUR"),
-                new Amount(amount.divide(BigDecimal.valueOf(3.15d), 2, RoundingMode.HALF_UP), "USD"),
-                new Amount(BigDecimal.valueOf(2000l), "BYN"));
+        rateFeign = new RateFeign(1L, localDateTime, List.of(new Rate(1L, 3.33d, 3.43d, "EUR", "BYN"),
+                new Rate(1L, 3.05d, 3.15d, "USD", "BYN")));
         cardResponseWithAmount = new CardResponseWithAmount(cardNumber, iban, uuid, CustomerType.LEGAL, cardholder, CardStatus.NEW, null);
         cardUpdateRequest = new CardUpdateRequest(iban, "LEGAL", "NEW");
-        RateFeign rateFeign = new RateFeign(1l, LocalDateTime.of(2023, 12, 22, 13, 55),
-                List.of(new Rate(1l, 3.33d, 3.43d, "EUR", "BYN"),
-                        new Rate(1l, 3.05d, 3.15d, "USD", "BYN")));
     }
 
     @Test
     @DisplayName("saveForRabbit return void when request correct and card not present")
-    public void saveForRabbitTest_cardNotPresent() {
+    void saveForRabbitTest_cardNotPresent() {
         when(cardRepository.findById(cardNumber)).thenReturn(Optional.empty());
         when(cardMapper.toCard(cardRabbitPayloadRequest)).thenReturn(card);
         when(accountRepository.findById(iban)).thenReturn(Optional.of(account));
@@ -109,7 +101,7 @@ public class CardServiceTest {
 
     @Test
     @DisplayName("saveForRabbit return void when request correct and card present")
-    public void saveForRabbitTest_cardPresent() {
+    void saveForRabbitTest_cardPresent() {
         when(cardRepository.findById(cardNumber)).thenReturn(Optional.of(card));
         doNothing().when(cardMapper).updateFromRabbitDto(cardRabbitPayloadRequest, card);
         when(accountRepository.findById(iban)).thenReturn(Optional.of(account));
@@ -120,7 +112,7 @@ public class CardServiceTest {
 
     @Test
     @DisplayName("saveForRabbit should return Exception when request null")
-    public void saveForRabbitTest_returnException() {
+    void saveForRabbitTest_returnException() {
         cardRabbitPayloadRequest = null;
 
         RequestBodyIncorrectException exception = assertThrows(RequestBodyIncorrectException.class,
@@ -130,7 +122,7 @@ public class CardServiceTest {
 
     @Test
     @DisplayName("saveForRabbit should return Exception when request with absent iban")
-    public void saveForRabbitTest_whenRequestWithAbsentIban_returnException() {
+    void saveForRabbitTest_whenRequestWithAbsentIban_returnException() {
         when(cardRepository.findById(cardNumber)).thenReturn(Optional.empty());
         when(cardMapper.toCard(cardRabbitPayloadRequest)).thenReturn(card);
 
@@ -141,7 +133,7 @@ public class CardServiceTest {
 
     @Test
     @DisplayName("save should return CardResponse when request correct and card not present")
-    public void saveTest_cardNotPresent() {
+    void saveTest_cardNotPresent() {
         when(cardRepository.findById(cardNumber)).thenReturn(Optional.empty());
         when(cardMapper.toCard(cardRequest)).thenReturn(card);
         when(accountRepository.findById(iban)).thenReturn(Optional.of(account));
@@ -156,7 +148,7 @@ public class CardServiceTest {
 
     @Test
     @DisplayName("save should return Exception when request null")
-    public void saveTest_returnException() {
+    void saveTest_returnException() {
         cardRequest = null;
 
         RequestBodyIncorrectException exception = assertThrows(RequestBodyIncorrectException.class,
@@ -166,7 +158,7 @@ public class CardServiceTest {
 
     @Test
     @DisplayName("save should return Exception when cardNumber is present")
-    public void saveTest_whenCardNumberPresent_returnException() {
+    void saveTest_whenCardNumberPresent_returnException() {
         when(cardRepository.findById(cardNumber)).thenReturn(Optional.of(card));
 
         GeneralException exception = assertThrows(GeneralException.class,
@@ -176,7 +168,7 @@ public class CardServiceTest {
 
     @Test
     @DisplayName("save should return Exception when request with absent in db iban ")
-    public void saveTest_whenRequestWithAbsentIban_returnException() {
+    void saveTest_whenRequestWithAbsentIban_returnException() {
         when(cardRepository.findById(cardNumber)).thenReturn(Optional.empty());
         when(cardMapper.toCard(cardRequest)).thenReturn(card);
         when(accountRepository.findById(iban)).thenReturn(Optional.empty());
@@ -188,7 +180,7 @@ public class CardServiceTest {
 
     @Test
     @DisplayName("findById should return CardResponseWithAmount when request correct")
-    public void findByIdTest() {
+    void findByIdTest() {
         card.setAccount(account);
         when(cardRepository.findWithAccountByCardNumber(cardNumber)).thenReturn(Optional.of(card));
         when(currencyRateClient.getCurrent()).thenReturn(rateFeign);
@@ -200,7 +192,7 @@ public class CardServiceTest {
 
     @Test
     @DisplayName("findById should return CardResponseWithAmount when request correct and card not present")
-    public void findByIdTest_when() {
+    void findByIdTest_when() {
         when(cardRepository.findWithAccountByCardNumber(cardNumber)).thenReturn(Optional.empty());
 
         ResourceNotFountException exception = assertThrows(ResourceNotFountException.class,
@@ -210,7 +202,7 @@ public class CardServiceTest {
 
     @Test
     @DisplayName("findAll should return Page<CardResponse>")
-    public void findAllTest() {
+    void findAllTest() {
         Pageable pageable = PageRequest.of(0, 5);
         when(cardRepository.findAll(pageable)).thenReturn(new PageImpl<>(List.of(card)));
         when(cardMapper.toCardResponse(card)).thenReturn(cardResponse);
@@ -221,7 +213,7 @@ public class CardServiceTest {
 
     @Test
     @DisplayName("findAll should return empty Page")
-    public void findAllTest_returnEmpty() {
+    void findAllTest_returnEmpty() {
         Pageable pageable = PageRequest.of(5, 5);
         when(cardRepository.findAll(pageable)).thenReturn(Page.empty());
 
@@ -231,7 +223,7 @@ public class CardServiceTest {
 
     @Test
     @DisplayName("findByCustomerId should return CardResponse when uuid present")
-    public void findByCustomerIdTest() {
+    void findByCustomerIdTest() {
         when(cardRepository.findByCustomerId(uuid)).thenReturn(Optional.of(card));
         when(cardMapper.toCardResponse(card)).thenReturn(cardResponse);
 
@@ -241,7 +233,7 @@ public class CardServiceTest {
 
     @Test
     @DisplayName("findByCustomerId should return ResourceNotFountException when uuid not present")
-    public void findByCustomerIdTest_returnException() {
+    void findByCustomerIdTest_returnException() {
         when(cardRepository.findByCustomerId(uuid)).thenReturn(Optional.empty());
 
         ResourceNotFountException exception = assertThrows(ResourceNotFountException.class,
@@ -251,7 +243,7 @@ public class CardServiceTest {
 
     @Test
     @DisplayName("update should return CardResponse when request correct and card not present")
-    public void updateTest() {
+    void updateTest() {
         when(cardRepository.findById(cardNumber)).thenReturn(Optional.of(card));
         when(accountRepository.findById(iban)).thenReturn(Optional.of(account));
         doNothing().when(cardMapper).updateFromDto(cardUpdateRequest, card);
@@ -267,7 +259,7 @@ public class CardServiceTest {
 
     @Test
     @DisplayName("update should return RequestBodyIncorrectException when request null")
-    public void updateTest_whenRequestNull_returnException() {
+    void updateTest_whenRequestNull_returnException() {
         cardUpdateRequest = null;
 
         RequestBodyIncorrectException exception = assertThrows(RequestBodyIncorrectException.class,
@@ -277,7 +269,7 @@ public class CardServiceTest {
 
     @Test
     @DisplayName("update should return RequestBodyIncorrectException when cardNumber not present")
-    public void updateTest_returnException_whenCardAbsent() {
+    void updateTest_returnException_whenCardAbsent() {
         when(cardRepository.findById(cardNumber)).thenReturn(Optional.empty());
 
         ResourceNotFountException exception = assertThrows(ResourceNotFountException.class,
@@ -287,7 +279,7 @@ public class CardServiceTest {
 
     @Test
     @DisplayName("update should return RequestBodyIncorrectException when cardNumber not present")
-    public void updateTest_returnException_whenAccountAbsent() {
+    void updateTest_returnException_whenAccountAbsent() {
         when(cardRepository.findById(cardNumber)).thenReturn(Optional.of(card));
         when(accountRepository.findById(iban)).thenReturn(Optional.empty());
 
@@ -298,7 +290,7 @@ public class CardServiceTest {
 
     @Test
     @DisplayName("remove should return cardNumber when cardNumber present")
-    public void removeTest() {
+    void removeTest() {
         when(cardRepository.findById(cardNumber)).thenReturn(Optional.of(card));
         doNothing().when(cardRepository).deleteById(cardNumber);
 
@@ -308,7 +300,7 @@ public class CardServiceTest {
 
     @Test
     @DisplayName("remove should return ResourceNotFountException when cardNumber not present")
-    public void removeTest_returnException() {
+    void removeTest_returnException() {
         when(cardRepository.findById(cardNumber)).thenReturn(Optional.empty());
 
         ResourceNotFountException exception = assertThrows(ResourceNotFountException.class,

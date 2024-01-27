@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class GetUuidInCreditTest {
 
-    private CreditMapper mapper = Mappers.getMapper(CreditMapper.class);
+    private final CreditMapper mapper = Mappers.getMapper(CreditMapper.class);
 
     @Mock
     private CreditService creditService;

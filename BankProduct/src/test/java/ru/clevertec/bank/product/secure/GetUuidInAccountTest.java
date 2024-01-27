@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class GetUuidInAccountTest {
 
-    private AccountMapper mapper = Mappers.getMapper(AccountMapper.class);
+    private final AccountMapper mapper = Mappers.getMapper(AccountMapper.class);
 
     @Mock
     private AccountService accountService;
@@ -44,7 +44,7 @@ class GetUuidInAccountTest {
 
     private Account getAccount(String iban) {
         return new Account(iban, "Main", 10000, "BYN",
-                LocalDate.of(2024, 01, 10), true, UUID.fromString("1a72a05f-4b8f-43c5-a889-1ebc6d9dc729"),
+                LocalDate.of(2024, 1, 10), true, UUID.fromString("1a72a05f-4b8f-43c5-a889-1ebc6d9dc729"),
                 CustomerType.LEGAL, 0.0, null);
     }
 }

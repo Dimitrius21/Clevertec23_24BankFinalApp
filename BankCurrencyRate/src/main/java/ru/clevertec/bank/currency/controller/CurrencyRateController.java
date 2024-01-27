@@ -29,7 +29,7 @@ public class CurrencyRateController implements CurrencyRateOpenAPI {
     }
 
     @GetMapping("/{time}")
-    public ResponseEntity<RatesOutDto> getLastForTime(@PathVariable ZonedDateTime time) { //    @JsonDeserialize(using =  DateTimeDeserialize.class)
+    public ResponseEntity<RatesOutDto> getLastForTime(@PathVariable ZonedDateTime time) {
         RatesOutDto outDto = ratesService.getLastRates(time);
         return new ResponseEntity<>(outDto, HttpStatus.OK);
     }

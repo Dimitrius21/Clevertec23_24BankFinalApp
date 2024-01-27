@@ -1,7 +1,5 @@
 rabbit-host: localhost
 spring:
-  application:
-    name: rates_service
   datasource:
     url: jdbc:postgresql://localhost:5432/rates
     username: postgres
@@ -33,3 +31,13 @@ rabbit:
     rates: rates
 server:
   port: 8083
+  forward-headers-strategy: framework
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka
+springdoc:
+  api-docs:
+    path: /rate/v3/api-docs
+  swagger-ui:
+    path: /rate/swagger-ui.html

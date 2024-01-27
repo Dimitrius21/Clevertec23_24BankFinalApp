@@ -8,7 +8,6 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 /**
@@ -16,53 +15,43 @@ import java.util.Optional;
  */
 public class CacheHandler implements InvocationHandler {
 
-    private JpaRepository obj;
-    private Cacheable cache;
+    private final JpaRepository<Object, Object> obj;
+    private final Cacheable<Object, Object> cache;
 
-    public CacheHandler(JpaRepository obj, Cacheable cache) {
+    public CacheHandler(JpaRepository<Object, Object> obj, Cacheable<Object, Object> cache) {
         this.obj = obj;
         this.cache = cache;
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        try {
-            switch (method.getName()) {
-                case "findById":
-                    return getByIdHandle(proxy, method, args);
-                case "deleteById":
-                    return deleteByIdHandle(proxy, method, args);
-                case "save":
-                    return createHandle(proxy, method, args);
-
-            }
-        } catch (NoSuchElementException ex) {
-        }
-        return method.invoke(obj, args);
+        return switch (method.getName()) {
+            case "findById" -> getByIdHandle(method, args);
+            case "deleteById" -> deleteByIdHandle(method, args);
+            case "save" -> createHandle(method, args);
+            default -> method.invoke(obj, args);
+        };
     }
 
-    private Object getByIdHandle(Object proxy, Method method, Object[] args) throws InvocationTargetException, IllegalAccessException {
+    private Object getByIdHandle(Method method, Object[] args) throws InvocationTargetException, IllegalAccessException {
         Object entity = cache.get(args[0]);
         if (entity != null) {
             return Optional.of(entity);
         } else {
             Optional<?> optionalEntity = (Optional<?>) method.invoke(obj, args);
-/*            if (optionalEntity.isPresent()) {
-                cache.put(args[0], optionalEntity.get());
-            }*/
             optionalEntity.ifPresent(v -> cache.put(args[0], v));
             return optionalEntity;
         }
 
     }
 
-    private Object deleteByIdHandle(Object proxy, Method method, Object[] args) throws InvocationTargetException, IllegalAccessException {
+    private Object deleteByIdHandle(Method method, Object[] args) throws InvocationTargetException, IllegalAccessException {
         Object res = method.invoke(obj, args);
         cache.remove(args[0]);
         return res;
     }
 
-    private Object createHandle(Object proxy, Method method, Object[] args) throws InvocationTargetException, IllegalAccessException {
+    private Object createHandle(Method method, Object[] args) throws InvocationTargetException, IllegalAccessException {
         Object res = method.invoke(obj, args);
         Object id = getId(res);
         cache.put(id, res);
@@ -71,7 +60,7 @@ public class CacheHandler implements InvocationHandler {
 
     private Object getId(Object obj) throws IllegalAccessException {
         Field[] fields = obj.getClass().getDeclaredFields();
-        Field fieldId = Arrays.stream(fields).filter(f -> f.isAnnotationPresent(Id.class)).findFirst().get();
+        Field fieldId = Arrays.stream(fields).filter(f -> f.isAnnotationPresent(Id.class)).findFirst().orElseThrow();
         fieldId.setAccessible(true);
         Object id = fieldId.get(obj);
         return id;

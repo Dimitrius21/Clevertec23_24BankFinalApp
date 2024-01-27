@@ -9,9 +9,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 @Slf4j
 public class RedisCache implements Cacheable<String, Object> {
 
-    private RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
 
-    private String entityRepo;
+    private final String entityRepo;
 
     public RedisCache(RedisTemplate<String, Object> redisTemplate, String entityRepo) {
         this.redisTemplate = redisTemplate;
@@ -36,8 +36,4 @@ public class RedisCache implements Cacheable<String, Object> {
         return redisTemplate.opsForHash().delete(entityRepo, key);
     }
 
-    @Override
-    public void setRepositoriesName(String name) {
-        entityRepo = name;
-    }
 }

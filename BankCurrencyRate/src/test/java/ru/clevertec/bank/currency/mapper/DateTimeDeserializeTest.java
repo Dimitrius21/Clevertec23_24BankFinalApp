@@ -28,11 +28,11 @@ class DateTimeDeserializeTest {
         DateTimeDeserialize deserialize = new DateTimeDeserialize();
         String date = "2024-01-15T14:00:10.604498616+03:00";
         ZoneId zone = ZoneId.of("GMT+3");
-        ZonedDateTime expect = ZonedDateTime.of(2024, 01, 15, 14, 00, 10, 604498616, zone);
+        ZonedDateTime expect = ZonedDateTime.of(2024, 1, 15, 14, 0, 10, 604498616, zone);
 
         when(parser.getText()).thenReturn(date);
 
-        ZonedDateTime dateTime = (ZonedDateTime) deserialize.deserialize(parser, ctxt);
+        ZonedDateTime dateTime = deserialize.deserialize(parser, ctxt);
 
         Assertions.assertThat(dateTime).isEqualTo(expect);
     }

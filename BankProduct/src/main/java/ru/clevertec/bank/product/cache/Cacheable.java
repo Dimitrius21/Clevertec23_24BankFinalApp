@@ -2,13 +2,16 @@ package ru.clevertec.bank.product.cache;
 
 /**
  * Интерфейс определяющий операции для кэшируемой сущности
+ *
  * @param <K> - тип ID
  * @param <V> - тип сущности
  */
-public interface Cacheable<K,V> {
-    public V put(K key, V value);
-    public V get(Object key);
-    public V remove(Object key);
+public interface Cacheable<K, V> {
 
-    public void setRepositoriesName(String name);
+    V put(K key, V value);
+
+    V get(Object key);
+
+    V remove(Object key);
+
 }

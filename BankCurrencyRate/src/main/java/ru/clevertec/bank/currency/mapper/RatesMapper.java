@@ -8,7 +8,7 @@ import ru.clevertec.bank.currency.domain.dto.RatesInDto;
 import ru.clevertec.bank.currency.domain.dto.RatesOutDto;
 import ru.clevertec.bank.currency.domain.entity.Rates;
 
-@Mapper(componentModel = "spring")
+@Mapper
 public interface RatesMapper {
     RatesOutDto toRatesOutDto(Rates rates);
 
@@ -16,7 +16,7 @@ public interface RatesMapper {
     Rates toRates(RatesInDto dto);
 
     @AfterMapping
-    default void populateAdditionalParams(RatesInDto source, @MappingTarget Rates target) {
+    default void populateAdditionalParams(@MappingTarget Rates target) {
         target.getExchangeRates().forEach(it -> it.setId(0L));
     }
 

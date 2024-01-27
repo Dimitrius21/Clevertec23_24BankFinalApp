@@ -50,7 +50,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/account/{iban}", "/cards/{id}", "/credits/{contractNumber}", "/deposits/{iban}")
                         .access(new AuthorizeUserForAction(authorizationCheckers.get("checkCustomerForGet")))
 
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**")
+                        .requestMatchers("/products/swagger-ui/**", "/products/v3/api-docs/**")
                         .permitAll()
                         .anyRequest()
                         .authenticated())
