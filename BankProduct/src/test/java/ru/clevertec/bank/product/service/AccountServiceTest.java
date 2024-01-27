@@ -14,12 +14,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import ru.clevertec.bank.product.domain.dto.account.response.AccountFullOutDto;
 import ru.clevertec.bank.product.domain.dto.account.request.AccountInDto;
+import ru.clevertec.bank.product.domain.dto.account.response.AccountFullOutDto;
 import ru.clevertec.bank.product.domain.dto.account.response.AccountOutDto;
 import ru.clevertec.bank.product.domain.entity.Account;
-import ru.clevertec.bank.product.repository.AccountRepository;
 import ru.clevertec.bank.product.mapper.AccountMapper;
+import ru.clevertec.bank.product.repository.AccountRepository;
 import ru.clevertec.bank.product.util.CustomerType;
 import ru.clevertec.exceptionhandler.exception.RequestBodyIncorrectException;
 import ru.clevertec.exceptionhandler.exception.ResourceNotFountException;
@@ -53,7 +53,7 @@ class AccountServiceTest {
     private AccountService accountService;
 
     @BeforeAll
-    public static void setJackson(){
+    public static void setJackson() {
         jacksonMapper.registerModule(new JavaTimeModule());
     }
 
@@ -73,10 +73,9 @@ class AccountServiceTest {
     @Test()
     void getAccountByIbanNotFoundTest() {
         String iban = "0000";
-        Account account = getAccount(iban);
         when(accountRepository.findById(iban)).thenReturn(Optional.empty());
 
-        Exception exception = assertThrows(ResourceNotFountException.class, ()->accountService.getAccountByIban(iban));
+        Exception exception = assertThrows(ResourceNotFountException.class, () -> accountService.getAccountByIban(iban));
         Assertions.assertThat(exception.getMessage()).contains(iban);
     }
 
@@ -143,7 +142,7 @@ class AccountServiceTest {
         AccountInDto inDto = getInDto(iban);
         when(accountRepository.findById(iban)).thenReturn(Optional.of(account));
 
-        Exception exception = assertThrows(RequestBodyIncorrectException.class, ()->accountService.createAccount(inDto));
+        Exception exception = assertThrows(RequestBodyIncorrectException.class, () -> accountService.createAccount(inDto));
         Assertions.assertThat(exception.getMessage()).contains("Data with such Iban already exist");
     }
 
@@ -171,13 +170,13 @@ class AccountServiceTest {
     @Test
     void saveAccountFromRabbitTest() {
         String message = """
-            {
-            "header": { "message_type": "account_info" },
-            "payload": {
-            "name": "Main", "iban": "AABBCCCDDDDEEEEEEEEEEEEEEEE", "iban_readable": "AABB CCC DDDD EEEE EEEE EEEE EEEE",
-            "amount": 100.00, "currency_code": "933", "open_date": "10.01.2024", "main_acc": true,
-            "customer_id": "1a72a05f-4b8f-43c5-a889-1ebc6d9dc729", "customer_type" : "LEGAL", "rate": 0.0 }
-        }""";
+                    {
+                    "header": { "message_type": "account_info" },
+                    "payload": {
+                    "name": "Main", "iban": "AABBCCCDDDDEEEEEEEEEEEEEEEE", "iban_readable": "AABB CCC DDDD EEEE EEEE EEEE EEEE",
+                    "amount": 100.00, "currency_code": "933", "open_date": "10.01.2024", "main_acc": true,
+                    "customer_id": "1a72a05f-4b8f-43c5-a889-1ebc6d9dc729", "customer_type" : "LEGAL", "rate": 0.0 }
+                }""";
         String iban = "AABBCCCDDDDEEEEEEEEEEEEEEEE";
         Account account = getAccount(iban);
         AccountOutDto outDto = mapper.toAccountOutDto(account);
@@ -191,13 +190,13 @@ class AccountServiceTest {
 
     private Account getAccount(String iban) {
         return new Account(iban, "Main", 10000, "BYN",
-                LocalDate.of(2024, 01, 10), true, UUID.fromString("1a72a05f-4b8f-43c5-a889-1ebc6d9dc729"),
+                LocalDate.of(2024, 1, 10), true, UUID.fromString("1a72a05f-4b8f-43c5-a889-1ebc6d9dc729"),
                 CustomerType.LEGAL, 0.0, null);
     }
 
     private AccountInDto getInDto(String iban) {
         return new AccountInDto(iban, "Main", iban, BigDecimal.valueOf(100), 933,
-                LocalDate.of(2024, 01, 10), true, UUID.fromString("1a72a05f-4b8f-43c5-a889-1ebc6d9dc729"),
+                LocalDate.of(2024, 1, 10), true, UUID.fromString("1a72a05f-4b8f-43c5-a889-1ebc6d9dc729"),
                 CustomerType.LEGAL, 0.0);
     }
 

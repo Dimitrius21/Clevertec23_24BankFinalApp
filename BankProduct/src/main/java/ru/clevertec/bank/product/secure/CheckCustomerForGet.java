@@ -6,7 +6,6 @@ import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.stereotype.Component;
 import ru.clevertec.bank.product.util.ParseRequest;
 import ru.clevertec.exceptionhandler.exception.InternalServerErrorException;
-import ru.clevertec.exceptionhandler.exception.RequestBodyIncorrectException;
 import ru.clevertec.exceptionhandler.exception.ResourceNotFountException;
 
 import java.util.Map;

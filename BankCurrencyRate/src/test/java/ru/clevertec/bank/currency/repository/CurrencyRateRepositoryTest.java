@@ -13,14 +13,9 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import ru.clevertec.bank.currency.domain.entity.Rate;
 import ru.clevertec.bank.currency.domain.entity.Rates;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -52,9 +47,9 @@ class CurrencyRateRepositoryTest {
 
     @Test
     void findFirstByStartBeforeOrderByStartDescTest() {
-        ZonedDateTime time = ZonedDateTime.of(2024, 01, 10, 15, 0, 0, 0, ZoneId.systemDefault());
+        ZonedDateTime time = ZonedDateTime.of(2024, 1, 10, 15, 0, 0, 0, ZoneId.systemDefault());
         Rates result = repository.findFirstByStartBeforeOrderByStartDesc(time);
-        ZonedDateTime expected = ZonedDateTime.of(2024, 01, 10, 14, 0, 0, 0, ZoneId.systemDefault());
+        ZonedDateTime expected = ZonedDateTime.of(2024, 1, 10, 14, 0, 0, 0, ZoneId.systemDefault());
         Assertions.assertThat(result.getStart()).isEqualTo(expected);
         Assertions.assertThat(result.getExchangeRates()).hasSize(3);
     }

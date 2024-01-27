@@ -16,7 +16,6 @@ import ru.clevertec.bank.currency.domain.entity.Rates;
 import ru.clevertec.bank.currency.mapper.RatesMapper;
 import ru.clevertec.bank.currency.repository.CurrencyRateRepository;
 import ru.clevertec.exceptionhandler.exception.RequestBodyIncorrectException;
-import ru.clevertec.exceptionhandler.exception.ResourceNotFountException;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -89,7 +88,7 @@ class CurrencyRateServiceTest {
                                   "sellRate": 3.15,
                                   "srcCurr": "USD",
                                   "reqCurr": "BYN"
-                              }   
+                              }
                            ]}
                      }
                      """;
@@ -124,11 +123,11 @@ class CurrencyRateServiceTest {
                                   "sellRate": 3.15,
                                   "srcCurr": "USD",
                                   "reqCurr": "BYN"
-                              }   
+                              }
                            ]}
                      }
                      """;
-        Exception exception = assertThrows(RequestBodyIncorrectException.class, ()->service.saveRatesFromRabbit(message));
+        Exception exception = assertThrows(RequestBodyIncorrectException.class, () -> service.saveRatesFromRabbit(message));
         Assertions.assertThat(exception.getMessage()).contains("Data in the request body isn't correct:");
     }
 

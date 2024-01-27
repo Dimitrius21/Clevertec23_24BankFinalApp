@@ -33,7 +33,6 @@ dependencies {
     implementation "org.mapstruct:mapstruct:$mapstructVersion"
     implementation 'org.springframework.cloud:spring-cloud-starter-config'
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
-// https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.16.1'
     implementation "io.jsonwebtoken:jjwt-api:$jwtVersion"
     implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -48,7 +47,6 @@ dependencies {
 
     annotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
 
-    //https://mvnrepository.com/artifact/com.github.tomakehurst/wiremock-standalone
     testImplementation 'com.github.tomakehurst:wiremock-standalone:3.0.0-beta-10'
     testImplementation "org.testcontainers:postgresql:$testContainersVersion"
     testImplementation "org.testcontainers:testcontainers:$testContainersVersion"

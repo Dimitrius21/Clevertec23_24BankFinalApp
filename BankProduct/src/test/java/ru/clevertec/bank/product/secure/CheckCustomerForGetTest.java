@@ -10,8 +10,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.authorization.AuthorizationDecision;
-import ru.clevertec.exceptionhandler.exception.InternalServerErrorException;
-import ru.clevertec.exceptionhandler.exception.RequestBodyIncorrectException;
 import ru.clevertec.exceptionhandler.exception.ResourceNotFountException;
 
 import java.util.Map;
@@ -140,7 +138,7 @@ class CheckCustomerForGetTest {
             }
         }
 
-        Assertions.assertThatThrownBy(()-> checkCustomer.check(uuid.toString(), request))
+        Assertions.assertThatThrownBy(() -> checkCustomer.check(uuid.toString(), request))
                 .isInstanceOf(ResourceNotFountException.class);
     }
 }

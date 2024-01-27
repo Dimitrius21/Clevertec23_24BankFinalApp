@@ -1,5 +1,7 @@
 package ru.clevertec.bank.product.cache;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -8,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -22,15 +23,13 @@ import java.util.concurrent.locks.ReentrantLock;
 public class CacheLfuSync<V> implements Cacheable<String, V> {
 
     private final int maxSize;
-    private String entityRepo;
-    private List<Node> nodeList;
-    private Map<String, Node> store = new ConcurrentHashMap<>();
+    private final List<Node<V>> nodeList;
+    private final Map<String, Node<V>> store = new ConcurrentHashMap<>();
     private int qNode;
     private final Lock lock = new ReentrantLock();
 
     public CacheLfuSync(String entityRepo, int maxSize) {
         this.maxSize = maxSize;
-        this.entityRepo = entityRepo;
         nodeList = new ArrayList<>(maxSize);
         qNode = 0;
         log.info("Cache Lfu has been created  for {}", entityRepo);
@@ -44,7 +43,7 @@ public class CacheLfuSync<V> implements Cacheable<String, V> {
             node.setValue(value);
             return val;
         } else {
-            node = new Node(id, value);
+            node = new Node<>(id, value);
             store.put(id, node);
             lock.lock();
             try {
@@ -74,7 +73,7 @@ public class CacheLfuSync<V> implements Cacheable<String, V> {
 
     public V remove(Object key) {
         if (store.containsKey(key)) {
-            Iterator<Node> iterator = nodeList.iterator();
+            Iterator<Node<V>> iterator = nodeList.iterator();
             lock.lock();
             try {
                 while (iterator.hasNext()) {
@@ -106,19 +105,18 @@ public class CacheLfuSync<V> implements Cacheable<String, V> {
         return index;
     }
 
-    @Override
-    public void setRepositoriesName(String name) {
-        entityRepo = name;
-    }
 
     /**
      * Дочерний класс для хранения кэшируемой сущности и частоты обращения к ней
      *
      * @param <V>
      */
-    private class Node<V> {
-        private AtomicLong frequency = new AtomicLong(1);
-        private String key;
+    private static class Node<V> {
+        private final AtomicLong frequency = new AtomicLong(1);
+        @Getter
+        private final String key;
+        @Setter
+        @Getter
         private V value;
 
         public Node(String key, V value) {
@@ -126,24 +124,14 @@ public class CacheLfuSync<V> implements Cacheable<String, V> {
             this.key = key;
         }
 
-        public String getKey() {
-            return key;
-        }
-
         public long getFrequency() {
             return frequency.get();
-        }
-
-        public V getValue() {
-            return value;
         }
 
         public void incrementFrequency() {
             frequency.incrementAndGet();
         }
 
-        public void setValue(V value) {
-            this.value = value;
-        }
     }
+
 }

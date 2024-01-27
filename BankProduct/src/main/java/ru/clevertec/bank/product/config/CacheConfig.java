@@ -2,10 +2,8 @@ package ru.clevertec.bank.product.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -22,27 +20,23 @@ import java.util.function.Function;
  * Класс для конфигурации объектов обеспечивающих кэширование данных при доступе в базу данных
  */
 @Configuration
-//@EnableCaching
 public class CacheConfig {
 
     @Value("${caching.size:10}")
     private int maxSize;
 
     @Bean
-    //@Profile("redis")
     @ConditionalOnProperty(prefix = "caching", name = "type", havingValue = "redis")
     public RedisTemplate<String, ?> redisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, ?> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
-       // template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
         return template;
     }
 
     @Bean
     @ConditionalOnProperty(prefix = "caching", name = "type", havingValue = "redis")
-    //@Profile("redis")
     public Function<String, Cacheable> CacheRedisBeanFactory(RedisTemplate redisTemplate) {
         return name -> CacheRedis(redisTemplate, name);
     }

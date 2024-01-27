@@ -3,9 +3,8 @@ spring:
     config:
       enabled: false
   datasource:
-    url: jdbc:postgresql://localhost:5432/test
-    username: postgres
-    password: 1234
+    username: test
+    password: test
   jpa:
     hibernate:
       ddl-auto: none
@@ -21,25 +20,28 @@ spring:
         max-page-size: 40
   liquibase:
     change-log: db/changelog/db.changelog-test.yaml
+    contexts: test
 exception:
   custom-handler:
     enable: true
 caching:
-  repository: #accountRepository, cardRepository, creditRepository, depositRepository
+  repository: accountRepository
   type: lfu
   size: 5
 rabbit:
-  exchange: bank
   queue:
     account: account
     card: card
     credit: credit
     deposit: deposit
-  header:
-    key: message_type
-    deposit: deposit_info
-    credit: credit-details
+eureka:
+  client:
+    enabled: false
 
 jwt:
   secretKey: 73357638792F423F4528482B4D6251655468576D5A7133743677397A24432646
   expiration: 86400000
+client:
+  name: "currency"
+  url:
+    rate: http://localhost:8083/rate

@@ -1,20 +1,17 @@
 package ru.clevertec.bank.product.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.MethodOrderer;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.MultiValueMapAdapter;
 import ru.clevertec.bank.product.domain.dto.account.request.AccountInDto;
 import ru.clevertec.bank.product.domain.dto.account.response.AccountOutDto;
 import ru.clevertec.bank.product.domain.entity.Account;
+import ru.clevertec.bank.product.integration.BaseIntegrationTest;
 import ru.clevertec.bank.product.mapper.AccountMapper;
 import ru.clevertec.bank.product.testutil.jwt.JwtGenerator;
 import ru.clevertec.bank.product.util.CustomerType;
@@ -26,27 +23,23 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-@SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class AccountControllerTest {
+@RequiredArgsConstructor
+class AccountControllerTest extends BaseIntegrationTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    private AccountMapper mapper;
-
-    @Autowired
-    private JwtGenerator jwtGenerator;
+    private final MockMvc mockMvc;
+    private final ObjectMapper objectMapper;
+    private final AccountMapper mapper;
+    private final JwtGenerator jwtGenerator;
 
     @Test
     void getByIdTest() throws Exception {
@@ -65,7 +58,6 @@ class AccountControllerTest {
     void getByIdAnotherUserTest() throws Exception {
         String iban = "AABBCCCDDDDEEEEEEEE01010102";
         Account account = getAccount(iban);
-        AccountOutDto outDto = mapper.toAccountOutDto(account);
         String token = jwtGenerator.generateTokenByIdWithRole(UUID.fromString("1a72a05f-4b8f-43c5-a889-1ebc6d9dc727"),
                 Role.USER);
         mockMvc.perform(

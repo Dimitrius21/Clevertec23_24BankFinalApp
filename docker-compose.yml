@@ -1,140 +1,133 @@
 version: '3.5'
 services:
-    db:
-      image: postgres:alpine
-      restart: always
-      environment:
-        POSTGRES_USER: postgres
-        POSTGRES_PASSWORD: '1234'
-        POSTGRES_MULTIPLE_DATABASES: customer, bank, rates
-      ports:
-        - "5432:5432"
-      volumes:
-        - ./bd_bases:/docker-entrypoint-initdb.d
-        - db:/var/lib/postgresql/data
+  db:
+    image: postgres:alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: '1234'
+      POSTGRES_MULTIPLE_DATABASES: customer, bank, rates
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./bd_bases:/docker-entrypoint-initdb.d
+      - db:/var/lib/postgresql/data
 
-    rabbitmq:
-      container_name: rabbitmq
-      image: rabbitmq:management-alpine
-      hostname: app-rabbitmq
-      ports:
-        - 5672:5672
-        - 15672:15672
-      volumes:
-        - ./init_r/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
-        - ./init_r/definitions.json:/etc/rabbitmq/definitions.json:ro
-    redis:
-      image: redis
-      restart: always
-      ports:
-        - "6379:6379"
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:management-alpine
+    hostname: app-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ./init_r/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - ./init_r/definitions.json:/etc/rabbitmq/definitions.json:ro
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - "6379:6379"
 
-    config-server:
-      build:
-        context: ./BankConfig
-      container_name: config-server
-      restart: always
-      ports:
-        - "8888:8888"
-      healthcheck:
-        test: wget -qO- http://localhost:8888/actuator/health
-        interval: 10s
-        timeout: 5s
-        retries: 3
+  config-server:
+    build:
+      context: ./BankConfig
+    container_name: config-server
+    restart: always
+    ports:
+      - "8888:8888"
+    healthcheck:
+      test: wget -qO- http://localhost:8888/actuator/health
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
-    eureka-server:
-      build:
-        context: ./eureka-server
-        dockerfile: Dockerfile
-      container_name: eureka-server
-      environment:
-        CONFIGHOST: http://config-server:8888
-      ports:
-        - "8761:8761"
-      healthcheck:
-        test: wget -qO- http://localhost:8761/actuator/health
-        interval: 10s
-        timeout: 5s
-        retries: 3
-      depends_on:
-        config-server:
-          condition: service_healthy
+  eureka-server:
+    build:
+      context: ./eureka-server
+      dockerfile: Dockerfile
+    container_name: eureka-server
+    environment:
+      CONFIGHOST: http://config-server:8888
+    ports:
+      - "8761:8761"
+    healthcheck:
+      test: wget -qO- http://localhost:8761/actuator/health
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    depends_on:
+      config-server:
+        condition: service_healthy
 
-    api-gateway:
-      build:
-        context: ./api-gateway
-        dockerfile: Dockerfile
-      container_name: api-gateway
-      environment:
-        CONFIGHOST: http://config-server:8888
-      ports:
-        - "8765:8765"
-      depends_on:
-        config-server:
-          condition: service_healthy
-        eureka-server:
-          condition: service_healthy
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    environment:
+      CONFIGHOST: http://config-server:8888
+    ports:
+      - "8765:8765"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
 
-    rates:
-      build:
-        dockerfile: DockerfileR
-      container_name: rates-server
-      restart: always
-      environment:
-        SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/rates
-        CONFIGHOST: http://config-server:8888
-        RABBIT-HOST : rabbitmq
-        ACTIVE: dev
-      ports:
-        - "8083:8083"
-      depends_on:
-        - db
-        - rabbitmq
-        - config-server
-        - eureka-server
-        - api-gateway
+  rates:
+    build:
+      dockerfile: DockerfileR
+    container_name: rates-server
+    restart: always
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/rates
+      CONFIGHOST: http://config-server:8888
+      RABBIT-HOST: rabbitmq
+      ACTIVE: dev
+    ports:
+      - "8083:8083"
+    depends_on:
+      - db
+      - rabbitmq
+      - api-gateway
 
-    customer:
-      build:
-        dockerfile: DockerfileC
-      container_name: customer-server
-      restart: always
-      environment:
-        SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/customer
-        CONFIGHOST: http://config-server:8888
-        RABBIT-HOST: rabbitmq
-        ACTIVE: prod
-      ports:
-        - "8082:8082"
-      depends_on:
-        - db
-        - rabbitmq
-        - config-server
-        - eureka-server
-        - api-gateway
+  customer:
+    build:
+      dockerfile: DockerfileC
+    container_name: customer-server
+    restart: always
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/customer
+      CONFIGHOST: http://config-server:8888
+      RABBIT-HOST: rabbitmq
+      ACTIVE: prod
+    ports:
+      - "8082:8082"
+    depends_on:
+      - db
+      - rabbitmq
+      - api-gateway
 
-    product-service:
-      build:
-        dockerfile: DockerfileP
-      container_name: product-service
-      restart: always
-      ports:
-        - "8081:8081"
-      depends_on:
-        - db
-        - redis
-        - rabbitmq
-        - customer
-        - config-server
-        - eureka-server
-        - api-gateway
-      environment:
-        CONFIGHOST: http://config-server:8888
-        SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/bank
-        SPRING_RABBITMQ_HOST: rabbitmq
-        FEIGN_URL: http://rates:8083/rate
-        ACTIVE: prod
-        SPRING_DATA_REDIS_HOST: redis
+  product-service:
+    build:
+      dockerfile: DockerfileP
+    container_name: product-service
+    restart: always
+    ports:
+      - "8081:8081"
+    depends_on:
+      - db
+      - redis
+      - rabbitmq
+      - rates
+      - customer
+      - api-gateway
+    environment:
+      CONFIGHOST: http://config-server:8888
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/bank
+      SPRING_RABBITMQ_HOST: rabbitmq
+      FEIGN_URL: http://rates:8083/rate
+      ACTIVE: prod
+      SPRING_DATA_REDIS_HOST: redis
 
 volumes:
   db:

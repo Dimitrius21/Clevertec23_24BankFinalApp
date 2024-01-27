@@ -8,24 +8,21 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.*;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.ArgumentsProvider;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.authorization.AuthorizationDecision;
 import ru.clevertec.exceptionhandler.exception.ResourceNotFountException;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
 
 class CheckCustomerForCreateTest {
     private MockHttpServletRequest request;
-    private static ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper();
     private CheckCustomerForCreate checkCustomer;
 
     @BeforeAll
@@ -48,10 +45,7 @@ class CheckCustomerForCreateTest {
         request.setRequestURI(String.format("/%s/AABBCCDDEE01", entity));
         request.setContent(args.get(1).getBytes(StandardCharsets.UTF_8));
         String uuid = "1a72a05f-4b8f-43c5-a889-1ebc6d9dc729";
-        boolean expected = false;
-        if (entity.equals("account") || entity.equals("deposits")) {
-            expected = true;
-        }
+        boolean expected = entity.equals("account") || entity.equals("deposits");
 
         AuthorizationDecision res = checkCustomer.check(uuid, request);
 
@@ -63,14 +57,14 @@ class CheckCustomerForCreateTest {
         String path = "customer";
         request.setRequestURI(String.format("/%s/AABBCCDDEE01", path));
         String uuid = "1a72a05f-4b8f-43c5-a889-1ebc6d9dc729";
-        Assertions.assertThatThrownBy(()-> checkCustomer.check(uuid, request))
+        Assertions.assertThatThrownBy(() -> checkCustomer.check(uuid, request))
                 .isInstanceOf(ResourceNotFountException.class);
     }
 
     private static class ArgsSupplier implements ArgumentsProvider {
 
         @Override
-        public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws Exception {
+        public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
             return Stream.of(
                     Arguments.of(List.of("account",
                             """

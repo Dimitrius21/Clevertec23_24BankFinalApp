@@ -25,31 +25,37 @@ public class CreditController implements CreditOpenApi {
 
     private final CreditService creditService;
 
+    @Override
     @GetMapping("/{contractNumber}")
     public ResponseEntity<CreditResponseDTO> findByContractNumber(@PathVariable String contractNumber) {
         return ResponseEntity.ok(creditService.findByContractNumber(contractNumber));
     }
 
+    @Override
     @GetMapping
     public ResponseEntity<Page<CreditResponseDTO>> findALl(Pageable pageable) {
         return ResponseEntity.ok(creditService.findAll(pageable));
     }
 
+    @Override
     @GetMapping("/customers/{id}")
     public ResponseEntity<List<CreditResponseDTO>> findAllByCustomerId(@PathVariable UUID id) {
         return ResponseEntity.ok(creditService.findAllByClientId(id));
     }
 
+    @Override
     @PostMapping
     public ResponseEntity<CreditResponseDTO> save(@RequestBody CreateCreditDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(creditService.save(dto));
     }
 
+    @Override
     @PutMapping("/{contractNumber}")
     public ResponseEntity<CreditResponseDTO> updateByContractNumber(@PathVariable String contractNumber, @RequestBody UpdateCreditDTO dto) {
         return ResponseEntity.ok(creditService.updateByContractNumber(contractNumber, dto));
     }
 
+    @Override
     @DeleteMapping("/{contractNumber}")
     public ResponseEntity<DeleteResponse> deleteByContractNumber(@PathVariable String contractNumber) {
         return ResponseEntity.ok(creditService.deleteByContractNumber(contractNumber));

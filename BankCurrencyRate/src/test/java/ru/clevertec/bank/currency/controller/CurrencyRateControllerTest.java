@@ -14,7 +14,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.clevertec.bank.currency.domain.dto.RatesInDto;
 import ru.clevertec.bank.currency.domain.dto.RatesOutDto;
 import ru.clevertec.bank.currency.domain.entity.Rate;
-import ru.clevertec.bank.currency.mapper.RatesMapper;
 import ru.clevertec.bank.currency.repository.CurrencyRateRepository;
 
 import java.time.ZoneId;
@@ -37,9 +36,6 @@ class CurrencyRateControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    @Autowired
-    private RatesMapper mapper;
 
     @Autowired
     private CurrencyRateRepository repo;
@@ -77,7 +73,7 @@ class CurrencyRateControllerTest {
     @Test
     void createTest() throws Exception {
         Matcher<Long> matcher = IsNot.not(0L);
-        ZonedDateTime dateTime = ZonedDateTime.of(2014, 01, 11, 12, 10, 0, 0, ZoneId.of("GMT+3"));
+        ZonedDateTime dateTime = ZonedDateTime.of(2014, 1, 11, 12, 10, 0, 0, ZoneId.of("GMT+3"));
         RatesInDto inDto = getRatesInDto(dateTime, 0);
 
         String result = mockMvc.perform(

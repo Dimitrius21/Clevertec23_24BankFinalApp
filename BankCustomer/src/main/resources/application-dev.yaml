@@ -28,7 +28,6 @@ aop:
   logging:
     enabled: true
 rabbit:
-  exchange: bank
   queue:
     customer: customer
 jwt:

@@ -28,11 +28,9 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CheckCustomerForUpdateTest {
-    private static ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     private MockHttpServletRequest request;
-
-    private static Map<String, GetUuid> uuidGetters;
 
     private CheckCustomerForUpdate checkCustomer;
 
@@ -56,7 +54,7 @@ class CheckCustomerForUpdateTest {
         request.setServerName("www.localhost.com");
         request.setLocalPort(8080);
 
-        uuidGetters = Map.of(
+        Map<String, GetUuid> uuidGetters = Map.of(
                 "getUuidInAccount", getUuidInAccount,
                 "getUuidInCard", getUuidInCard,
                 "getUuidInCredit", getUuidInCredit,
@@ -74,10 +72,7 @@ class CheckCustomerForUpdateTest {
         request.setContent(args.get(1).getBytes(StandardCharsets.UTF_8));
         String uuid = "1a72a05f-4b8f-43c5-a889-1ebc6d9dc729";
         String iban = "AABBCCDDEE01";
-        boolean expected = false;
-        if (entity.equals("account") || entity.equals("deposits")) {
-            expected = true;
-        }
+        boolean expected = entity.equals("account") || entity.equals("deposits");
         if (entity.equals("deposits")) {
             when(getUuidInDeposit.get(iban)).thenReturn(UUID.fromString(uuid));
         }
@@ -100,7 +95,7 @@ class CheckCustomerForUpdateTest {
     private static class ArgsSupplier implements ArgumentsProvider {
 
         @Override
-        public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws Exception {
+        public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
             return Stream.of(
                     Arguments.of(List.of("/account",
                             """

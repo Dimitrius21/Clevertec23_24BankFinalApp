@@ -36,7 +36,6 @@ dependencies {
     implementation "org.mapstruct:mapstruct:$mapstructVersion"
     annotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
     implementation 'org.springframework.cloud:spring-cloud-starter-config'
-// https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.16.1'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 
@@ -44,8 +43,6 @@ dependencies {
 
     runtimeOnly 'org.postgresql:postgresql'
 
-//https://mvnrepository.com/artifact/com.github.tomakehurst/wiremock-standalone
-//    testImplementation 'com.github.tomakehurst:wiremock-standalone:3.0.0-beta-10'
     testImplementation "org.testcontainers:postgresql:$testContainersVersion"
     testImplementation "org.testcontainers:testcontainers:$testContainersVersion"
     testImplementation "org.testcontainers:junit-jupiter:$testContainersVersion"
