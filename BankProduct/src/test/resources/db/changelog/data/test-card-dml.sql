@@ -1,0 +1,10 @@
+--liquibase formatted sql
+
+--changeset Savitsky_E:test-2
+INSERT INTO cards (card_number, iban, customer_id, customer_type, cardholder, card_status)
+VALUES (5200000000001099, 'AABBCCCDDDDEEEEEEEEEEEEEEE0', '1a72a05f-4b8f-43c5-a889-1ebc6d9dc729', 'LEGAL', 'Jack Nikson', 'INACTIVE'),
+       (5200000000001090, 'AABBCCCDDDDEEEEEEEEEEEEEEEF' , '1a72a05f-4b8f-43c5-a889-1ebc6d9dc730', 'LEGAL', 'Tom Cruz', 'NEW'),
+       (5200000000001091, 'AABBCCCDDDDEEEEEEEE01010101', '1a72a05f-4b8f-43c5-a889-1ebc6d9dc731', 'PHYSIC', 'Bob Toyz', 'ACTIVE'),
+       (5200000000001092, 'AABBCCCDDDDEEEEEEEE01010102', '1a72a05f-4b8f-43c5-a889-1ebc6d9dc732', 'PHYSIC', 'Nick Jekson', 'INACTIVE'),
+       (0000000000000000, '000000000000000000000000000', '00000000-0000-0000-0000-000000000000', 'PHYSIC', 'Lily Doyson', 'BLOCKED');
+

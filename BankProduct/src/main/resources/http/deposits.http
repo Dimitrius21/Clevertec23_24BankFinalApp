@@ -1,0 +1,53 @@
+###findByIban
+GET http://localhost:8081/deposits/FR7630001007941234567890185
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzY29wZSI6IlJPTEVfQURNSU5JU1RSQVRPUiIsInN1YiI6IjFhNzJhMDVmLTRiOGYtNDNjNS1hODg5LTFlYmM2ZDlkYzcyOSIsImlhdCI6MTcwNTk1MDg0MiwiZXhwIjoxNzA2MDM3MjQyfQ.us8aOJeBAI1V6xAUM-yd8rQLF7Zn_MZHeiyqekoZkfSjkrwq3BT5TBwMpGyN4t-n
+
+###findAll
+GET http://localhost:8081/deposits?page=0&size=2&sort=depInfo.expDate
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzY29wZSI6IlJPTEVfQURNSU5JU1RSQVRPUiIsInN1YiI6IjFhNzJhMDVmLTRiOGYtNDNjNS1hODg5LTFlYmM2ZDlkYzcyOSIsImlhdCI6MTcwNTk0OTM4MCwiZXhwIjoxNzA2MDM1NzgwfQ.IzBRIuP_wjjPxnjywSDxE6E7nOxNRGxUUTaN4X7Xo8jEUWRZTc9K5ACVT4eWzw3s
+
+###findAllByFilter
+GET http://localhost:8081/deposits/filter?accIban=FR7630001007941234567890185&greaterThan=true&amount=1000&currency=EUR&page=0&size=2&sort=depInfo.expDate
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6IjFhNzJhMDVmLTRiOGYtNDNjNS1hODg5LTFlYmM2ZDlkYzcyOSIsImlhdCI6MTcwNTk0NTc3NywiZXhwIjoxNzA2MDMyMTc3fQ.S-PD1XUrE_swSJjSKIgcqP6ASqeiCGjjG6fS0nRrSPvY_y0rn-a4tYUCwwWPnDQY
+
+###save
+POST http://localhost:8081/deposits
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6IjFhNzJhMDVmLTRiOGYtNDNjNS1hODg5LTFlYmM2ZDlkYzcyOSIsImlhdCI6MTcwNTkxNTEzMCwiZXhwIjoxNzA2MDAxNTMwfQ.hbY9lH0dxKf7TOcBYmSpmXdyrvoKvRxHNB8z31aAcODbj1S3MxKxIf97L6IlVe8A
+
+{
+  "customer_id": "1a72a05f-4b8f-43c5-a889-1ebc6d9dc729",
+  "customer_type": "LEGAL",
+  "acc_info": {
+    "acc_iban": "AABBCCCDDDDEEEEEEEEEEEEEEEEE",
+    "curr_amount": 3000.00,
+    "curr_amount_currency": "BYN"
+  },
+  "dep_info": {
+    "rate": 14.50,
+    "term_val": 24,
+    "term_scale": "M",
+    "dep_type": "REVOCABLE",
+    "auto_renew": true
+  }
+}
+
+###updateByIban
+PUT http://localhost:8081/deposits/DE89370400440532013000
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6IjFhNzJhMDVmLTRiOGYtNDNjNS1hODg5LTFlYmM2ZDlkYzkyOSIsImlhdCI6MTcwNTk0ODY2NCwiZXhwIjoxNzA2MDM1MDY0fQ.MXnDOdhKHsw3NO4J5F1kZGZZ-Cl8Y9P4WUKV4y7Ilv8Xl3fRs11ZeveyhPzRtHkk
+
+{
+  "dep_type": "IRREVOCABLE",
+  "auto_renew": false
+}
+
+###deleteByIban
+DELETE http://localhost:8081/deposits/FR7630001007941234567890185
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiQURNSU5JU1RSQVRPUiIsInN1YiI6IjFhNzJhMDVmLTRiOGYtNDNjNS1hODg5LTFlYmM2ZDlkYzcyOSIsImlhdCI6MTcwNTkyMTI1OCwiZXhwIjoxNzA2MDA3NjU4fQ.RqekGiwm6MoyObUg1aueQwH-VCKEnKWdq4YjO4uXTI0l2452vhvTF6VmyWntkiFm

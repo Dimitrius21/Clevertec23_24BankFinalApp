@@ -1,59 +1,99 @@
 version: '3.5'
 services:
-    db:
-      image: postgres:alpine
-      restart: always
-      environment:
-        POSTGRES_USER: postgres
-        POSTGRES_PASSWORD: '1234'
-        POSTGRES_DB: clevertec
-      ports:
-        - "5432:5432"
-      volumes: 
-        - db:/var/lib/postgresql/data
-    redis:
-      image: redis
-      restart: always
-      ports:
-        - "6379:6379"
-    authserver:
-      build:
-        context: ./AuthServer
-      container_name: authserver
-      restart: always
-      environment:
-        SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/clevertec
-      ports:
-        - "8090:8090"
-      depends_on:
-        - db
-        - final-project
+  db:
+    image: postgres:alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: '1234'
+      POSTGRES_MULTIPLE_DATABASES: customer, bank, rates
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./bd_bases:/docker-entrypoint-initdb.d
+      - db:/var/lib/postgresql/data
 
-    config-server:
-      build:
-        context: ./ConfigServer
-      container_name: config-server
-      restart: always
-      ports:
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:management-alpine
+    hostname: app-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ./init_r/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - ./init_r/definitions.json:/etc/rabbitmq/definitions.json:ro
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - "6379:6379"
+
+  config-server:
+    build:
+      context: ./BankConfig
+    container_name: config-server
+    restart: always
+    ports:
       - "8888:8888"
+    healthcheck:
+      test: wget -qO- http://localhost:8888/actuator/health
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
-    final-project:
-      build:
-        context: ./MainNewsService
-      container_name: final-project
-      restart: always
-      ports:
-        - "8080:8080"
-      depends_on:
-        - db
-        - config-server
+  rates:
+    build:
+      dockerfile: DockerfileR
+    container_name: rates-server
+    restart: always
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/rates
+      CONFIGHOST: http://config-server:8888
+      RABBIT-HOST: rabbitmq
+      ACTIVE: prod
+    ports:
+      - "8083:8083"
+    depends_on:
+      - db
+      - rabbitmq
 
-      environment:
-        CONFIGHOST: http://config-server:8888
-        SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/clevertec
-        FEIGN_URL: http://authserver:8090
-        ACTIVE: dev
-        SPRING_DATA_REDIS_HOST: redis
+  customer:
+    build:
+      dockerfile: DockerfileC
+    container_name: customer-server
+    restart: always
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/customer
+      CONFIGHOST: http://config-server:8888
+      RABBIT-HOST: rabbitmq
+      ACTIVE: prod
+    ports:
+      - "8082:8082"
+    depends_on:
+      - db
+      - rabbitmq
+
+  product-service:
+    build:
+      dockerfile: DockerfileP
+    container_name: product-service
+    restart: always
+    ports:
+      - "8081:8081"
+    depends_on:
+      - db
+      - redis
+      - rabbitmq
+      - rates
+    environment:
+      CONFIGHOST: http://config-server:8888
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/bank
+      SPRING_RABBITMQ_HOST: rabbitmq
+      FEIGN_URL: http://rates:8083/rate
+      ACTIVE: prod
+      SPRING_DATA_REDIS_HOST: redis
+
 volumes:
   db:
 

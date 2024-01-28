@@ -7,11 +7,11 @@ import org.springframework.data.redis.core.RedisTemplate;
  * Класс реализующий кэш, для хранения сущностей в Redis
  */
 @Slf4j
-public class RedisCache implements Cacheable<Long, Object> {
+public class RedisCache implements Cacheable<String, Object> {
 
-    private RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
 
-    private String entityRepo;
+    private final String entityRepo;
 
     public RedisCache(RedisTemplate<String, Object> redisTemplate, String entityRepo) {
         this.redisTemplate = redisTemplate;
@@ -20,7 +20,7 @@ public class RedisCache implements Cacheable<Long, Object> {
     }
 
     @Override
-    public Object put(Long key, Object value) {
+    public Object put(String key, Object value) {
         redisTemplate.opsForHash().put(entityRepo, key, value);
         return value;
     }
@@ -36,8 +36,4 @@ public class RedisCache implements Cacheable<Long, Object> {
         return redisTemplate.opsForHash().delete(entityRepo, key);
     }
 
-    @Override
-    public void setRepositoriesName(String name) {
-        entityRepo = name;
-    }
 }

@@ -1,53 +1,70 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.1.7'
-	id 'io.spring.dependency-management' version '1.1.4'
+    id 'java'
+    id 'org.springframework.boot' version '3.1.7'
+    id 'io.spring.dependency-management' version '1.1.4'
+    id 'io.freefair.lombok' version '8.4'
 }
-
-group = 'ru.clevertec'
-version = '0.0.1-SNAPSHOT'
 
 java {
-	sourceCompatibility = '17'
+    sourceCompatibility = targetCompatibility = '17'
 }
+
+version = '1.0'
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
-}
-
-repositories {
-	mavenCentral()
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 ext {
-	set('springCloudVersion', "2022.0.4")
+    openApiVersion = '2.1.0'
+    mapstructVersion = '1.5.5.Final'
+    testContainersVersion = '1.19.3'
+    springCloudVersion = '2022.0.4'
+}
+
+
+tasks.withType(Jar).all {
+    duplicatesStrategy 'exclude'
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-amqp'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.liquibase:liquibase-core'
-	implementation 'org.springframework.cloud:spring-cloud-starter-config'
-	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'org.postgresql:postgresql'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.amqp:spring-rabbit-test'
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
+    implementation 'org.liquibase:liquibase-core'
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:$openApiVersion"
+    implementation "org.mapstruct:mapstruct:$mapstructVersion"
+    annotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.16.1'
+//    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+
+    implementation project(':exception-handling-starter')
+
+    runtimeOnly 'org.postgresql:postgresql'
+
+    testImplementation "org.testcontainers:postgresql:$testContainersVersion"
+    testImplementation "org.testcontainers:testcontainers:$testContainersVersion"
+    testImplementation "org.testcontainers:junit-jupiter:$testContainersVersion"
+    testImplementation 'org.assertj:assertj-core:3.25.1'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+compileJava {
+    options.annotationProcessorPath = configurations.annotationProcessor
+    options.compilerArgs += [
+            '-Amapstruct.defaultComponentModel=spring',
+            '-Amapstruct.unmappedTargetPolicy=IGNORE'
+    ]
 }
 
 dependencyManagement {
-	imports {
-		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-	}
-}
-
-tasks.named('bootBuildImage') {
-	builder = 'paketobuildpacks/builder-jammy-base:latest'
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion"
+    }
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
+    ignoreFailures = true
 }

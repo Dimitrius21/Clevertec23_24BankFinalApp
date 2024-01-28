@@ -1,0 +1,22 @@
+#Build stage
+
+FROM gradle:latest AS BUILD
+WORKDIR /app
+COPY ./controller-logging-starter ./controller-logging-starter
+COPY ./exception-handling-starter ./exception-handling-starter
+COPY ./BankProduct ./BankProduct
+COPY settings.gradle .
+COPY build.gradle .
+RUN gradle :BankProduct:build
+
+# Package stage
+
+FROM eclipse-temurin:17-alpine
+ENV JAR_NAME=BankProduct-1.0.jar
+#app-1.0.jar
+ENV APP_HOME=/app
+WORKDIR /app
+#$APP_HOME
+COPY --from=BUILD /app/BankProduct  .
+EXPOSE 8083
+ENTRYPOINT exec java -jar $APP_HOME/build/libs/$JAR_NAME

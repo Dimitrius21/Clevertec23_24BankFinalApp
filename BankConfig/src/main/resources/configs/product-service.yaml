@@ -1,0 +1,67 @@
+confighost: http://localhost:8888
+#active: prod
+feign_url: http://localhost:8083/rate
+
+spring:
+  application:
+    name: product-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bank
+    username: postgres
+    password: 1234
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  data:
+    web:
+      pageable:
+        default-page-size: 20
+        max-page-size: 40
+    redis:
+      host: localhost
+      port: 6379
+  liquibase:
+    enabled: true
+    contexts: dev
+  cache:
+    redis:
+      time-to-live: 300s
+  rabbitmq:
+    host: localhost
+springdoc:
+  api-docs:
+    path: /products/v3/api-docs
+  swagger-ui:
+    path: /products/swagger-ui.html
+caching:
+  repository: accountRepository, cardRepository, creditRepository, depositRepository
+  type: redis
+  size: 5
+exception:
+  custom-handler:
+    enable: true
+aop:
+  logging:
+    enabled: true
+rabbit:
+  queue:
+    account: account
+    card: card
+    credit: credit
+    deposit: deposit
+jwt:
+  secretKey: 73357638792F423F4528482B4D6251655468576D5A7133743677397A24432646
+
+server:
+  port: 8081
+  forward-headers-strategy: framework
+
+client:
+  name: "currency"
+  url:
+    rate: ${feign_url}

@@ -1,0 +1,3 @@
+###getById
+GET http://localhost:8081/account/1
+Accept: application/json

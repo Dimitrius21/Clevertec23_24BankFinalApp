@@ -1,0 +1,55 @@
+# типы liquibase https://overcoder.net/q/117500/%D0%BF%D0%B5%D1%80%D0%B5%D1%87%D0%B8%D1%81%D0%BB%D0%B8%D1%82%D0%B5-%D0%B2%D1%81%D0%B5-%D1%82%D0%B8%D0%BF%D1%8B-sql-liquibase
+
+databaseChangeLog:
+  - changeSet:
+      id: create_account
+      author: group1
+      changes:
+        - createTable:
+            tableName: accounts
+            columns:
+              - column:
+                  name: iban
+                  type: VARCHAR(35)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: amount
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: currency_code
+                  type: VARCHAR(5)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: open_date
+                  type: date
+                  constraints:
+                    nullable: false
+              - column:
+                  name: main_acc
+                  type: boolean
+                  constraints:
+                    nullable: false
+              - column:
+                  name: customer_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: customer_type
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: rate
+                  type: double
+                  constraints:

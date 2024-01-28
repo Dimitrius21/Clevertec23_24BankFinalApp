@@ -1,0 +1,145 @@
+{
+    "users": [
+        {
+          "name": "guest",
+          "password_hash": "BMfxN8drrYcIqXZMr+pWTpDT0nMcOagMduLX0bjr4jwud/pN",
+          "hashing_algorithm": "rabbit_password_hashing_sha256",
+          "tags": [
+            "administrator"
+          ],
+          "limits": {}
+        }
+      ],
+      "vhosts": [
+        {
+          "name": "/"
+        }
+      ],
+      "permissions": [
+        {
+          "user": "guest",
+          "vhost": "/",
+          "configure": ".*",
+          "write": ".*",
+          "read": ".*"
+        }
+      ],
+
+    "queues": [
+        {
+            "name": "rates",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {
+                "x-queue-type": "classic"
+            }
+        },
+      {
+        "name": "customer",
+        "vhost": "/",
+        "durable": true,
+        "auto_delete": false,
+        "arguments": {
+          "x-queue-type": "classic"
+        }
+      },
+      {
+        "name": "account",
+        "vhost": "/",
+        "durable": true,
+        "auto_delete": false,
+        "arguments": {
+          "x-queue-type": "classic"
+        }
+      },
+      {
+        "name": "card",
+        "vhost": "/",
+        "durable": true,
+        "auto_delete": false,
+        "arguments": {
+          "x-queue-type": "classic"
+        }
+      },
+      {
+        "name": "credit",
+        "vhost": "/",
+        "durable": true,
+        "auto_delete": false,
+        "arguments": {
+          "x-queue-type": "classic"
+        }
+      },
+      {
+        "name": "deposit",
+        "vhost": "/",
+        "durable": true,
+        "auto_delete": false,
+        "arguments": {
+          "x-queue-type": "classic"
+        }
+      }
+    ],
+    "exchanges": [
+        {
+            "name": "bank_exchange",
+            "vhost": "/",
+            "type": "direct",
+            "durable": true,
+            "auto_delete": false,
+            "internal": false,
+            "arguments": {}
+        }
+    ],
+    "bindings": [
+        {
+            "source": "bank_exchange",
+            "vhost": "/",
+            "destination": "rates",
+            "destination_type": "queue",
+            "routing_key": "rates",
+            "arguments": {}
+        },
+      {
+        "source": "bank_exchange",
+        "vhost": "/",
+        "destination": "customer",
+        "destination_type": "queue",
+        "routing_key": "customer",
+        "arguments": {}
+      },
+      {
+        "source": "bank_exchange",
+        "vhost": "/",
+        "destination": "account",
+        "destination_type": "queue",
+        "routing_key": "account",
+        "arguments": {}
+      },
+      {
+        "source": "bank_exchange",
+        "vhost": "/",
+        "destination": "card",
+        "destination_type": "queue",
+        "routing_key": "card",
+        "arguments": {}
+      },
+      {
+        "source": "bank_exchange",
+        "vhost": "/",
+        "destination": "credit",
+        "destination_type": "queue",
+        "routing_key": "credit",
+        "arguments": {}
+      },
+      {
+        "source": "bank_exchange",
+        "vhost": "/",
+        "destination": "deposit",
+        "destination_type": "queue",
+        "routing_key": "deposit",
+        "arguments": {}
+      }
+    ]
+}

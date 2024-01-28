@@ -1,0 +1,22 @@
+spring:
+  cloud:
+    config:
+      enabled: false
+  datasource:
+    url: jdbc:postgresql://localhost:5432/rates_test
+    username: postgres
+    password: 1234
+  liquibase:
+    contexts: test
+
+exception:
+  custom-handler:
+    enable: true
+aop:
+  logging:
+    enabled: true
+rabbit:
+  queue:
+    rates: rates
+server:
+  port: 8083

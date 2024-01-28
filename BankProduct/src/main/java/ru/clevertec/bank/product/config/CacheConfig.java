@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -27,18 +26,17 @@ public class CacheConfig {
     private int maxSize;
 
     @Bean
-    @Profile("redis")
+    @ConditionalOnProperty(prefix = "caching", name = "type", havingValue = "redis")
     public RedisTemplate<String, ?> redisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, ?> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
-        template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
         return template;
     }
 
     @Bean
-    @Profile("redis")
+    @ConditionalOnProperty(prefix = "caching", name = "type", havingValue = "redis")
     public Function<String, Cacheable> CacheRedisBeanFactory(RedisTemplate redisTemplate) {
         return name -> CacheRedis(redisTemplate, name);
     }

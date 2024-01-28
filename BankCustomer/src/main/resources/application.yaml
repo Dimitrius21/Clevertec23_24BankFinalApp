@@ -1,0 +1,6 @@
+active: dev
+spring:
+  application:
+    name: customer-service
+  profiles:
+    active: ${active}
