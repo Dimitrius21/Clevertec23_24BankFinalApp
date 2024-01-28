@@ -42,37 +42,6 @@ services:
       timeout: 5s
       retries: 3
 
-  eureka-server:
-    build:
-      context: ./eureka-server
-      dockerfile: Dockerfile
-    container_name: eureka-server
-    environment:
-      CONFIGHOST: http://config-server:8888
-    ports:
-      - "8761:8761"
-    healthcheck:
-      test: wget -qO- http://localhost:8761/actuator/health
-      interval: 10s
-      timeout: 5s
-      retries: 3
-    depends_on:
-      config-server:
-        condition: service_healthy
-
-  api-gateway:
-    build:
-      context: ./api-gateway
-      dockerfile: Dockerfile
-    container_name: api-gateway
-    environment:
-      CONFIGHOST: http://config-server:8888
-    ports:
-      - "8765:8765"
-    depends_on:
-      eureka-server:
-        condition: service_healthy
-
   rates:
     build:
       dockerfile: DockerfileR
@@ -82,13 +51,12 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/rates
       CONFIGHOST: http://config-server:8888
       RABBIT-HOST: rabbitmq
-      ACTIVE: dev
+      ACTIVE: prod
     ports:
       - "8083:8083"
     depends_on:
       - db
       - rabbitmq
-      - api-gateway
 
   customer:
     build:
@@ -105,7 +73,6 @@ services:
     depends_on:
       - db
       - rabbitmq
-      - api-gateway
 
   product-service:
     build:
@@ -119,8 +86,6 @@ services:
       - redis
       - rabbitmq
       - rates
-      - customer
-      - api-gateway
     environment:
       CONFIGHOST: http://config-server:8888
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/bank

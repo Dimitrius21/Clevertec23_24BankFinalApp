@@ -1,4 +1,7 @@
 spring:
+  cloud:
+    config:
+      enabled: false
   application:
     name: rates
   datasource:
@@ -32,15 +35,4 @@ rabbit:
 
 server:
   port: 8083
-
----
-
-spring:
-  config:
-    activate:
-      on-profile: test
-  datasource:
-    url: jdbc:postgresql://localhost:5432/rates_test
-  liquibase:
-    contexts: test
 

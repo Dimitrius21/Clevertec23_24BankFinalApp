@@ -3,8 +3,8 @@ spring:
     config:
       enabled: false
   datasource:
-    username: test
-    password: test
+    username: postgres
+    password: 1234
   jpa:
     hibernate:
       ddl-auto: none

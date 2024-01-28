@@ -1,4 +1,4 @@
-active: prod
+active: dev
 spring:
   application:
     name: customer-service

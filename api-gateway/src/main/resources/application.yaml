@@ -1,6 +1,0 @@
-confighost: http://localhost:8888
-spring:
-  config:
-    import: "optional:configserver:${confighost}"
-  application:
-    name: api-gateway

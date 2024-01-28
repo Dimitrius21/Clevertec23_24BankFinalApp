@@ -1,8 +1,0 @@
-###getById
-GET http://localhost:8765/account/1
-Accept: application/json
-Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzY29wZSI6IlJPTEVfQURNSU5JU1RSQVRPUiIsInN1YiI6IjFhNzJhMDVmLTRiOGYtNDNjNS1hODg5LTFlYmM2ZDlkYzcyOSIsImlhdCI6MTcwNjEyNjg1OCwiZXhwIjoxNzA2MjEzMjU4fQ.w3wQGRZRqpy7jqSWkPPvpi_AyU5e-Qm-YFdh-2tpHjA2AecQ7bvMdxR2RKV-fGDz
-
-###getCurrent
-GET http://localhost:8765/rate
-Accept: application/json

@@ -4,6 +4,5 @@ include 'BankCustomer',
         'BankCurrencyRate',
         'BankProduct',
         'controller-logging-starter',
-        'exception-handling-starter',
-        'eureka-server',
-        'api-gateway'
+        'exception-handling-starter'
+

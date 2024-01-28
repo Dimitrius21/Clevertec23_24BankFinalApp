@@ -12,13 +12,15 @@ spring:
         format_sql: true
   rabbitmq:
     host: ${rabbit-host}
-#  profiles:
-#    active: dev
   liquibase:
     enabled: true
     contexts: dev
 spring-doc:
   packagesToScan: ru.clevertec.bank.currency.controller
+  api-docs:
+    path: /rate/v3/api-docs
+  swagger-ui:
+    path: /rate/swagger-ui.html
 
 exception:
   custom-handler:
@@ -32,12 +34,5 @@ rabbit:
 server:
   port: 8083
   forward-headers-strategy: framework
-eureka:
-  client:
-    service-url:
-      defaultZone: http://eureka-server:8761/eureka
-springdoc:
-  api-docs:
-    path: /rate/v3/api-docs
-  swagger-ui:
-    path: /rate/swagger-ui.html
+
+

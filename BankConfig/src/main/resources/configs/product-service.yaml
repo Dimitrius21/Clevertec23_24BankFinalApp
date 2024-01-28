@@ -10,7 +10,7 @@ spring:
     username: postgres
     password: 1234
   jpa:
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         format_sql: true
@@ -60,10 +60,6 @@ jwt:
 server:
   port: 8081
   forward-headers-strategy: framework
-eureka:
-  client:
-    service-url:
-      defaultZone: http://eureka-server:8761/eureka
 
 client:
   name: "currency"
